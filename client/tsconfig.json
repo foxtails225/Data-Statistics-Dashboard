@@ -1,0 +1,34 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "types": [
+      "react"
+    ],
+    "lib": [
+      "es6",
+      "dom"
+    ],
+    "module": "esnext",
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "strictNullChecks": true,
+    "noEmit": true,
+    "target": "ESNext",
+    "esModuleInterop": true,
+    "strict": true,
+    "moduleResolution": "Node",
+    "skipLibCheck": true,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "build"
+  ]
+}
