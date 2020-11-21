@@ -37,7 +37,7 @@ def gapItems(filename, ext):
         # Get static variants
         headers = df.columns.values
         handoff = headers[-1]
-        df[handoff] = df[handoff].str.replace('\r', '')
+        df[handoff] = df[handoff].apply(str).str.replace('\r', '')
 
         for idx, val in enumerate(df.values):
             if val[-1] == 'False' or val[-1] == 'FALSE':
