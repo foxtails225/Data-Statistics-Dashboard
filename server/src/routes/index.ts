@@ -3,6 +3,6 @@ import { getItems } from '../controllers/gap'
  
 const router: Router = Router()
 
-router.get('/get-items', getItems)
+router.get('/get-items', getItems);
 
 export default router

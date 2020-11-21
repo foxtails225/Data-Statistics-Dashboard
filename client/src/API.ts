@@ -7,7 +7,7 @@ export const getItems = async (selected: String) => {
   const params = { selected };
 
   try {
-    const todos: AxiosResponse = await axios.get(baseUrl + "/get-items", {
+    const todos: AxiosResponse = await axios.get("/get-items", {
       params,
     });
     return todos;
