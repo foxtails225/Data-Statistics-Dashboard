@@ -16,7 +16,7 @@ function BoxChartSection(props: any) {
         },
       ]}
       layout={{
-        title: `${props.title.toUpperCase().split("_")[0]} Statistics`,
+        title: `${props.title.toUpperCase().split(" ")[0]} STATISTICS`,
         width: size.width * 0.35,
         showlegend: true,
         legend: {
@@ -37,16 +37,6 @@ function BoxChartSection(props: any) {
         },
         xaxis: {
           title: "Occurances",
-          titlefont: {
-            size: 12,
-            color: "#212529",
-          },
-          showgrid: true,
-          zerolinecolor: "#969696",
-          zerolinewidth: 1,
-        },
-        yaxis: {
-          title: "Duration",
           titlefont: {
             size: 12,
             color: "#212529",
