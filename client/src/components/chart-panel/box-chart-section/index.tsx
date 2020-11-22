@@ -11,23 +11,13 @@ function BoxChartSection(props: any) {
       data={[
         {
           y: props.xTraces,
-          name: "Duration",
+          name: "",
           type: "box",
         },
       ]}
       layout={{
         title: `${props.title.toUpperCase().split(" ")[0]} STATISTICS`,
         width: size.width * 0.35,
-        showlegend: true,
-        legend: {
-          orientation: "h",
-          xanchor: "center",
-          font: {
-            family: "sans-serif",
-            size: 12,
-            color: "#000",
-          },
-        },
         margin: {
           l: 60,
           b: 0,
@@ -35,8 +25,8 @@ function BoxChartSection(props: any) {
           t: 30,
           pad: 5,
         },
-        xaxis: {
-          title: "Occurances",
+        yaxis: {
+          title: "Duration",
           titlefont: {
             size: 12,
             color: "#212529",
