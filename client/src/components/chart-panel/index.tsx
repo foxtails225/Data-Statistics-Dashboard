@@ -56,7 +56,7 @@ function ChartPanel() {
                   yTraces: durations,
                   avgTraces: avgs,
                   type: ctype,
-                  title: el,
+                  title: data[el]['title'],
                 },
               }));
             } else if (ctype === "histogram") {
@@ -65,7 +65,7 @@ function ChartPanel() {
                 [el]: {
                   xTraces: data[el]["data"],
                   type: ctype,
-                  title: el,
+                  title: data[el]['title'],
                 },
               }));
             }

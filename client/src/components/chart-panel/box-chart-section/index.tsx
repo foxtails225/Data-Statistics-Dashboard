@@ -5,7 +5,7 @@ import { useWindowSize } from "../../../utils/util";
 
 function BoxChartSection(props: any) {
   const size = useWindowSize();
-  
+
   return (
     <Plot
       data={[
@@ -16,7 +16,7 @@ function BoxChartSection(props: any) {
         },
       ]}
       layout={{
-        title: `${props.title.toUpperCase().split('_')[0]} BOX`,
+        title: `${props.title.toUpperCase().split("_")[0]} Statistics`,
         width: size.width * 0.35,
         showlegend: true,
         legend: {

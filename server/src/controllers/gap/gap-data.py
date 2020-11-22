@@ -50,11 +50,27 @@ def gapItems(filename, ext):
                 hcdata.append(val[3])
             preSat = val[2]
 
-        # Add average value
-        output['coverage'] = {'data': getAvgs(cdata), 'type': 'line'}
-        output['gap'] = {'data': getAvgs(gdata), 'type': 'line'}
-        output['coverage_histogram'] = {'data': hcdata, 'type': 'histogram'}
-        output['gap_histogram'] = {'data': hgdata, 'type': 'histogram'}
+        # Put results
+        output['coverage'] = {
+            'data': getAvgs(cdata),
+            'title': 'Coverage Running Average',
+            'type': 'line'
+        }
+        output['gap'] = {
+            'data': getAvgs(gdata),
+            'title': 'Gaps Running Average',
+            'type': 'line'
+        }
+        output['coverage_histogram'] = {
+            'data': hcdata,
+            'title': 'Coverage Distribution',
+            'type': 'histogram'
+        }
+        output['gap_histogram'] = {
+            'data': hgdata,
+            'title': 'Gaps Distribution',
+            'type': 'histogram'
+        }
 
         # Export Result as excel file
         # cdata = pd.DataFrame(cdata)
