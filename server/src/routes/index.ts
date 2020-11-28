@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getItems, getPlotItems } from '../controllers/gap';
+import { getItems, getPlotItems } from '../controllers';
  
 const router: Router = Router();
 

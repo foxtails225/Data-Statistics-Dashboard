@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { testData } from "../../data/test";
+import { testData } from "../data/test";
 
 const getItems = async (req: Request, res: Response): Promise<void> => {
   try {
