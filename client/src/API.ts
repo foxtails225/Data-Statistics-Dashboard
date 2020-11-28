@@ -1,12 +1,12 @@
 import axios, { AxiosResponse } from "axios";
 
-const baseUrl: string = "http://127.0.0.1:7000";
+// const baseUrl: string = "http://127.0.0.1:7000";
 
 export const getItems = async (selected: String) => {
   const params = { selected };
 
   try {
-    const res: AxiosResponse = await axios.get(baseUrl + "/get-items", {
+    const res: AxiosResponse = await axios.get("/get-items", {
       params,
     });
     return res;
@@ -17,7 +17,7 @@ export const getItems = async (selected: String) => {
 
 export const getPlotItems = async () => {
   try {
-    const res: AxiosResponse = await axios.get(baseUrl + "/get-plot");
+    const res: AxiosResponse = await axios.get("/get-plot");
     return res;
   } catch (error) {
     throw new Error(error);
