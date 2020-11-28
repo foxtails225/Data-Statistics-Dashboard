@@ -166,7 +166,7 @@ function TerrestrialHeatMap() {
             onClick={(e) => setMode(e.currentTarget.name)}
             style={{ width: "48%", marginRight: "4%" }}
           >
-            {"Heat Map"}
+            {"Non-Interpolated"}
           </Button>
           <Button
             name="intrpl"
@@ -176,7 +176,7 @@ function TerrestrialHeatMap() {
             onClick={(e) => setMode(e.currentTarget.name)}
             style={{ width: "48%" }}
           >
-            {"Interpolation"}
+            {"Interpolated"}
           </Button>
         </Box>
       </Grid>

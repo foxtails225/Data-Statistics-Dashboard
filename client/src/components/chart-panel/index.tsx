@@ -138,7 +138,7 @@ function ChartPanel() {
                 aria-label="full width tabs example"
               >
                 <Tab label="Data Statistics Dashboard" {...a11yProps(0)} />
-                <Tab label="Interpolation Chart" {...a11yProps(1)} />
+                <Tab label="Heat Map" {...a11yProps(1)} />
               </Tabs>
             </AppBar>
             <SwipeableViews
