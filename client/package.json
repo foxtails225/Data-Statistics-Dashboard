@@ -29,7 +29,7 @@
     },
     "scripts": {
         "start": "set PORT=4000 && react-scripts start",
-        "build": "react-scripts build && rm -rf ../server/build && mv build ../server",
+        "build": "react-scripts build && move build ../server",
         "test": "react-scripts test",
         "eject": "react-scripts eject"
     },
