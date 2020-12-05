@@ -1,5 +1,5 @@
 import { Response, Request } from "express";
-import { testData } from "../data/test";
+import { testData, cartData } from "../data/test";
 
 const getItems = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -45,4 +45,15 @@ const getPlotItems = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export { getItems, getPlotItems };
+const getCartItems = async (req: Request, res: Response): Promise<void> => {
+  try {
+    let data: any = cartData;
+    data["terrestrial"] = testData;
+
+    res.status(200).send(data);
+  } catch (error) {
+    throw error;
+  }
+};
+
+export { getItems, getPlotItems, getCartItems };

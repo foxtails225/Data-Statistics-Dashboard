@@ -14,7 +14,6 @@ def getAvgs(data):
     sum = 0
 
     for idx, val in enumerate(data):
-        # print(idx + 1)
         sum += val[3]
         val.append(sum / (idx + 1))
 

@@ -10,6 +10,7 @@ import {
   CardHeader,
   CardContent,
   Typography,
+  Button,
   Select,
   MenuItem,
   Tab,
@@ -26,6 +27,7 @@ import LineChartSection from "./line-chart-section";
 import HistogramChartSection from "./histogram-chart-section";
 import BoxChartSection from "./box-chart-section";
 import TerrestrialHeatMap from "./terrestrial-heatmap-chart";
+import CartPanel from "../cart-panel";
 
 const INIT_MENUS = [
   { id: "as_needed_handoff", name: "Power below threshold handoff" },
@@ -63,6 +65,7 @@ function a11yProps(index: any) {
 
 function ChartPanel() {
   const [traces, setTraces] = useState({} as any);
+  const [isOpen, setIsOpen] = useState(false);
   const [selected, setSelected] = useState("none");
   const [tab, setTab] = useState(0);
   const theme = useTheme();
@@ -116,98 +119,114 @@ function ChartPanel() {
   }, [selected]);
 
   return (
-    <Grid container>
-      <Container component="main" maxWidth="lg">
-        <CssBaseline />
-        <Card className={classes.chartCard}>
-          <CardHeader
-            title={
-              <Typography component="h1" variant="h5" className="m-3">
-                {`CART Data Statistics Dashboard (Prototype)`}
-              </Typography>
-            }
-          />
-          <CardContent className="ml-3 mr-3">
-            <AppBar position="static" color="default">
-              <Tabs
-                value={tab}
-                onChange={(e, val) => setTab(val)}
-                indicatorColor="primary"
-                textColor="primary"
-                variant="fullWidth"
-                aria-label="full width tabs example"
-              >
-                <Tab label="Data Statistics Dashboard" {...a11yProps(0)} />
-                <Tab label="Heat Map" {...a11yProps(1)} />
-              </Tabs>
-            </AppBar>
-            <SwipeableViews
-              axis={theme.direction === "rtl" ? "x-reverse" : "x"}
-              index={tab}
-              onChangeIndex={(index: any) => setTab(index)}
-            >
-              <TabPanel value={tab} index={0}>
-                <Grid
-                  container
-                  spacing={3}
-                  justify="center"
-                  alignItems="center"
+    <>
+      <Grid container>
+        <Container component="main" maxWidth="lg">
+          <CssBaseline />
+          <Card className={classes.chartCard}>
+            <CardHeader
+              title={
+                <Typography component="h1" variant="h5" className="m-3">
+                  {`CART Data Statistics Dashboard (Prototype)`}
+                </Typography>
+              }
+              action={
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => setIsOpen(true)}
                 >
-                  <Grid item md={4}>
-                    <Select
-                      name=""
-                      value={selected}
-                      onChange={(e: any) => setSelected(e.target.value)}
-                      className={classes.searchSelect}
-                      style={selected === "none" ? { color: grey[500] } : {}}
-                      fullWidth
-                    >
-                      <MenuItem value="none" style={{ opacity: 0.87 }} disabled>
-                        {"Select Data Set…"}
-                      </MenuItem>
-                      {INIT_MENUS.map((item) => (
-                        <MenuItem value={item.id} key={item.id}>
-                          {item.name}
+                  {"Open Chart"}
+                </Button>
+              }
+            />
+            <CardContent className="ml-3 mr-3">
+              <AppBar position="static" color="default">
+                <Tabs
+                  value={tab}
+                  onChange={(e, val) => setTab(val)}
+                  indicatorColor="primary"
+                  textColor="primary"
+                  variant="fullWidth"
+                  aria-label="full width tabs example"
+                >
+                  <Tab label="Data Statistics Dashboard" {...a11yProps(0)} />
+                  <Tab label="Heat Map" {...a11yProps(1)} />
+                </Tabs>
+              </AppBar>
+              <SwipeableViews
+                axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+                index={tab}
+                onChangeIndex={(index: any) => setTab(index)}
+              >
+                <TabPanel value={tab} index={0}>
+                  <Grid
+                    container
+                    spacing={3}
+                    justify="center"
+                    alignItems="center"
+                  >
+                    <Grid item md={4}>
+                      <Select
+                        name=""
+                        value={selected}
+                        onChange={(e: any) => setSelected(e.target.value)}
+                        className={classes.searchSelect}
+                        style={selected === "none" ? { color: grey[500] } : {}}
+                        fullWidth
+                      >
+                        <MenuItem
+                          value="none"
+                          style={{ opacity: 0.87 }}
+                          disabled
+                        >
+                          {"Select Data Set…"}
                         </MenuItem>
-                      ))}
-                    </Select>
-                  </Grid>
-                  <Grid item md={8}></Grid>
-                  {Object.keys(traces).map((item) => (
-                    <Grid item md={6} key={item}>
-                      <Grid container spacing={3}>
-                        {traces[item].type === "line" && (
-                          <Grid item md={12}>
-                            <LineChartSection {...traces[item]} />
-                          </Grid>
-                        )}
-                        {traces[item].type === "histogram" && (
-                          <>
-                            <Grid item md={12}>
-                              <HistogramChartSection {...traces[item]} />
-                            </Grid>
-                            <Grid item md={12}>
-                              <BoxChartSection {...traces[item]} />
-                            </Grid>
-                          </>
-                        )}
-                      </Grid>
+                        {INIT_MENUS.map((item) => (
+                          <MenuItem value={item.id} key={item.id}>
+                            {item.name}
+                          </MenuItem>
+                        ))}
+                      </Select>
                     </Grid>
-                  ))}
-                </Grid>
-              </TabPanel>
-              <TabPanel value={tab} index={1}>
-                <Grid container justify="center" alignItems="center">
-                  <Grid item md={12}>
-                    <TerrestrialHeatMap />
+                    <Grid item md={8}></Grid>
+                    {Object.keys(traces).map((item) => (
+                      <Grid item md={6} key={item}>
+                        <Grid container spacing={3}>
+                          {traces[item].type === "line" && (
+                            <Grid item md={12}>
+                              <LineChartSection {...traces[item]} />
+                            </Grid>
+                          )}
+                          {traces[item].type === "histogram" && (
+                            <>
+                              <Grid item md={12}>
+                                <HistogramChartSection {...traces[item]} />
+                              </Grid>
+                              <Grid item md={12}>
+                                <BoxChartSection {...traces[item]} />
+                              </Grid>
+                            </>
+                          )}
+                        </Grid>
+                      </Grid>
+                    ))}
                   </Grid>
-                </Grid>
-              </TabPanel>
-            </SwipeableViews>
-          </CardContent>
-        </Card>
-      </Container>
-    </Grid>
+                </TabPanel>
+                <TabPanel value={tab} index={1}>
+                  <Grid container justify="center" alignItems="center">
+                    <Grid item md={12}>
+                      <TerrestrialHeatMap />
+                    </Grid>
+                  </Grid>
+                </TabPanel>
+              </SwipeableViews>
+            </CardContent>
+          </Card>
+        </Container>
+      </Grid>
+      <CartPanel isOpen={isOpen} onClose={() => setIsOpen(false)} />
+    </>
   );
 }
 

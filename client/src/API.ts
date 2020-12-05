@@ -23,3 +23,12 @@ export const getPlotItems = async () => {
     throw new Error(error);
   }
 };
+
+export const getCartItems = async (params: Object) => {
+  try {
+    const res: AxiosResponse = await axios.post("/get-cart", params);
+    return res;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
