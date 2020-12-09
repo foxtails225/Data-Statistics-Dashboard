@@ -43,7 +43,10 @@ const useStyles = makeStyles((theme) => ({
   contentSection: {
     backgroundColor: grey[500],
     height: "100%",
-    paddingRight: 0,
+  },
+
+  label: {
+    fontSize: 14,
   },
 }));
 

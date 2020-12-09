@@ -8,10 +8,12 @@ import LineChartSection from "../../../chart-panel/line-chart-section";
 import HistogramChartSection from "../../../chart-panel/histogram-chart-section";
 import BoxChartSection from "../../../chart-panel/box-chart-section";
 import * as Constants from "../../../../constants";
+import useStyles from "../../../../utils/styles";
 
 function ChartsLibsSection(props: any) {
   const [selected, setSelected] = useState([] as any);
   const [anchorEl, setAnchorEl] = useState(null as any);
+  const classes = useStyles();
 
   const handleSelected = (id: any, type: string) => {
     if (!selected.includes(id) && type === "add") {
@@ -51,7 +53,9 @@ function ChartsLibsSection(props: any) {
                 )}
                 {item.id === 3 && <BoxChartSection {...props[item.dataset]} />}
               </Grid>
-              <ContentAddon />
+              <Grid item md={3} className={classes.contentSection}>
+                <ContentAddon />
+              </Grid>
               {selected.sort()[selected.length - 1] === item.id && (
                 <PlusAddon
                   selected={selected}
