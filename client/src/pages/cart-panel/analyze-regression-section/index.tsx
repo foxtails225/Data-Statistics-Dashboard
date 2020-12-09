@@ -20,6 +20,7 @@ import ThreeViewSection from "./three-view-section";
 import ChartsLibsSection from "./charts-libs-section";
 import useStyles from "../../../utils/styles";
 import LineChartSection from "../../chart-panel/line-chart-section";
+import ContentAddon from "../../../components/Button/contentAddon";
 import { getItems } from "../../../API";
 
 const INIT_CHECK_STATUS = {
@@ -238,39 +239,44 @@ function AnalyzeRegressionSection(props: any) {
         </MathJax.Provider>
       </Grid>
       {viewMethod === "3d_view" ? (
-        <ThreeViewSection
-          data={props.data}
-          equation={props.equation}
-          maxAltitude={props.maxAltitude}
-          alt={props.alt}
-          inc={props.inc}
-          value={props.value}
-          reset={reset}
-          isLegend={false}
-          isSub={true}
-          plot_rows={plot_rows}
-          surface_rows={surface_rows}
-          zAxisLabel={zAxisLabel}
-          checked={checked}
-          onClick={handleClick}
-        />
+        <Grid item md={9}>
+          <ThreeViewSection
+            data={props.data}
+            equation={props.equation}
+            maxAltitude={props.maxAltitude}
+            alt={props.alt}
+            inc={props.inc}
+            value={props.value}
+            reset={reset}
+            isLegend={false}
+            isSub={true}
+            plot_rows={plot_rows}
+            surface_rows={surface_rows}
+            zAxisLabel={zAxisLabel}
+            checked={checked}
+            onClick={handleClick}
+          />
+        </Grid>
       ) : (
-        <TwoViewSection
-          data={props.data}
-          equation={props.equation}
-          maxAltitude={props.maxAltitude}
-          alt={props.alt}
-          inc={props.inc}
-          value={props.value}
-          isLegend={false}
-          isSub={true}
-          plot_rows={plot_rows}
-          surface_rows={surface_rows}
-          yAxisLabel={zAxisLabel}
-          checked={checked}
-          onClick={handleClick}
-        />
+        <Grid item md={9}>
+          <TwoViewSection
+            data={props.data}
+            equation={props.equation}
+            maxAltitude={props.maxAltitude}
+            alt={props.alt}
+            inc={props.inc}
+            value={props.value}
+            isLegend={false}
+            isSub={true}
+            plot_rows={plot_rows}
+            surface_rows={surface_rows}
+            yAxisLabel={zAxisLabel}
+            checked={checked}
+            onClick={handleClick}
+          />
+        </Grid>
       )}
+      <ContentAddon />
       {selected && (
         <Grid item md={12}>
           <LineChartSection {...traces["coverage"]} />

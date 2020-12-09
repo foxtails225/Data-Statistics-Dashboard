@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
 import { Grid, Typography } from "@material-ui/core";
+import useStyles from "../../../../utils/styles";
 
 function ThreeViewSection(props: any) {
   const [checked, setChecked] = useState(props.checked);
@@ -8,6 +9,7 @@ function ThreeViewSection(props: any) {
   const [config, setConfig] = useState([]);
   const plot_rows = props.plot_rows;
   const surface_rows = props.surface_rows;
+  const classes = useStyles();
 
   useEffect(() => {
     setReset(!reset);
@@ -161,84 +163,66 @@ function ThreeViewSection(props: any) {
   }, [checked, plot_rows, surface_rows, reset]);
 
   return (
-    <>
-      <Grid item md={9}>
-        <Plot
-          data={config}
-          layout={{
-            autosize: true,
-            width: window.innerWidth * 0.4,
-            margin: {
-              l: 0,
-              r: 0,
-              b: 0,
-              t: 0,
+    <Plot
+      data={config}
+      layout={{
+        autosize: true,
+        width: window.innerWidth * 0.4,
+        margin: {
+          l: 0,
+          r: 0,
+          b: 0,
+          t: 0,
+        },
+        scene: {
+          aspectratio: {
+            x: 0.6,
+            y: 0.6,
+            z: 0.6,
+          },
+          camera: {
+            center: {
+              x: 0,
+              y: 0,
+              z: 0,
             },
-            scene: {
-              aspectratio: {
-                x: 0.6,
-                y: 0.6,
-                z: 0.6,
-              },
-              camera: {
-                center: {
-                  x: 0,
-                  y: 0,
-                  z: 0,
-                },
-                eye: {
-                  x: 0.9,
-                  y: 0.9,
-                  z: 0.9,
-                },
-                up: {
-                  x: 0,
-                  y: 0,
-                  z: 1,
-                },
-              },
-              xaxis: {
-                title: "Altitude (km)",
-                type: "linear",
-                range: [Math.max(...unpack(surface_rows, "altitude")), 0],
-                zeroline: false,
-              },
-              yaxis: {
-                title: "Inclination (deg)",
-                type: "linear",
-                range: [90, 0],
-                zeroline: false,
-              },
-              zaxis: {
-                title: props.zAxisLabel,
-                type: "linear",
-                range: [
-                  Math.min(...unpack(surface_rows, "value")),
-                  Math.max(...unpack(surface_rows, "value")),
-                ],
-                zeroline: false,
-              },
+            eye: {
+              x: 0.9,
+              y: 0.9,
+              z: 0.9,
             },
-            showlegend: false,
-          }}
-          onClick={(e) => props.onHover(e)}
-        />
-      </Grid>
-      <Grid item md={3}>
-        <Grid container alignItems="center" justify="center">
-          <Grid item md={12}>
-            <Typography component="strong" variant="body1">
-              {"Options"}
-            </Typography>
-          </Grid>
-          <Grid item md={12}>
-            <Typography component="strong" variant="body1">
-              {"Metrics"}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-    </>
+            up: {
+              x: 0,
+              y: 0,
+              z: 1,
+            },
+          },
+          xaxis: {
+            title: "Altitude (km)",
+            type: "linear",
+            range: [Math.max(...unpack(surface_rows, "altitude")), 0],
+            zeroline: false,
+          },
+          yaxis: {
+            title: "Inclination (deg)",
+            type: "linear",
+            range: [90, 0],
+            zeroline: false,
+          },
+          zaxis: {
+            title: props.zAxisLabel,
+            type: "linear",
+            range: [
+              Math.min(...unpack(surface_rows, "value")),
+              Math.max(...unpack(surface_rows, "value")),
+            ],
+            zeroline: false,
+          },
+        },
+        showlegend: false,
+      }}
+      onClick={(e) => props.onHover(e)}
+    />
   );
 }
 

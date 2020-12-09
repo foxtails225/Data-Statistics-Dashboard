@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
 import { Grid, Typography } from "@material-ui/core";
-import Selection from "../../../../components/Select";
+import useStyles from "../../../../utils/styles";
 
 function TwoViewSection(props: any) {
   const [checked, setChecked] = useState(props.checked);
   const [config, setConfig] = useState([]);
   const plot_rows = props.plot_rows;
   const surface_rows = props.surface_rows;
+  const classes = useStyles();
 
   useEffect(() => {
     setChecked(props.checked);
@@ -156,53 +157,35 @@ function TwoViewSection(props: any) {
   }, [checked, plot_rows, surface_rows, props.inc]);
 
   return (
-    <>
-      <Grid item md={9}>
-        <Plot
-          data={config}
-          layout={{
-            autosize: true,
-            showlegend: false,
-            hovermode: "closest",
-            width: 550,
-            height: 400,
-            margin: {
-              l: 60,
-              r: 15,
-              b: 35,
-              t: 15,
-            },
-            xaxis: {
-              title: `Altitude (km), Inclination=${props.inc} deg`,
-              type: "linear",
-              zeroline: false,
-            },
-            yaxis: {
-              title: props.yAxisLabel,
-              type: "linear",
-              zeroline: false,
-            },
-          }}
-          onHover={(e: any) => (e.event.target.style.cursor = "pointer")}
-          onUnhover={(e: any) => (e.event.target.style.cursor = "crosshair")}
-          onClick={(e) => props.onClick(e)}
-        />
-      </Grid>
-      <Grid item md={3}>
-        <Grid container alignItems="center" justify="center">
-          <Grid item md={12}>
-            <Typography component="strong" variant="body1">
-              {"Options"}
-            </Typography>
-          </Grid>
-          <Grid item md={12}>
-            <Typography component="strong" variant="body1">
-              {"Metrics"}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-    </>
+    <Plot
+      data={config}
+      layout={{
+        autosize: true,
+        showlegend: false,
+        hovermode: "closest",
+        width: 550,
+        height: 400,
+        margin: {
+          l: 60,
+          r: 15,
+          b: 35,
+          t: 15,
+        },
+        xaxis: {
+          title: `Altitude (km), Inclination=${props.inc} deg`,
+          type: "linear",
+          zeroline: false,
+        },
+        yaxis: {
+          title: props.yAxisLabel,
+          type: "linear",
+          zeroline: false,
+        },
+      }}
+      onHover={(e: any) => (e.event.target.style.cursor = "pointer")}
+      onUnhover={(e: any) => (e.event.target.style.cursor = "crosshair")}
+      onClick={(e) => props.onClick(e)}
+    />
   );
 }
 

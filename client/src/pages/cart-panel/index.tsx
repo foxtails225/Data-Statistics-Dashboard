@@ -106,7 +106,10 @@ function CartPanel(props: any) {
           <CloseIcon />
         </IconButton>
       </MuiDialogTitle>
-      <DialogContent dividers={true}>
+      <DialogContent
+        dividers={true}
+        style={{ paddingRight: 0, overflowX: "hidden" }}
+      >
         <Grid container justify="center" alignItems="center">
           <Grid item md={12}>
             {!isLoading &&

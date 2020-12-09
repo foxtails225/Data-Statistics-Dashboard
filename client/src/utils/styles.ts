@@ -1,4 +1,5 @@
 import { makeStyles } from "@material-ui/core/styles";
+import { grey } from "@material-ui/core/colors";
 
 const useStyles = makeStyles((theme) => ({
   authcard: {
@@ -37,6 +38,12 @@ const useStyles = makeStyles((theme) => ({
     top: theme.spacing(1),
     color: theme.palette.grey[500],
     zIndex: 100,
+  },
+
+  contentSection: {
+    backgroundColor: grey[500],
+    height: "100%",
+    paddingRight: 0,
   },
 }));
 
