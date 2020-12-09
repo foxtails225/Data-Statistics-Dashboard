@@ -183,12 +183,9 @@ function TwoViewSection(props: any) {
               zeroline: false,
             },
           }}
+          onHover={(e: any) => (e.event.target.style.cursor = "pointer")}
+          onUnhover={(e: any) => (e.event.target.style.cursor = "crosshair")}
           onClick={(e) => props.onClick(e)}
-        />
-        <Selection
-          anchorEl={props.anchorEl}
-          onAnchorEl={(value: any) => props.onAnchorEl(value)}
-          onSelected={(value: any) => props.onSelected(value)}
         />
       </Grid>
       <Grid item md={3}>

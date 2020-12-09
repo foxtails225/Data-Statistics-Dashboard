@@ -221,7 +221,7 @@ function ThreeViewSection(props: any) {
             },
             showlegend: false,
           }}
-          onClick={(e) => props.onClick(e)}
+          onClick={(e) => props.onHover(e)}
         />
       </Grid>
       <Grid item md={3}>

@@ -123,8 +123,6 @@ function CartPanel(props: any) {
                 />
               ) : (
                 <></>
-                // <TerrestrialHeatMap />
-                // <TerrestrialHeatMap data={terrestrial} />
               ))}
           </Grid>
         </Grid>

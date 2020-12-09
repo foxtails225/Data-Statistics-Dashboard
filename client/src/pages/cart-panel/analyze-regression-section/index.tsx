@@ -33,8 +33,7 @@ function AnalyzeRegressionSection(props: any) {
   const [traces, setTraces] = useState({} as any);
   const [isOpen, setIsOpen] = useState(false);
   const [reset, setReset] = useState(false);
-  const [selected, setSelected] = useState("");
-  const [anchorEl, setAnchorEl] = useState(null as any);
+  const [selected, setSelected] = useState(false);
   const plot_rows = props.data.plot_value;
   const surface_rows: Array<any> = [];
   const zAxisLabel = props.data.label;
@@ -103,13 +102,8 @@ function AnalyzeRegressionSection(props: any) {
   const handleClick = (data: any) => {
     if (Object.keys(data).includes("event")) {
       const { points, event } = data;
-      setAnchorEl(event.target);
     }
-  };
-
-  const handleSelected = (id: any) => {
-    setSelected(id);
-    setAnchorEl(null);
+    setSelected(true);
   };
 
   return (
@@ -258,11 +252,7 @@ function AnalyzeRegressionSection(props: any) {
           surface_rows={surface_rows}
           zAxisLabel={zAxisLabel}
           checked={checked}
-          selected={selected}
-          anchorEl={anchorEl}
           onClick={handleClick}
-          onAnchorEl={(value: any) => setAnchorEl(value)}
-          onSelected={(value: any) => handleSelected(value)}
         />
       ) : (
         <TwoViewSection
@@ -278,11 +268,7 @@ function AnalyzeRegressionSection(props: any) {
           surface_rows={surface_rows}
           yAxisLabel={zAxisLabel}
           checked={checked}
-          selected={selected}
-          anchorEl={anchorEl}
           onClick={handleClick}
-          onAnchorEl={(value: any) => setAnchorEl(value)}
-          onSelected={(value: any) => handleSelected(value)}
         />
       )}
       {selected && (
