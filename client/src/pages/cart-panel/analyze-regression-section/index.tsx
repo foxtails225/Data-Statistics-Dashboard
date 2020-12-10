@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import MathJax from "react-mathjax";
 
-import { Grid } from "@material-ui/core";
+import { Grid, Button } from "@material-ui/core";
 
 import TwoViewSection from "./two-view-section";
 import ThreeViewSection from "./three-view-section";
@@ -19,6 +19,8 @@ const INIT_CHECK_STATUS = {
 
 function AnalyzeRegressionSection(props: any) {
   const [viewMethod, setViewMethod] = useState("2d_view");
+  const [dataSet, setDataSet] = useState("as_needed_handoff" as any);
+  const [lineType, setLineType] = useState("coverage" as any);
   const [checked, setChecked] = useState(INIT_CHECK_STATUS);
   const [traces, setTraces] = useState({} as any);
   const [reset, setReset] = useState(false);
@@ -29,7 +31,7 @@ function AnalyzeRegressionSection(props: any) {
   const classes = useStyles();
 
   useEffect(() => {
-    getItems("as_needed_handoff")
+    getItems(dataSet)
       .then((res) => {
         let data = eval("[" + res.data + "]")[0];
 
@@ -72,15 +74,11 @@ function AnalyzeRegressionSection(props: any) {
       .catch(() => {
         setTraces({});
       });
-  }, []);
+  }, [dataSet]);
 
   const handleCheck = (event: any) => {
     const { name, checked } = event.currentTarget;
     setChecked((prevState) => ({ ...prevState, [name]: checked }));
-  };
-
-  const resetPlot = () => {
-    setReset(!reset);
   };
 
   const handleClick = (data: any) => {
@@ -90,8 +88,37 @@ function AnalyzeRegressionSection(props: any) {
     setSelected(true);
   };
 
+  const handleDataSetClick = (event: any) => {
+    event.preventDefault();
+    const { id, name } = event.currentTarget;
+    setDataSet(id);
+    setLineType(name);
+  };
+
   return (
     <Grid container justify="center" alignItems="center" spacing={2}>
+      <Grid item md={3}>
+        <Button
+          id="as_needed_handoff"
+          name="coverage"
+          variant="contained"
+          color="primary"
+          onClick={handleDataSetClick}
+        >
+          {`RF Coverage Statistics`}
+        </Button>
+      </Grid>
+      <Grid item md={3}>
+        <Button
+          id="maximum_powee_handoff"
+          name="gap"
+          variant="contained"
+          color="primary"
+          onClick={handleDataSetClick}
+        >
+          {`Coverage Gap Statistics`}
+        </Button>
+      </Grid>
       <Grid item md={12} style={{ zIndex: 1000 }}>
         <MathJax.Provider>
           <MathJax.Node formula={props.text} />
@@ -151,10 +178,10 @@ function AnalyzeRegressionSection(props: any) {
       </Grid>
       {selected && (
         <Grid item md={12}>
-          <LineChartSection {...traces["coverage"]} />
+          <LineChartSection {...traces[lineType]} />
         </Grid>
       )}
-      <ChartsLibsSection {...traces} />
+      <ChartsLibsSection traces={traces} dataSet={dataSet} />
     </Grid>
   );
 }

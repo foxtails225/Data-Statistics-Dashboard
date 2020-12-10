@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
-import { Grid, Typography } from "@material-ui/core";
-import useStyles from "../../../../utils/styles";
 
 function ThreeViewSection(props: any) {
   const [checked, setChecked] = useState(props.checked);
@@ -9,7 +7,6 @@ function ThreeViewSection(props: any) {
   const [config, setConfig] = useState([]);
   const plot_rows = props.plot_rows;
   const surface_rows = props.surface_rows;
-  const classes = useStyles();
 
   useEffect(() => {
     setReset(!reset);

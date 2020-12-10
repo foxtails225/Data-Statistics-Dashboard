@@ -1,14 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
-import { Grid, Typography } from "@material-ui/core";
-import useStyles from "../../../../utils/styles";
 
 function TwoViewSection(props: any) {
   const [checked, setChecked] = useState(props.checked);
   const [config, setConfig] = useState([]);
   const plot_rows = props.plot_rows;
   const surface_rows = props.surface_rows;
-  const classes = useStyles();
 
   useEffect(() => {
     setChecked(props.checked);
@@ -184,7 +181,7 @@ function TwoViewSection(props: any) {
       }}
       onHover={(e: any) => (e.event.target.style.cursor = "pointer")}
       onUnhover={(e: any) => (e.event.target.style.cursor = "crosshair")}
-      onClick={(e) => props.onClick(e)}
+      // onClick={(e) => props.onClick(e)}
     />
   );
 }

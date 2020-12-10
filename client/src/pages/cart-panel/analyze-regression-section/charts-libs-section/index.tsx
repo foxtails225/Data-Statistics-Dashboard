@@ -34,39 +34,47 @@ function ChartsLibsSection(props: any) {
           onSelected={(value: any) => handleSelected(value, "add")}
         />
       )}
-      {Constants.MENU_ITEMS.map(
-        (item: any) =>
-          Object.keys(props).includes(item.dataset) &&
-          selected.includes(item.id) && (
-            <React.Fragment key={item.id}>
-              <MinusAddon
-                id={item.id}
-                selected={selected}
-                anchorEl={anchorEl}
-                onAnchorEl={(value: any) => setAnchorEl(value)}
-                onSelected={(value: any) => handleSelected(value, "remove")}
-              />
-              <Grid item md={9}>
-                {item.id === 1 && <LineChartSection {...props[item.dataset]} />}
-                {item.id === 2 && (
-                  <HistogramChartSection {...props[item.dataset]} />
-                )}
-                {item.id === 3 && <BoxChartSection {...props[item.dataset]} />}
-              </Grid>
-              <Grid item md={3} className={classes.contentSection}>
-                <ContentAddon />
-              </Grid>
-              {selected.sort()[selected.length - 1] === item.id && (
-                <PlusAddon
+
+      {
+        // @ts-ignore
+        Constants.MENU_ITEMS[props.dataSet].map(
+          (item: any) =>
+            Object.keys(props.traces).includes(item.dataset) &&
+            selected.includes(item.id) && (
+              <React.Fragment key={item.id}>
+                <MinusAddon
+                  id={item.id}
                   selected={selected}
                   anchorEl={anchorEl}
                   onAnchorEl={(value: any) => setAnchorEl(value)}
-                  onSelected={(value: any) => handleSelected(value, "add")}
+                  onSelected={(value: any) => handleSelected(value, "remove")}
                 />
-              )}
-            </React.Fragment>
-          )
-      )}
+                <Grid item md={9}>
+                  {item.id === 1 && (
+                    <LineChartSection {...props.traces[item.dataset]} />
+                  )}
+                  {item.id === 2 && (
+                    <HistogramChartSection {...props.traces[item.dataset]} />
+                  )}
+                  {item.id === 3 && (
+                    <BoxChartSection {...props.traces[item.dataset]} />
+                  )}
+                </Grid>
+                <Grid item md={3} className={classes.contentSection}>
+                  <ContentAddon />
+                </Grid>
+                {selected.sort()[selected.length - 1] === item.id && (
+                  <PlusAddon
+                    selected={selected}
+                    anchorEl={anchorEl}
+                    onAnchorEl={(value: any) => setAnchorEl(value)}
+                    onSelected={(value: any) => handleSelected(value, "add")}
+                  />
+                )}
+              </React.Fragment>
+            )
+        )
+      }
     </>
   );
 }

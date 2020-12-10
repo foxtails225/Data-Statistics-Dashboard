@@ -1,7 +1,6 @@
 import React from "react";
-import { Grid, IconButton, Menu, MenuItem, Divider } from "@material-ui/core";
+import { Grid, IconButton, Divider } from "@material-ui/core";
 import AddCircleOutlineIcon from "@material-ui/icons/AddCircleOutline";
-import * as Constants from "../../constants";
 import Selection from "../Select";
 
 function PlusAddon(props: any) {

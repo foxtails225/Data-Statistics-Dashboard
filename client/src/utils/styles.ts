@@ -43,6 +43,8 @@ const useStyles = makeStyles((theme) => ({
   contentSection: {
     backgroundColor: grey[500],
     height: "100%",
+    maxHeight: "55vh",
+    overflow: "auto",
   },
 
   label: {

@@ -10,7 +10,7 @@ function Selection(props: any) {
       open={Boolean(props.anchorEl)}
       onClose={() => props.onAnchorEl(null)}
     >
-      {Constants.MENU_ITEMS.map((el: any) => (
+      {Constants.MENU_ITEMS["as_needed_handoff"].map((el: any) => (
         <MenuItem
           id={el.id}
           key={el.id}
