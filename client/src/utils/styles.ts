@@ -27,9 +27,9 @@ const useStyles = makeStyles((theme) => ({
   },
 
   dialogDeep: {
-    minWidth: "1000px !important",
+    minWidth: "700px !important",
     height: "90vh !important",
-    maxWidth: "1000px !important",
+    maxWidth: "700px !important",
   },
 
   dialogCloseBtn: {

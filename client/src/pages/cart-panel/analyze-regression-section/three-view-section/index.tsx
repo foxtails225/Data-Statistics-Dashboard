@@ -218,7 +218,7 @@ function ThreeViewSection(props: any) {
         },
         showlegend: false,
       }}
-      onClick={(e) => props.onHover(e)}
+      onDoubleClick={() => props.onClick()}
     />
   );
 }

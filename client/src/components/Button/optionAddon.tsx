@@ -48,17 +48,16 @@ function OptionAddon(props: any) {
             border={2}
             borderRadius={5}
             padding={2}
-            style={{ zIndex: 1000, backgroundColor: grey[300] }}
           >
             <Grid container justify="center" alignItems="center" spacing={2}>
-              <Grid item md={12}>
+              <Grid item md={2}>
                 <Grid
                   container
                   justify="center"
                   alignItems="center"
                   spacing={2}
                 >
-                  <Grid item md={5}>
+                  <Grid item md={12}>
                     <Button
                       id={props.type}
                       name="2d_view"
@@ -69,7 +68,7 @@ function OptionAddon(props: any) {
                       {"2D"}
                     </Button>
                   </Grid>
-                  <Grid item md={5}>
+                  <Grid item md={12}>
                     <Button
                       name="3d_view"
                       variant="outlined"
@@ -80,9 +79,9 @@ function OptionAddon(props: any) {
                     </Button>
                   </Grid>
                 </Grid>
-                <Divider style={{ marginTop: 10 }} />
               </Grid>
-              <Grid item md={12}>
+              <Divider orientation="vertical" flexItem />
+              <Grid item md={6}>
                 <FormControlLabel
                   control={
                     <Checkbox
@@ -109,9 +108,9 @@ function OptionAddon(props: any) {
                   classes={{ label: classes.label }}
                   label="Show Underlying Data"
                 />
-                <Divider style={{ marginTop: 10 }} />
               </Grid>
-              <Grid item md={5}>
+              <Divider orientation="vertical" flexItem />
+              <Grid item md={3}>
                 <Tooltip
                   title={
                     <Typography

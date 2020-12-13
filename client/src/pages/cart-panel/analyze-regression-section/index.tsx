@@ -9,14 +9,13 @@ import {
   TableRow,
   TableCell,
   TableBody,
+  Divider,
 } from "@material-ui/core";
 
 import TwoViewSection from "./two-view-section";
 import ThreeViewSection from "./three-view-section";
 import ChartsLibsSection from "./charts-libs-section";
 import useStyles from "../../../utils/styles";
-import LineChartSection from "../../chart-panel/line-chart-section";
-import ContentAddon from "../../../components/Button/contentAddon";
 import OptionAddon from "../../../components/Button/optionAddon";
 import { getItems } from "../../../API";
 
@@ -50,7 +49,6 @@ function AnalyzeRegressionSection(props: any) {
   const plot_rows = props.data.plot_value;
   const surface_rows: Array<any> = [];
   const zAxisLabel = props.data.label;
-  const classes = useStyles();
 
   useEffect(() => {
     getItems(dataSet)
@@ -103,13 +101,6 @@ function AnalyzeRegressionSection(props: any) {
     setChecked((prevState) => ({ ...prevState, [name]: checked }));
   };
 
-  const handleClick = (data: any) => {
-    if (Object.keys(data).includes("event")) {
-      const { points, event } = data;
-    }
-    setSelected(true);
-  };
-
   const handleDataSetClick = (event: any) => {
     event.preventDefault();
     const { id, name } = event.currentTarget;
@@ -119,7 +110,7 @@ function AnalyzeRegressionSection(props: any) {
 
   return (
     <Grid container justify="center" alignItems="center" spacing={2}>
-      <Grid item md={3}>
+      <Grid item md={4}>
         <Button
           id="as_needed_handoff"
           name="coverage"
@@ -130,7 +121,7 @@ function AnalyzeRegressionSection(props: any) {
           {`RF Coverage Statistics`}
         </Button>
       </Grid>
-      <Grid item md={3}>
+      <Grid item md={4}>
         <Button
           id="maximum_powee_handoff"
           name="gap"
@@ -141,25 +132,16 @@ function AnalyzeRegressionSection(props: any) {
           {`Coverage Gap Statistics`}
         </Button>
       </Grid>
-      <Grid item md={10}>
-        <Table aria-label="simple table" size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>{`Gap Statistic`}</TableCell>
-              <TableCell>{`Value`}</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row: any) => (
-              <TableRow key={row.name}>
-                <TableCell component="th" scope="row">
-                  {row.name}
-                </TableCell>
-                <TableCell>{row.value}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+      <Grid item md={3} />
+      <Grid item md={12}>
+        <Divider style={{ paddingRight: "24px" }} />
+        <OptionAddon
+          checked={checked}
+          viewMethod={viewMethod}
+          onChecked={handleCheck}
+          resetPlot={() => setReset(!reset)}
+          onViewMethod={(e: any) => setViewMethod(e.currentTarget.name)}
+        />
       </Grid>
       <Grid item md={12} style={{ zIndex: 1000 }}>
         <MathJax.Provider>
@@ -169,7 +151,7 @@ function AnalyzeRegressionSection(props: any) {
       <Grid item md={12}>
         <Grid container justify="center" spacing={2}>
           {viewMethod === "3d_view" ? (
-            <Grid item md={9}>
+            <Grid item md={12}>
               <ThreeViewSection
                 data={props.data}
                 equation={props.equation}
@@ -184,11 +166,11 @@ function AnalyzeRegressionSection(props: any) {
                 surface_rows={surface_rows}
                 zAxisLabel={zAxisLabel}
                 checked={checked}
-                onClick={handleClick}
+                onClick={() => setSelected(true)}
               />
             </Grid>
           ) : (
-            <Grid item md={9}>
+            <Grid item md={12}>
               <TwoViewSection
                 data={props.data}
                 equation={props.equation}
@@ -202,25 +184,32 @@ function AnalyzeRegressionSection(props: any) {
                 surface_rows={surface_rows}
                 yAxisLabel={zAxisLabel}
                 checked={checked}
-                onClick={handleClick}
+                onClick={() => setSelected(true)}
               />
             </Grid>
           )}
-          <Grid item md={3} className={classes.contentSection}>
-            <OptionAddon
-              checked={checked}
-              viewMethod={viewMethod}
-              onChecked={handleCheck}
-              resetPlot={() => setReset(!reset)}
-              onViewMethod={(e: any) => setViewMethod(e.currentTarget.name)}
-            />
-            <ContentAddon />
-          </Grid>
         </Grid>
       </Grid>
       {selected && (
-        <Grid item md={12}>
-          <LineChartSection {...traces[lineType]} />
+        <Grid item md={10}>
+          <Table aria-label="simple table" size="small">
+            <TableHead>
+              <TableRow>
+                <TableCell>{`Gap Statistic`}</TableCell>
+                <TableCell>{`Value`}</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows.map((row: any) => (
+                <TableRow key={row.name}>
+                  <TableCell component="th" scope="row">
+                    {row.name}
+                  </TableCell>
+                  <TableCell>{row.value}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
         </Grid>
       )}
       <ChartsLibsSection traces={traces} dataSet={dataSet} />

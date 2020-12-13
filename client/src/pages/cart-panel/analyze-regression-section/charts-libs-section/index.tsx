@@ -3,7 +3,6 @@ import { Grid } from "@material-ui/core";
 
 import MinusAddon from "../../../../components/Button/minusAddon";
 import PlusAddon from "../../../../components/Button/plusAddon";
-import ContentAddon from "../../../../components/Button/contentAddon";
 import LineChartSection from "../../../chart-panel/line-chart-section";
 import HistogramChartSection from "../../../chart-panel/histogram-chart-section";
 import BoxChartSection from "../../../chart-panel/box-chart-section";
@@ -49,7 +48,7 @@ function ChartsLibsSection(props: any) {
                   onAnchorEl={(value: any) => setAnchorEl(value)}
                   onSelected={(value: any) => handleSelected(value, "remove")}
                 />
-                <Grid item md={9}>
+                <Grid item md={12}>
                   {item.id === 1 && (
                     <LineChartSection {...props.traces[item.dataset]} />
                   )}
@@ -59,9 +58,6 @@ function ChartsLibsSection(props: any) {
                   {item.id === 3 && (
                     <BoxChartSection {...props.traces[item.dataset]} />
                   )}
-                </Grid>
-                <Grid item md={3} className={classes.contentSection}>
-                  <ContentAddon />
                 </Grid>
                 {selected.sort()[selected.length - 1] === item.id && (
                   <PlusAddon
