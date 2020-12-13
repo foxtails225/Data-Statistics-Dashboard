@@ -212,7 +212,7 @@ function AnalyzeRegressionSection(props: any) {
           </Table>
         </Grid>
       )}
-      <ChartsLibsSection traces={traces} dataSet={dataSet} />
+      <ChartsLibsSection isTable={selected} traces={traces} dataSet={dataSet} />
     </Grid>
   );
 }

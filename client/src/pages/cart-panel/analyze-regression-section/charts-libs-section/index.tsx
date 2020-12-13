@@ -25,7 +25,7 @@ function ChartsLibsSection(props: any) {
 
   return (
     <>
-      {selected.length === 0 && (
+      {props.isTable && selected.length === 0 && (
         <PlusAddon
           selected={selected}
           anchorEl={anchorEl}
@@ -33,7 +33,6 @@ function ChartsLibsSection(props: any) {
           onSelected={(value: any) => handleSelected(value, "add")}
         />
       )}
-
       {
         // @ts-ignore
         Constants.MENU_ITEMS[props.dataSet].map(
