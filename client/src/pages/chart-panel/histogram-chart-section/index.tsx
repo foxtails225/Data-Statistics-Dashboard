@@ -16,7 +16,7 @@ function HistogramChartSection(props: any) {
         },
       ]}
       layout={{
-        title: props.title.toUpperCase().split('_').join(' '),
+        title: props.title.split('_').join(' '),
         width: size.width * 0.35,
         showlegend: true,
         legend: {

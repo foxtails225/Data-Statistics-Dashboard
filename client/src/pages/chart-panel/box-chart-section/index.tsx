@@ -16,7 +16,7 @@ function BoxChartSection(props: any) {
         },
       ]}
       layout={{
-        title: `${props.title.toUpperCase().split(" ")[0]} STATISTICS`,
+        title: `${props.title.split(" ")[0]} Statistics`,
         width: size.width * 0.35,
         margin: {
           l: 60,

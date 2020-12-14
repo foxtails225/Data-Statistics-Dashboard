@@ -1,11 +1,13 @@
 import { Response, Request } from "express";
+import db from "../model";
+import { getAvgs } from "../utils";
 import { testData, cartData } from "../data/test";
 
 const getItems = async (req: Request, res: Response): Promise<void> => {
   try {
     const { spawn } = require("child_process");
     var child = await spawn("python", [
-      `${process.cwd()}/src/controllers/gap-data.py`,
+      `${process.cwd()}/src/controllers/gap_data_v1.py`,
       req.query.selected,
       "csv",
     ]);
@@ -24,7 +26,7 @@ const getPlotItems = async (req: Request, res: Response): Promise<void> => {
   try {
     const { spawn } = require("child_process");
     var child = await spawn("python", [
-      `${process.cwd()}/src/controllers/plot-data.py`,
+      `${process.cwd()}/src/controllers/plot_data_v1.py`,
       JSON.stringify(testData),
     ]);
 
@@ -56,4 +58,48 @@ const getCartItems = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export { getItems, getPlotItems, getCartItems };
+const getItem = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const sql =
+      "select gap_duration from stkreport \
+      where gap_duration is not null";
+    let result: any = {};
+
+    db.query(sql, (err, data, fields) => {
+      if (err) throw err;
+
+      let tdata = data.map((item: any) => {
+        return Number(item.gap_duration)
+      });
+      
+      result["coverage"] = {
+        data: getAvgs(tdata),
+        title: "Coverage Running Average",
+        type: "line",
+      };
+
+      result["gap"] = {
+        data: getAvgs(tdata),
+        title: "Gaps Running Average",
+        type: "line",
+      };
+
+      result["coverage_histogram"] = {
+        data: tdata,
+        title: "Coverage Distribution",
+        type: "histogram",
+      };
+      result["gap_histogram"] = {
+        data: tdata,
+        title: "Gaps Distribution",
+        type: "histogram",
+      };
+
+      res.status(200).json(result);
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export { getItems, getPlotItems, getCartItems, getItem };

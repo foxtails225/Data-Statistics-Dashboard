@@ -50,38 +50,42 @@ function OptionAddon(props: any) {
             padding={2}
           >
             <Grid container justify="center" alignItems="center" spacing={2}>
-              <Grid item md={2}>
+              <Grid item md={3}>
                 <Grid
                   container
-                  justify="center"
+                  justify="flex-start"
                   alignItems="center"
                   spacing={2}
                 >
-                  <Grid item md={12}>
+                  <Grid item md={5}>
                     <Button
                       id={props.type}
                       name="2d_view"
                       variant="outlined"
                       size="small"
                       onClick={(e) => props.onViewMethod(e)}
+                      fullWidth
                     >
                       {"2D"}
                     </Button>
                   </Grid>
-                  <Grid item md={12}>
+                  <Grid item md={7} />
+                  <Grid item md={5}>
                     <Button
                       name="3d_view"
                       variant="outlined"
                       size="small"
                       onClick={(e) => props.onViewMethod(e)}
+                      fullWidth
                     >
                       {"3D"}
                     </Button>
                   </Grid>
+                  <Grid item md={7} />
                 </Grid>
               </Grid>
               <Divider orientation="vertical" flexItem />
-              <Grid item md={6}>
+              <Grid item md={5}>
                 <FormControlLabel
                   control={
                     <Checkbox

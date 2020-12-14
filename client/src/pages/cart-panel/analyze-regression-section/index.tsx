@@ -9,13 +9,13 @@ import {
   TableRow,
   TableCell,
   TableBody,
-  Divider,
+  Typography,
 } from "@material-ui/core";
+import { grey } from "@material-ui/core/colors";
 
 import TwoViewSection from "./two-view-section";
 import ThreeViewSection from "./three-view-section";
 import ChartsLibsSection from "./charts-libs-section";
-import useStyles from "../../../utils/styles";
 import OptionAddon from "../../../components/Button/optionAddon";
 import { getItems } from "../../../API";
 
@@ -53,20 +53,18 @@ function AnalyzeRegressionSection(props: any) {
   useEffect(() => {
     getItems(dataSet)
       .then((res) => {
-        let data = eval("[" + res.data + "]")[0];
-
-        Object.keys(data).map((el) => {
-          let ctype: String = data[el]["type"];
+        Object.keys(res.data).map((el) => {
+          let ctype: String = res.data[el]["type"];
           let gaps: Array<any> = [];
           let durations: Array<any> = [];
           let avgs: Array<any> = [];
 
           // Detect chart type and set Traces
           if (ctype === "line") {
-            data[el]["data"].map((item: Array<any>, idx: number) => {
+            res.data[el]["data"].map((item: Array<any>, idx: number) => {
               gaps.push(idx + 1);
-              durations.push(item[3]);
-              avgs.push(item[4]);
+              durations.push(item[0]);
+                avgs.push(item[1]);
             });
 
             setTraces((prevState: any) => ({
@@ -76,16 +74,16 @@ function AnalyzeRegressionSection(props: any) {
                 yTraces: durations,
                 avgTraces: avgs,
                 type: ctype,
-                title: data[el]["title"],
+                title: res.data[el]["title"],
               },
             }));
           } else if (ctype === "histogram") {
             setTraces((prevState: any) => ({
               ...prevState,
               [el]: {
-                xTraces: data[el]["data"],
+                xTraces: res.data[el]["data"],
                 type: ctype,
-                title: data[el]["title"],
+                title: res.data[el]["title"],
               },
             }));
           }
@@ -110,31 +108,43 @@ function AnalyzeRegressionSection(props: any) {
 
   return (
     <Grid container justify="center" alignItems="center" spacing={2}>
-      <Grid item md={4}>
-        <Button
-          id="as_needed_handoff"
-          name="coverage"
-          variant="contained"
-          size="small"
-          onClick={handleDataSetClick}
-        >
-          {`RF Coverage Statistics`}
-        </Button>
-      </Grid>
-      <Grid item md={4}>
-        <Button
-          id="maximum_powee_handoff"
-          name="gap"
-          variant="contained"
-          size="small"
-          onClick={handleDataSetClick}
-        >
-          {`Coverage Gap Statistics`}
-        </Button>
-      </Grid>
-      <Grid item md={3} />
       <Grid item md={12}>
-        <Divider style={{ paddingRight: "24px" }} />
+        <Grid
+          container
+          justify="flex-start"
+          alignItems="center"
+          spacing={1}
+          style={{ backgroundColor: grey[200], minHeight: "10vh" }}
+        >
+          <Grid item md={3}>
+            <Button
+              id="as_needed_handoff"
+              name="coverage"
+              variant="contained"
+              size="small"
+              onClick={handleDataSetClick}
+              style={{ marginLeft: "15px" }}
+              fullWidth
+            >
+              {`RF Coverage (%)`}
+            </Button>
+          </Grid>
+          <Grid item md={2}>
+            <Button
+              id="maximum_powee_handoff"
+              name="gap"
+              variant="contained"
+              size="small"
+              onClick={handleDataSetClick}
+              style={{ marginLeft: "15px" }}
+              fullWidth
+            >
+              {`Gap (%)`}
+            </Button>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Grid item md={12} style={{ marginLeft: "15px" }}>
         <OptionAddon
           checked={checked}
           viewMethod={viewMethod}
@@ -143,12 +153,22 @@ function AnalyzeRegressionSection(props: any) {
           onViewMethod={(e: any) => setViewMethod(e.currentTarget.name)}
         />
       </Grid>
+
+      {/* FIXME: check at the process of cart integration.
       <Grid item md={12} style={{ zIndex: 1000 }}>
         <MathJax.Provider>
           <MathJax.Node formula={props.text} />
         </MathJax.Provider>
+      </Grid> */}
+
+      <Grid item md={12} style={{ textAlign: "center" }}>
+        <Typography variant="h6">
+          {dataSet === "as_needed_handoff"
+            ? `RF Coverage (%) vs. User Inclination`
+            : `GAP (%) vs. User Inclination`}
+        </Typography>
       </Grid>
-      <Grid item md={12}>
+      <Grid item md={12} style={{ marginLeft: "15px" }}>
         <Grid container justify="center" spacing={2}>
           {viewMethod === "3d_view" ? (
             <Grid item md={12}>
@@ -191,26 +211,31 @@ function AnalyzeRegressionSection(props: any) {
         </Grid>
       </Grid>
       {selected && (
-        <Grid item md={10}>
-          <Table aria-label="simple table" size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>{`Gap Statistic`}</TableCell>
-                <TableCell>{`Value`}</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map((row: any) => (
-                <TableRow key={row.name}>
-                  <TableCell component="th" scope="row">
-                    {row.name}
-                  </TableCell>
-                  <TableCell>{row.value}</TableCell>
+        <>
+          <Grid item md={10} style={{ textAlign: "center" }}>
+            <Typography variant="h6">{`Key Metrics`}</Typography>
+          </Grid>
+          <Grid item md={10}>
+            <Table aria-label="simple table" size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>{`Gap Statistic`}</TableCell>
+                  <TableCell>{`Value`}</TableCell>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Grid>
+              </TableHead>
+              <TableBody>
+                {rows.map((row: any) => (
+                  <TableRow key={row.name}>
+                    <TableCell component="th" scope="row">
+                      {row.name}
+                    </TableCell>
+                    <TableCell>{row.value}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </Grid>
+        </>
       )}
       <ChartsLibsSection isTable={selected} traces={traces} dataSet={dataSet} />
     </Grid>

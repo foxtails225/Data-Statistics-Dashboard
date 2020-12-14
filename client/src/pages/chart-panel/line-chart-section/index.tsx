@@ -26,7 +26,7 @@ function LineChartSection(props: any) {
         },
       ]}
       layout={{
-        title: props.title.toUpperCase(),
+        title: props.title,
         width: size.width * 0.35,
         showlegend: true,
         legend: {

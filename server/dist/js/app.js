@@ -10,9 +10,9 @@ const routes_1 = __importDefault(require("./routes"));
 const app = express_1.default();
 const PORT = process.env.PORT || 7000;
 app.use(cors_1.default());
-app.use(express_1.default.static('./build'));
+app.use(express_1.default.static("./build"));
 app.use(routes_1.default);
-app.get('/', function (req, res) {
-    res.sendFile(path_1.default.join('./build', 'index.html'));
+app.get("/", function (req, res) {
+    res.sendFile(path_1.default.join("./build", "index.html"));
 });
 app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));

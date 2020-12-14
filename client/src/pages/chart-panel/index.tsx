@@ -75,20 +75,18 @@ function ChartPanel() {
     if (selected !== "none")
       getItems(selected)
         .then((res) => {
-          let data = eval("[" + res.data + "]")[0];
-
-          Object.keys(data).map((el) => {
-            let ctype: String = data[el]["type"];
+          Object.keys(res.data).map((el) => {
+            let ctype: String = res.data[el]["type"];
             let gaps: Array<any> = [];
             let durations: Array<any> = [];
             let avgs: Array<any> = [];
 
             // Detect chart type and set Traces
             if (ctype === "line") {
-              data[el]["data"].map((item: Array<any>, idx: number) => {
+              res.data[el]["data"].map((item: Array<any>, idx: number) => {
                 gaps.push(idx + 1);
-                durations.push(item[3]);
-                avgs.push(item[4]);
+                durations.push(item[0]);
+                avgs.push(item[1]);
               });
 
               setTraces((prevState: any) => ({
@@ -98,16 +96,16 @@ function ChartPanel() {
                   yTraces: durations,
                   avgTraces: avgs,
                   type: ctype,
-                  title: data[el]["title"],
+                  title: res.data[el]["title"],
                 },
               }));
             } else if (ctype === "histogram") {
               setTraces((prevState: any) => ({
                 ...prevState,
                 [el]: {
-                  xTraces: data[el]["data"],
+                  xTraces: res.data[el]["data"],
                   type: ctype,
-                  title: data[el]["title"],
+                  title: res.data[el]["title"],
                 },
               }));
             }
