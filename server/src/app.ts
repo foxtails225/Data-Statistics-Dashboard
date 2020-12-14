@@ -1,5 +1,4 @@
 import express, { Express } from "express";
-import mysql from "mysql";
 import path from "path";
 import cors from "cors";
 import itemsRouter from "./routes";
