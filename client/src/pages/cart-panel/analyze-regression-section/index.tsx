@@ -1,42 +1,19 @@
 import React, { useState, useEffect } from "react";
 import MathJax from "react-mathjax";
 
-import {
-  Grid,
-  Button,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Typography,
-} from "@material-ui/core";
+import { Grid, Button, Typography } from "@material-ui/core";
 import { grey } from "@material-ui/core/colors";
 
 import TwoViewSection from "./two-view-section";
 import ThreeViewSection from "./three-view-section";
 import ChartsLibsSection from "./charts-libs-section";
-import OptionAddon from "../../../components/Button/optionAddon";
+import OptionAddon from "../../../components/Button/OptionAddon";
 import { getItems } from "../../../API";
 
 const INIT_CHECK_STATUS = {
   show_surface: true,
   show_scatter: true,
 };
-
-function createData(name: String, value: String) {
-  return { name, value };
-}
-
-const rows = [
-  createData("Average (sec)", "xx"),
-  createData("Time-Averaged Gap", "xx"),
-  createData("Median (sec)", "xx"),
-  createData("Maximum (minutes)", "xx"),
-  createData("Minimum (sec)", "xx"),
-  createData("Average # Gaps Per Orbit", "xx"),
-  createData("Average # Gaps Per Day", "xx"),
-];
 
 function AnalyzeRegressionSection(props: any) {
   const [viewMethod, setViewMethod] = useState("2d_view");
@@ -64,7 +41,7 @@ function AnalyzeRegressionSection(props: any) {
             res.data[el]["data"].map((item: Array<any>, idx: number) => {
               gaps.push(idx + 1);
               durations.push(item[0]);
-                avgs.push(item[1]);
+              avgs.push(item[1]);
             });
 
             setTraces((prevState: any) => ({
@@ -144,6 +121,13 @@ function AnalyzeRegressionSection(props: any) {
           </Grid>
         </Grid>
       </Grid>
+      <Grid item md={12} style={{ textAlign: "center" }}>
+        <Typography variant="h6">
+          {dataSet === "as_needed_handoff"
+            ? `RF Coverage (%) vs. User Inclination`
+            : `GAP (%) vs. User Inclination`}
+        </Typography>
+      </Grid>
       <Grid item md={12} style={{ marginLeft: "15px" }}>
         <OptionAddon
           checked={checked}
@@ -160,14 +144,7 @@ function AnalyzeRegressionSection(props: any) {
           <MathJax.Node formula={props.text} />
         </MathJax.Provider>
       </Grid> */}
-
-      <Grid item md={12} style={{ textAlign: "center" }}>
-        <Typography variant="h6">
-          {dataSet === "as_needed_handoff"
-            ? `RF Coverage (%) vs. User Inclination`
-            : `GAP (%) vs. User Inclination`}
-        </Typography>
-      </Grid>
+      
       <Grid item md={12} style={{ marginLeft: "15px" }}>
         <Grid container justify="center" spacing={2}>
           {viewMethod === "3d_view" ? (
@@ -210,34 +187,8 @@ function AnalyzeRegressionSection(props: any) {
           )}
         </Grid>
       </Grid>
-      {selected && (
-        <>
-          <Grid item md={10} style={{ textAlign: "center" }}>
-            <Typography variant="h6">{`Key Metrics`}</Typography>
-          </Grid>
-          <Grid item md={10}>
-            <Table aria-label="simple table" size="small">
-              <TableHead>
-                <TableRow>
-                  <TableCell>{`Gap Statistic`}</TableCell>
-                  <TableCell>{`Value`}</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row: any) => (
-                  <TableRow key={row.name}>
-                    <TableCell component="th" scope="row">
-                      {row.name}
-                    </TableCell>
-                    <TableCell>{row.value}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Grid>
-        </>
-      )}
-      <ChartsLibsSection isTable={selected} traces={traces} dataSet={dataSet} />
+      {selected && <></>}
+      <ChartsLibsSection traces={traces} dataSet={dataSet} />
     </Grid>
   );
 }
