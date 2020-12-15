@@ -12,6 +12,7 @@ function PlusAddon(props: any) {
             <AddCircleOutlineIcon />
           </IconButton>
           <Selection
+            selected={props.selected}
             anchorEl={props.anchorEl}
             onAnchorEl={(value: any) => props.onAnchorEl(value)}
             onSelected={(value: any) => props.onSelected(value)}

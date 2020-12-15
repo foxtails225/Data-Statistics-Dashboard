@@ -5,7 +5,7 @@ import { useWindowSize } from "../../../utils/util";
 
 function LineChartSection(props: any) {
   const size = useWindowSize();
-  
+
   return (
     <Plot
       data={[
@@ -26,8 +26,8 @@ function LineChartSection(props: any) {
         },
       ]}
       layout={{
-        title: props.title,
-        width: size.width * 0.35,
+        title: `<b>${props.title}</b>`,
+        width: size.width * 0.37,
         showlegend: true,
         legend: {
           orientation: "h",

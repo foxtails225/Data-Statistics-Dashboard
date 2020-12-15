@@ -1,6 +1,7 @@
 import React from "react";
 import { Menu, MenuItem } from "@material-ui/core";
 import * as Constants from "../../constants";
+import { grey } from "@material-ui/core/colors";
 
 function Selection(props: any) {
   return (
@@ -15,6 +16,7 @@ function Selection(props: any) {
           id={el.id}
           key={el.id}
           onClick={() => props.onSelected(el.id)}
+          style={{ backgroundColor: props.selected.includes(el.id) ? grey[300] : "" }}
         >
           {el.name}
         </MenuItem>

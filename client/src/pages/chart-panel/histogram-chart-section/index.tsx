@@ -16,8 +16,8 @@ function HistogramChartSection(props: any) {
         },
       ]}
       layout={{
-        title: props.title.split('_').join(' '),
-        width: size.width * 0.35,
+        title: `<b>${props.title.split('_').join(' ')}</b>`,
+        width: size.width * 0.37,
         showlegend: true,
         legend: {
           orientation: "h",
