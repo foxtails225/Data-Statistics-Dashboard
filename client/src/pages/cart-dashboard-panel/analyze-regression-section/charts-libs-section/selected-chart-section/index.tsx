@@ -9,9 +9,9 @@ import {
   TableBody,
 } from "@material-ui/core";
 
-import LineChartSection from "../../../../chart-panel/line-chart-section";
-import HistogramChartSection from "../../../../chart-panel/histogram-chart-section";
-import BoxChartSection from "../../../../chart-panel/box-chart-section";
+import LineChartSection from "../line-chart-section";
+import HistogramChartSection from "../histogram-chart-section";
+import BoxChartSection from "../box-chart-section";
 
 function createData(name: String, value: String) {
   return { name, value };

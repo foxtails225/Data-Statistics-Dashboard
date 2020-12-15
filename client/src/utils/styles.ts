@@ -34,8 +34,9 @@ const useStyles = makeStyles((theme) => ({
 
   dashDialogDeep: {
     minWidth: "80vw !important",
-    height: "90vh !important",
+    height: "98vh !important",
     maxWidth: "80vw !important",
+    backgroundColor: theme.palette.grey[100],
   },
 
   dialogCloseBtn: {
@@ -56,6 +57,10 @@ const useStyles = makeStyles((theme) => ({
   label: {
     fontSize: 14,
   },
+
+  dashCard: {
+    minHeight: '32vh !important'
+  }
 }));
 
 export default useStyles;

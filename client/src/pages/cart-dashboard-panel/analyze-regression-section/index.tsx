@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from "react";
 import MathJax from "react-mathjax";
 
-import { Grid, Button, Typography } from "@material-ui/core";
+import {
+  Grid,
+  Button,
+  Typography,
+  Card,
+  CardContent,
+} from "@material-ui/core";
 import { grey } from "@material-ui/core/colors";
 
 import TwoViewSection from "./two-view-section";
@@ -9,6 +15,7 @@ import ThreeViewSection from "./three-view-section";
 import ChartsLibsSection from "./charts-libs-section";
 import OptionAddon from "../../../components/Button/OptionAddon";
 import { getItems } from "../../../API";
+import useStyles from "../../../utils/styles";
 
 const INIT_CHECK_STATUS = {
   show_surface: true,
@@ -26,6 +33,7 @@ function AnalyzeRegressionSection(props: any) {
   const plot_rows = props.data.plot_value;
   const surface_rows: Array<any> = [];
   const zAxisLabel = props.data.label;
+  const classes = useStyles();
 
   useEffect(() => {
     getItems(dataSet)
@@ -91,7 +99,7 @@ function AnalyzeRegressionSection(props: any) {
           justify="flex-start"
           alignItems="center"
           spacing={1}
-          style={{ backgroundColor: grey[200], minHeight: "10vh" }}
+          style={{ backgroundColor: grey[300], minHeight: "6vh" }}
         >
           <Grid item md={3}>
             <Button
@@ -101,12 +109,9 @@ function AnalyzeRegressionSection(props: any) {
               size="small"
               onClick={handleDataSetClick}
               style={{ marginLeft: "15px" }}
-              fullWidth
             >
               {`RF Coverage (%)`}
             </Button>
-          </Grid>
-          <Grid item md={2}>
             <Button
               id="maximum_powee_handoff"
               name="gap"
@@ -114,31 +119,12 @@ function AnalyzeRegressionSection(props: any) {
               size="small"
               onClick={handleDataSetClick}
               style={{ marginLeft: "15px" }}
-              fullWidth
             >
               {`Gap (%)`}
             </Button>
           </Grid>
         </Grid>
       </Grid>
-      <Grid item md={6} style={{ textAlign: "center" }}>
-        <Typography variant="h6">
-          {dataSet === "as_needed_handoff"
-            ? `RF Coverage (%) vs. User Inclination`
-            : `GAP (%) vs. User Inclination`}
-        </Typography>
-      </Grid>
-      <Grid item md={6} />
-      <Grid item md={5} style={{ marginLeft: "15px" }}>
-        <OptionAddon
-          checked={checked}
-          viewMethod={viewMethod}
-          onChecked={handleCheck}
-          resetPlot={() => setReset(!reset)}
-          onViewMethod={(e: any) => setViewMethod(e.currentTarget.name)}
-        />
-      </Grid>
-      <Grid item md={5} />
 
       {/* FIXME: check at the process of cart integration.
       <Grid item md={12} style={{ zIndex: 1000 }}>
@@ -147,47 +133,67 @@ function AnalyzeRegressionSection(props: any) {
         </MathJax.Provider>
       </Grid> */}
 
-      <Grid item md={5}>
-        <Grid container justify="center" spacing={2}>
-          {viewMethod === "3d_view" ? (
-            <Grid item md={12}>
-              <ThreeViewSection
-                data={props.data}
-                equation={props.equation}
-                maxAltitude={props.maxAltitude}
-                alt={props.alt}
-                inc={props.inc}
-                value={props.value}
-                reset={reset}
-                isLegend={false}
-                isSub={true}
-                plot_rows={plot_rows}
-                surface_rows={surface_rows}
-                zAxisLabel={zAxisLabel}
-                checked={checked}
-                onClick={() => setSelected(true)}
-              />
+      <Grid item md={6} style={{ paddingLeft: "2rem" }}>
+        <Card className={classes.dashCard}>
+          <CardContent>
+            <Grid container justify="center" spacing={2}>
+              <Grid item md={12} style={{ textAlign: "center" }}>
+                <Typography variant="h6">
+                  {dataSet === "as_needed_handoff"
+                    ? `RF Coverage (%) vs. User Inclination`
+                    : `GAP (%) vs. User Inclination`}
+                </Typography>
+              </Grid>
+              <Grid item md={12} style={{ marginLeft: "15px", padding: 0 }}>
+                <OptionAddon
+                  checked={checked}
+                  viewMethod={viewMethod}
+                  onChecked={handleCheck}
+                  resetPlot={() => setReset(!reset)}
+                  onViewMethod={(e: any) => setViewMethod(e.currentTarget.name)}
+                />
+              </Grid>
+              {viewMethod === "3d_view" ? (
+                <Grid item md={12}>
+                  <ThreeViewSection
+                    data={props.data}
+                    equation={props.equation}
+                    maxAltitude={props.maxAltitude}
+                    alt={props.alt}
+                    inc={props.inc}
+                    value={props.value}
+                    reset={reset}
+                    isLegend={false}
+                    isSub={true}
+                    plot_rows={plot_rows}
+                    surface_rows={surface_rows}
+                    zAxisLabel={zAxisLabel}
+                    checked={checked}
+                    onClick={() => setSelected(true)}
+                  />
+                </Grid>
+              ) : (
+                <Grid item md={12}>
+                  <TwoViewSection
+                    data={props.data}
+                    equation={props.equation}
+                    maxAltitude={props.maxAltitude}
+                    alt={props.alt}
+                    inc={props.inc}
+                    value={props.value}
+                    isLegend={false}
+                    isSub={true}
+                    plot_rows={plot_rows}
+                    surface_rows={surface_rows}
+                    yAxisLabel={zAxisLabel}
+                    checked={checked}
+                    onClick={() => setSelected(true)}
+                  />
+                </Grid>
+              )}
             </Grid>
-          ) : (
-            <Grid item md={12}>
-              <TwoViewSection
-                data={props.data}
-                equation={props.equation}
-                maxAltitude={props.maxAltitude}
-                alt={props.alt}
-                inc={props.inc}
-                value={props.value}
-                isLegend={false}
-                isSub={true}
-                plot_rows={plot_rows}
-                surface_rows={surface_rows}
-                yAxisLabel={zAxisLabel}
-                checked={checked}
-                onClick={() => setSelected(true)}
-              />
-            </Grid>
-          )}
-        </Grid>
+          </CardContent>
+        </Card>
       </Grid>
       {selected && <></>}
       <ChartsLibsSection traces={traces} dataSet={dataSet} />
