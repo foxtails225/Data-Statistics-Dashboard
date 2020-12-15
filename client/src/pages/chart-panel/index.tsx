@@ -27,6 +27,7 @@ import LineChartSection from "./line-chart-section";
 import HistogramChartSection from "./histogram-chart-section";
 import BoxChartSection from "./box-chart-section";
 import TerrestrialHeatMap from "./terrestrial-heatmap-chart";
+import CartDashBoardPanel from "../cart-dashboard-panel";
 import CartPanel from "../cart-panel";
 
 const INIT_MENUS = [
@@ -66,6 +67,7 @@ function a11yProps(index: any) {
 function ChartPanel() {
   const [traces, setTraces] = useState({} as any);
   const [isOpen, setIsOpen] = useState(false);
+  const [isOpenDash, setIsOpenDash] = useState(false);
   const [selected, setSelected] = useState("none");
   const [tab, setTab] = useState(0);
   const theme = useTheme();
@@ -129,13 +131,23 @@ function ChartPanel() {
                 </Typography>
               }
               action={
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={() => setIsOpen(true)}
-                >
-                  {"Open Chart"}
-                </Button>
+                <>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setIsOpenDash(true)}
+                    style={{ marginRight: 10 }}
+                  >
+                    {"Open Dashboard"}
+                  </Button>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setIsOpen(true)}
+                  >
+                    {"Open Chart"}
+                  </Button>
+                </>
               }
             />
             <CardContent className="ml-3 mr-3">
@@ -224,6 +236,10 @@ function ChartPanel() {
         </Container>
       </Grid>
       <CartPanel isOpen={isOpen} onClose={() => setIsOpen(false)} />
+      <CartDashBoardPanel
+        isOpen={isOpenDash}
+        onClose={() => setIsOpenDash(false)}
+      />
     </>
   );
 }

@@ -18,11 +18,12 @@ function ChartsLibsSection(props: any) {
     }
     setAnchorEl(null);
   };
-  
+
   return (
     <>
       {selected.length === 0 && (
         <PlusAddon
+          type={0}
           selected={selected}
           anchorEl={anchorEl}
           onAnchorEl={(value: any) => setAnchorEl(value)}
@@ -33,6 +34,7 @@ function ChartsLibsSection(props: any) {
         <React.Fragment key={item}>
           <MinusAddon
             id={item}
+            type={0}
             selected={selected}
             anchorEl={anchorEl}
             onAnchorEl={(value: any) => setAnchorEl(value)}
@@ -48,6 +50,7 @@ function ChartsLibsSection(props: any) {
           </Grid>
           {idx === selected.length - 1 && (
             <PlusAddon
+              type={0}
               selected={selected}
               anchorEl={anchorEl}
               onAnchorEl={(value: any) => setAnchorEl(value)}

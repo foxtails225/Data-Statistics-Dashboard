@@ -32,6 +32,12 @@ const useStyles = makeStyles((theme) => ({
     maxWidth: "40vw !important",
   },
 
+  dashDialogDeep: {
+    minWidth: "80vw !important",
+    height: "90vh !important",
+    maxWidth: "80vw !important",
+  },
+
   dialogCloseBtn: {
     position: "absolute",
     right: theme.spacing(1),
