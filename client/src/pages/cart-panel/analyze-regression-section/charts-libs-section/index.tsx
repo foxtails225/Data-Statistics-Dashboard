@@ -41,7 +41,7 @@ function ChartsLibsSection(props: any) {
             onSelected={(value: any) => handleSelected(value, "remove")}
           />
           <Grid item md={12}>
-            <Card style={{ marginLeft: "2.5rem", marginRight: "1rem" }}>
+            <Card style={{ marginLeft: "2.5rem", marginRight: "2.5rem" }}>
               <CardContent>
                 <SelectedChartSection
                   id={item}

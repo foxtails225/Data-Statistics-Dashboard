@@ -227,51 +227,49 @@ function AnalyzeRegressionSection(props: any) {
         </MathJax.Provider>
       </Grid> */}
 
-      <Grid item md={12} style={{ marginLeft: "15px" }}>
-        <Grid container justify="center" spacing={2}>
-          <Card>
-            <CardContent>
-              {viewMethod === "3d_view" ? (
-                <Grid item md={12}>
-                  <ThreeViewSection
-                    data={props.data}
-                    equation={props.equation}
-                    maxAltitude={props.maxAltitude}
-                    alt={props.alt}
-                    inc={props.inc}
-                    value={props.value}
-                    reset={reset}
-                    isLegend={false}
-                    isSub={true}
-                    plot_rows={plot_rows}
-                    surface_rows={surface_rows}
-                    zAxisLabel={zAxisLabel}
-                    checked={checked}
-                    onClick={() => setSelected(true)}
-                  />
-                </Grid>
-              ) : (
-                <Grid item md={12}>
-                  <TwoViewSection
-                    data={props.data}
-                    equation={props.equation}
-                    maxAltitude={props.maxAltitude}
-                    alt={props.alt}
-                    inc={props.inc}
-                    value={props.value}
-                    isLegend={false}
-                    isSub={true}
-                    plot_rows={plot_rows}
-                    surface_rows={surface_rows}
-                    yAxisLabel={zAxisLabel}
-                    checked={checked}
-                    onClick={() => setSelected(true)}
-                  />
-                </Grid>
-              )}
-            </CardContent>
-          </Card>
-        </Grid>
+      <Grid item md={12}>
+        <Card style={{ marginLeft: "2.5rem", marginRight: "2.5rem" }}>
+          <CardContent>
+            {viewMethod === "3d_view" ? (
+              <Grid item md={12}>
+                <ThreeViewSection
+                  data={props.data}
+                  equation={props.equation}
+                  maxAltitude={props.maxAltitude}
+                  alt={props.alt}
+                  inc={props.inc}
+                  value={props.value}
+                  reset={reset}
+                  isLegend={false}
+                  isSub={true}
+                  plot_rows={plot_rows}
+                  surface_rows={surface_rows}
+                  zAxisLabel={zAxisLabel}
+                  checked={checked}
+                  onClick={() => setSelected(true)}
+                />
+              </Grid>
+            ) : (
+              <Grid item md={12}>
+                <TwoViewSection
+                  data={props.data}
+                  equation={props.equation}
+                  maxAltitude={props.maxAltitude}
+                  alt={props.alt}
+                  inc={props.inc}
+                  value={props.value}
+                  isLegend={false}
+                  isSub={true}
+                  plot_rows={plot_rows}
+                  surface_rows={surface_rows}
+                  yAxisLabel={zAxisLabel}
+                  checked={checked}
+                  onClick={() => setSelected(true)}
+                />
+              </Grid>
+            )}
+          </CardContent>
+        </Card>
       </Grid>
       {selected && <></>}
       <ChartsLibsSection traces={traces} dataSet={dataSet} />

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
+import { useWindowSize } from "../../../../utils/util";
 
 function ThreeViewSection(props: any) {
   const [checked, setChecked] = useState(props.checked);
   const [reset, setReset] = useState(false);
   const [config, setConfig] = useState([]);
+  const size: any = useWindowSize();
   const plot_rows = props.plot_rows;
   const surface_rows = props.surface_rows;
 
@@ -164,7 +166,8 @@ function ThreeViewSection(props: any) {
       data={config}
       layout={{
         autosize: true,
-        width: window.innerWidth * 0.4,
+        width: size * 0.37,
+        height: size * 0.37,
         margin: {
           l: 0,
           r: 0,

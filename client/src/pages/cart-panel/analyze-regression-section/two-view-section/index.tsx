@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
+import { useWindowSize } from "../../../../utils/util";
 
 function TwoViewSection(props: any) {
   const [checked, setChecked] = useState(props.checked);
   const [config, setConfig] = useState([]);
+  const size: any = useWindowSize();
   const plot_rows = props.plot_rows;
   const surface_rows = props.surface_rows;
 
@@ -160,8 +162,8 @@ function TwoViewSection(props: any) {
         autosize: true,
         showlegend: false,
         hovermode: "closest",
-        width: 550,
-        height: 400,
+        width: size * 0.37,
+        height: size * 0.37,
         margin: {
           l: 60,
           r: 15,
