@@ -8,7 +8,7 @@ function TwoViewSection(props: any) {
   const size = useWindowSize();
   const plot_rows = props.plot_rows;
   const surface_rows = props.surface_rows;
-
+  
   useEffect(() => {
     setChecked(props.checked);
   }, [props.checked]);

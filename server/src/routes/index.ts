@@ -4,6 +4,8 @@ import {
   getPlotItems,
   getCartItems,
   getItem,
+  getSystems,
+  getSystemVersion,
 } from "../controllers";
 
 const router: Router = Router();
@@ -15,6 +17,8 @@ const router: Router = Router();
 router.get("/get-items", getItem);
 
 router.get("/get-plot", getPlotItems);
-router.post("/get-cart", getCartItems);
+router.get("/get-systems", getSystems);
+router.get("/get-system-version", getSystemVersion);
+router.get("/get-cart", getCartItems);
 
 export default router;

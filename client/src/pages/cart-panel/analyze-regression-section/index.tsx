@@ -1,14 +1,24 @@
 import React, { useState, useEffect } from "react";
-import MathJax from "react-mathjax";
 
-import { Grid, Button, Typography } from "@material-ui/core";
+import {
+  Grid,
+  Button,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Card,
+  CardContent,
+} from "@material-ui/core";
 import { grey } from "@material-ui/core/colors";
 
 import TwoViewSection from "./two-view-section";
 import ThreeViewSection from "./three-view-section";
 import ChartsLibsSection from "./charts-libs-section";
 import OptionAddon from "../../../components/Button/OptionAddon";
-import { getItems } from "../../../API";
+import { getItems, getSystems, getSystemVersion } from "../../../API";
+import useStyles from "../../../utils/styles";
 
 const INIT_CHECK_STATUS = {
   show_surface: true,
@@ -18,11 +28,14 @@ const INIT_CHECK_STATUS = {
 function AnalyzeRegressionSection(props: any) {
   const [viewMethod, setViewMethod] = useState("2d_view");
   const [dataSet, setDataSet] = useState("as_needed_handoff" as any);
+  const [systems, setSystems] = useState([] as any);
+  const [versions, setVersions] = useState([] as any);
   const [lineType, setLineType] = useState("coverage" as any);
   const [checked, setChecked] = useState(INIT_CHECK_STATUS);
   const [traces, setTraces] = useState({} as any);
   const [reset, setReset] = useState(false);
   const [selected, setSelected] = useState(false);
+  const classes = useStyles();
   const plot_rows = props.data.plot_value;
   const surface_rows: Array<any> = [];
   const zAxisLabel = props.data.label;
@@ -71,6 +84,20 @@ function AnalyzeRegressionSection(props: any) {
       });
   }, [dataSet]);
 
+  useEffect(() => {
+    getSystems()
+      .then((res: any) => setSystems(res.data))
+      .catch((err: any) => setSystems([]));
+  }, []);
+
+  useEffect(() => {
+    if (props.system !== "") {
+      getSystemVersion({ system: props.system })
+        .then((res: any) => setVersions(res.data))
+        .catch((err: any) => setVersions([]));
+    }
+  }, [props.system]);
+
   const handleCheck = (event: any) => {
     const { name, checked } = event.currentTarget;
     setChecked((prevState) => ({ ...prevState, [name]: checked }));
@@ -90,8 +117,8 @@ function AnalyzeRegressionSection(props: any) {
           container
           justify="flex-start"
           alignItems="center"
-          spacing={1}
-          style={{ backgroundColor: grey[200], minHeight: "10vh" }}
+          spacing={2}
+          style={{ backgroundColor: grey[300], minHeight: "10vh" }}
         >
           <Grid item md={3}>
             <Button
@@ -119,6 +146,61 @@ function AnalyzeRegressionSection(props: any) {
               {`Gap (%)`}
             </Button>
           </Grid>
+          <Grid item md={3}>
+            <FormControl
+              variant="outlined"
+              size="small"
+              className={classes.formControl}
+              fullWidth
+            >
+              <InputLabel id="demo-simple-select-outlined-label">{`System`}</InputLabel>
+              <Select
+                labelId="demo-simple-select-outlined-label"
+                id="demo-simple-select-outlined"
+                value={props.system}
+                onChange={(e) => props.onSystem(e.target.value)}
+                label="System"
+              >
+                <MenuItem value="" disabled>
+                  <em>{`None`}</em>
+                </MenuItem>
+                {systems.map((item: any) => (
+                  <MenuItem key={item.system_name} value={item.system_id}>
+                    {item.system_name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
+          <Grid item md={3}>
+            <FormControl
+              variant="outlined"
+              size="small"
+              className={classes.formControl}
+              fullWidth
+            >
+              <InputLabel id="demo-simple-select-outlined-label">{`Version`}</InputLabel>
+              <Select
+                labelId="demo-simple-select-outlined-label"
+                id="demo-simple-select-outlined"
+                value={props.version}
+                onChange={(e) => props.onVersion(e.target.value)}
+                label="Version"
+              >
+                <MenuItem value="" disabled>
+                  <em>{`None`}</em>
+                </MenuItem>
+                {versions.map((item: any) => (
+                  <MenuItem
+                    key={`version_${item.versions}`}
+                    value={item.versions}
+                  >
+                    {item.versions}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
         </Grid>
       </Grid>
       <Grid item md={12} style={{ textAlign: "center" }}>
@@ -144,47 +226,51 @@ function AnalyzeRegressionSection(props: any) {
           <MathJax.Node formula={props.text} />
         </MathJax.Provider>
       </Grid> */}
-      
+
       <Grid item md={12} style={{ marginLeft: "15px" }}>
         <Grid container justify="center" spacing={2}>
-          {viewMethod === "3d_view" ? (
-            <Grid item md={12}>
-              <ThreeViewSection
-                data={props.data}
-                equation={props.equation}
-                maxAltitude={props.maxAltitude}
-                alt={props.alt}
-                inc={props.inc}
-                value={props.value}
-                reset={reset}
-                isLegend={false}
-                isSub={true}
-                plot_rows={plot_rows}
-                surface_rows={surface_rows}
-                zAxisLabel={zAxisLabel}
-                checked={checked}
-                onClick={() => setSelected(true)}
-              />
-            </Grid>
-          ) : (
-            <Grid item md={12}>
-              <TwoViewSection
-                data={props.data}
-                equation={props.equation}
-                maxAltitude={props.maxAltitude}
-                alt={props.alt}
-                inc={props.inc}
-                value={props.value}
-                isLegend={false}
-                isSub={true}
-                plot_rows={plot_rows}
-                surface_rows={surface_rows}
-                yAxisLabel={zAxisLabel}
-                checked={checked}
-                onClick={() => setSelected(true)}
-              />
-            </Grid>
-          )}
+          <Card>
+            <CardContent>
+              {viewMethod === "3d_view" ? (
+                <Grid item md={12}>
+                  <ThreeViewSection
+                    data={props.data}
+                    equation={props.equation}
+                    maxAltitude={props.maxAltitude}
+                    alt={props.alt}
+                    inc={props.inc}
+                    value={props.value}
+                    reset={reset}
+                    isLegend={false}
+                    isSub={true}
+                    plot_rows={plot_rows}
+                    surface_rows={surface_rows}
+                    zAxisLabel={zAxisLabel}
+                    checked={checked}
+                    onClick={() => setSelected(true)}
+                  />
+                </Grid>
+              ) : (
+                <Grid item md={12}>
+                  <TwoViewSection
+                    data={props.data}
+                    equation={props.equation}
+                    maxAltitude={props.maxAltitude}
+                    alt={props.alt}
+                    inc={props.inc}
+                    value={props.value}
+                    isLegend={false}
+                    isSub={true}
+                    plot_rows={plot_rows}
+                    surface_rows={surface_rows}
+                    yAxisLabel={zAxisLabel}
+                    checked={checked}
+                    onClick={() => setSelected(true)}
+                  />
+                </Grid>
+              )}
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
       {selected && <></>}

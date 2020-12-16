@@ -40,6 +40,8 @@ const Transition = React.forwardRef(function Transition(
 
 function CartPanel(props: any) {
   const [source, setSource] = useState({} as any);
+  const [system, setSystem] = useState("1" as any);
+  const [version, setVersion] = useState("1" as any);
   const [isLoading, setIsLoading] = useState(true);
   const [terrestrial, setTerrestrial] = useState({});
   const [maxAltitude, setMaxAltitude] = useState(0);
@@ -52,13 +54,13 @@ function CartPanel(props: any) {
 
   useEffect(() => {
     setText("");
-    getCartItems({ type: missionType })
+    getCartItems({ type: missionType, system: system, version: version })
       .then((res: any) => {
         setTerrestrial(res.data.terrestrial);
-        setSource(res.data.data);
-        setMaxAltitude(res.data.maxAltitude);
-        setCoefficients(res.data.coefficients);
-        setText(res.data.text);
+        setSource(res.data.data.data);
+        setMaxAltitude(res.data.data.maxAltitude);
+        setCoefficients(res.data.data.coefficients);
+        setText(res.data.data.text);
 
         // FIXME: there is no real data for it.
         //
@@ -71,7 +73,7 @@ function CartPanel(props: any) {
       .then(() => {
         setIsLoading(false);
       });
-  }, []);
+  }, [system, version]);
 
   const equation = (inc: any, alt: any, metric: string) => {
     // FIXME: activate in integration of cart.
@@ -123,6 +125,10 @@ function CartPanel(props: any) {
                   data={source}
                   selectedItem={metric}
                   text={text}
+                  system={system}
+                  version={version}
+                  onSystem={(value: any) => setSystem(value)}
+                  onVersion={(value: any) => setVersion(value)}
                 />
               ) : (
                 <></>

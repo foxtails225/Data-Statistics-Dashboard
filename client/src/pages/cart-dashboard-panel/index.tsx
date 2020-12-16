@@ -40,7 +40,9 @@ const Transition = React.forwardRef(function Transition(
 
 function CartDashBoardPanel(props: any) {
   const [source, setSource] = useState({} as any);
-  const [isLoading, setIsLoading] = useState(true);
+  const [system, setSystem] = useState("1" as any);
+  const [version, setVersion] = useState("1" as any);
+  const [isLoading, setIsLoading] = useState(false);
   const [terrestrial, setTerrestrial] = useState({});
   const [maxAltitude, setMaxAltitude] = useState(0);
   const [coefficients, setCoefficients] = useState({} as any);
@@ -52,13 +54,15 @@ function CartDashBoardPanel(props: any) {
 
   useEffect(() => {
     setText("");
-    getCartItems({ type: missionType })
+    setIsLoading(true);
+    getCartItems({ type: missionType, version, system })
       .then((res: any) => {
         setTerrestrial(res.data.terrestrial);
-        setSource(res.data.data);
-        setMaxAltitude(res.data.maxAltitude);
-        setCoefficients(res.data.coefficients);
+        setSource(res.data.data.data);
+        setMaxAltitude(res.data.data.maxAltitude);
+        setCoefficients(res.data.data.coefficients);
         setText(res.data.text);
+        setIsLoading(false);
 
         // FIXME: there is no real data for it.
         //
@@ -71,7 +75,7 @@ function CartDashBoardPanel(props: any) {
       .then(() => {
         setIsLoading(false);
       });
-  }, []);
+  }, [system, version]);
 
   const equation = (inc: any, alt: any, metric: string) => {
     // FIXME: activate in integration of cart.
@@ -112,7 +116,7 @@ function CartDashBoardPanel(props: any) {
       >
         <Grid container justify="center" alignItems="center">
           <Grid item md={12}>
-            {!isLoading &&
+            {Object.keys(source).length > 0 &&
               (missionType === "orbital" ? (
                 <AnalyzeRegressionSection
                   equation={(x: any, y: any, m: any) => equation(x, y, m)}
@@ -123,6 +127,10 @@ function CartDashBoardPanel(props: any) {
                   data={source}
                   selectedItem={metric}
                   text={text}
+                  system={system}
+                  version={version}
+                  onSystem={(value: any) => setSystem(value)}
+                  onVersion={(value: any) => setVersion(value)}
                 />
               ) : (
                 <></>

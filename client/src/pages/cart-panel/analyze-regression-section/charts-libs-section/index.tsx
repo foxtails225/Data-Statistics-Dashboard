@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Grid } from "@material-ui/core";
+import { Grid, Card, CardContent } from "@material-ui/core";
 
 import MinusAddon from "../../../../components/Button/MinusAddon";
 import PlusAddon from "../../../../components/Button/PlusAddon";
@@ -41,12 +41,18 @@ function ChartsLibsSection(props: any) {
             onSelected={(value: any) => handleSelected(value, "remove")}
           />
           <Grid item md={12}>
-            <SelectedChartSection
-              id={item}
-              data={
-                props.traces[Constants.MENU_ITEMS[props.dataSet][item].dataset]
-              }
-            />
+            <Card style={{ marginLeft: "2.5rem", marginRight: "1rem" }}>
+              <CardContent>
+                <SelectedChartSection
+                  id={item}
+                  data={
+                    props.traces[
+                      Constants.MENU_ITEMS[props.dataSet][item].dataset
+                    ]
+                  }
+                />
+              </CardContent>
+            </Card>
           </Grid>
           {idx === selected.length - 1 && (
             <PlusAddon

@@ -1,21 +1,12 @@
 import React, { useState, useEffect } from "react";
-import MathJax from "react-mathjax";
-
-import {
-  Grid,
-  Button,
-  Typography,
-  Card,
-  CardContent,
-} from "@material-ui/core";
-import { grey } from "@material-ui/core/colors";
-
+import { Grid, Typography, Card, CardContent } from "@material-ui/core";
 import TwoViewSection from "./two-view-section";
 import ThreeViewSection from "./three-view-section";
 import ChartsLibsSection from "./charts-libs-section";
+import HeaderSection from "./header-section";
 import OptionAddon from "../../../components/Button/OptionAddon";
-import { getItems } from "../../../API";
 import useStyles from "../../../utils/styles";
+import { getItems, getSystems, getSystemVersion } from "../../../API";
 
 const INIT_CHECK_STATUS = {
   show_surface: true,
@@ -25,6 +16,8 @@ const INIT_CHECK_STATUS = {
 function AnalyzeRegressionSection(props: any) {
   const [viewMethod, setViewMethod] = useState("2d_view");
   const [dataSet, setDataSet] = useState("as_needed_handoff" as any);
+  const [systems, setSystems] = useState([] as any);
+  const [versions, setVersions] = useState([] as any);
   const [lineType, setLineType] = useState("coverage" as any);
   const [checked, setChecked] = useState(INIT_CHECK_STATUS);
   const [traces, setTraces] = useState({} as any);
@@ -34,50 +27,66 @@ function AnalyzeRegressionSection(props: any) {
   const surface_rows: Array<any> = [];
   const zAxisLabel = props.data.label;
   const classes = useStyles();
+  
+  useEffect(() => {
+    if (props.version !== "") {
+      getItems({ dataSet, version: props.version })
+        .then((res) => {
+          Object.keys(res.data).map((el) => {
+            let ctype: String = res.data[el]["type"];
+            let gaps: Array<any> = [];
+            let durations: Array<any> = [];
+            let avgs: Array<any> = [];
+
+            // Detect chart type and set Traces
+            if (ctype === "line") {
+              res.data[el]["data"].map((item: Array<any>, idx: number) => {
+                gaps.push(idx + 1);
+                durations.push(item[0]);
+                avgs.push(item[1]);
+              });
+
+              setTraces((prevState: any) => ({
+                ...prevState,
+                [el]: {
+                  xTraces: gaps,
+                  yTraces: durations,
+                  avgTraces: avgs,
+                  type: ctype,
+                  title: res.data[el]["title"],
+                },
+              }));
+            } else if (ctype === "histogram") {
+              setTraces((prevState: any) => ({
+                ...prevState,
+                [el]: {
+                  xTraces: res.data[el]["data"],
+                  type: ctype,
+                  title: res.data[el]["title"],
+                },
+              }));
+            }
+          });
+        })
+        .catch(() => {
+          setTraces({});
+        });
+    }
+  }, [dataSet, props.version]);
 
   useEffect(() => {
-    getItems(dataSet)
-      .then((res) => {
-        Object.keys(res.data).map((el) => {
-          let ctype: String = res.data[el]["type"];
-          let gaps: Array<any> = [];
-          let durations: Array<any> = [];
-          let avgs: Array<any> = [];
+    getSystems()
+      .then((res: any) => setSystems(res.data))
+      .catch((err: any) => setSystems([]));
+  }, []);
 
-          // Detect chart type and set Traces
-          if (ctype === "line") {
-            res.data[el]["data"].map((item: Array<any>, idx: number) => {
-              gaps.push(idx + 1);
-              durations.push(item[0]);
-              avgs.push(item[1]);
-            });
-
-            setTraces((prevState: any) => ({
-              ...prevState,
-              [el]: {
-                xTraces: gaps,
-                yTraces: durations,
-                avgTraces: avgs,
-                type: ctype,
-                title: res.data[el]["title"],
-              },
-            }));
-          } else if (ctype === "histogram") {
-            setTraces((prevState: any) => ({
-              ...prevState,
-              [el]: {
-                xTraces: res.data[el]["data"],
-                type: ctype,
-                title: res.data[el]["title"],
-              },
-            }));
-          }
-        });
-      })
-      .catch(() => {
-        setTraces({});
-      });
-  }, [dataSet]);
+  useEffect(() => {
+    if (props.system !== "") {
+      getSystemVersion({ system: props.system })
+        .then((res: any) => setVersions(res.data))
+        .catch((err: any) => setVersions([]));
+    }
+  }, [props.system]);
 
   const handleCheck = (event: any) => {
     const { name, checked } = event.currentTarget;
@@ -90,49 +99,18 @@ function AnalyzeRegressionSection(props: any) {
     setDataSet(id);
     setLineType(name);
   };
-
+  
   return (
     <Grid container justify="center" alignItems="flex-start" spacing={2}>
-      <Grid item md={12}>
-        <Grid
-          container
-          justify="flex-start"
-          alignItems="center"
-          spacing={1}
-          style={{ backgroundColor: grey[300], minHeight: "6vh" }}
-        >
-          <Grid item md={3}>
-            <Button
-              id="as_needed_handoff"
-              name="coverage"
-              variant="contained"
-              size="small"
-              onClick={handleDataSetClick}
-              style={{ marginLeft: "15px" }}
-            >
-              {`RF Coverage (%)`}
-            </Button>
-            <Button
-              id="maximum_powee_handoff"
-              name="gap"
-              variant="contained"
-              size="small"
-              onClick={handleDataSetClick}
-              style={{ marginLeft: "15px" }}
-            >
-              {`Gap (%)`}
-            </Button>
-          </Grid>
-        </Grid>
-      </Grid>
-
-      {/* FIXME: check at the process of cart integration.
-      <Grid item md={12} style={{ zIndex: 1000 }}>
-        <MathJax.Provider>
-          <MathJax.Node formula={props.text} />
-        </MathJax.Provider>
-      </Grid> */}
-
+      <HeaderSection
+        system={props.system}
+        systems={systems}
+        version={props.version}
+        versions={versions}
+        onSystem={(value: any) => props.onSystem(value)}
+        onVersion={(value: any) => props.onVersion(value)}
+        onClick={handleDataSetClick}
+      />
       <Grid item md={6} style={{ paddingLeft: "2rem" }}>
         <Card className={classes.dashCard}>
           <CardContent>
