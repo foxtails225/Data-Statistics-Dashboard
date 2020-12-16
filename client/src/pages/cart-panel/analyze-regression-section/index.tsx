@@ -146,7 +146,7 @@ function AnalyzeRegressionSection(props: any) {
               {`Gap (%)`}
             </Button>
           </Grid>
-          <Grid item md={3}>
+          <Grid item md={3} style={{ marginLeft: "15px" }}>
             <FormControl
               variant="outlined"
               size="small"
