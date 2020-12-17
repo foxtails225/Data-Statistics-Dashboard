@@ -18,7 +18,7 @@ function TwoViewSection(props: any) {
       return row[key];
     });
   };
-
+  
   useEffect(() => {
     let configData: any = [];
     const inclination = parseInt(props.inc);
