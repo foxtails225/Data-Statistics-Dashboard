@@ -36,7 +36,7 @@ function AnalyzeRegressionSection(props: any) {
 
   useEffect(() => {
     if (fileId.length > 0)
-      getItems({ dataSet, fileId: fileId[0]["id"], version: props.version })
+      getItems({ dataSet, fileId: fileId, version: props.version })
         .then((res) => {
           Object.keys(res.data).map((el) => {
             let ctype: String = res.data[el]["type"];
@@ -197,9 +197,7 @@ function AnalyzeRegressionSection(props: any) {
       </Grid>
       {selected && <></>}
       {fileId.length === 0 && <Grid item md={6} />}
-      {fileId.length > 0 && (
-        <ChartsLibsSection traces={traces} dataSet={dataSet} />
-      )}
+      <ChartsLibsSection traces={traces} dataSet={dataSet} />
     </Grid>
   );
 }

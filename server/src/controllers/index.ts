@@ -86,51 +86,64 @@ const getCartItems = async (req: Request, res: Response): Promise<void> => {
 const getItem = async (req: Request, res: Response): Promise<void> => {
   try {
     const { dataSet, fileId } = req.query as any;
-    const sql = `select a.gap_duration from stk_report as a inner join file_id_usat as b \
-      on a.file_id = b.id where b.id=${fileId} or b.id=null and b.is_active=1`;
     let result: any = {};
+    let sql: string;
 
-    db.getConnection(function (err, connection) {
-      if (err) {
-        connection.release();
-        console.log(" Error getting mysql_pool connection: " + err);
-        throw err;
+    if (fileId.length > 0) {
+      if (fileId.length === 1) {
+        sql = `select a.gap_duration from stk_report as a inner join file_id_usat as b on a.file_id = b.id \
+          where b.id=${JSON.parse(fileId[0]).id} and b.is_active=1 order by a.simulation_time`;
+      } else {
+        sql = `select a.gap_duration from stk_report as a inner join file_id_usat as b on a.file_id = b.id \
+          where b.id=${JSON.parse(fileId[0]).id} or b.id=${JSON.parse(fileId[1]).id} and \
+          b.is_active=1 order by a.simulation_time`;
       }
 
-      connection.query(sql, (err, data, fields) => {
-        if (err) throw err;
+      db.getConnection(function (err, connection) {
+        if (err) {
+          connection.release();
+          console.log(" Error getting mysql_pool connection: " + err);
+          throw err;
+        }
 
-        let tdata = data.map((item: any) => {
-          return Number(item.gap_duration);
+        connection.query(sql, (err, data, fields) => {
+          if (err) throw err;
+
+          let tdata = data.map((item: any) => {
+            return Number(item.gap_duration);
+          });
+
+          result["coverage"] = {
+            data: getAvgs(tdata),
+            title: "Coverage Running Average",
+            type: "line",
+          };
+
+          result["gap"] = {
+            data: getAvgs(tdata),
+            title: "Gaps Running Average",
+            type: "line",
+          };
+
+          result["coverage_histogram"] = {
+            data: tdata,
+            title: "Coverage Distribution",
+            type: "histogram",
+          };
+
+          result["gap_histogram"] = {
+            data: tdata,
+            title: "Gaps Distribution",
+            type: "histogram",
+          };
+
+          res.status(200).json(result);
+          connection.release();
         });
-
-        result["coverage"] = {
-          data: getAvgs(tdata),
-          title: "Coverage Running Average",
-          type: "line",
-        };
-
-        result["gap"] = {
-          data: getAvgs(tdata),
-          title: "Gaps Running Average",
-          type: "line",
-        };
-
-        result["coverage_histogram"] = {
-          data: tdata,
-          title: "Coverage Distribution",
-          type: "histogram",
-        };
-        result["gap_histogram"] = {
-          data: tdata,
-          title: "Gaps Distribution",
-          type: "histogram",
-        };
-
-        res.status(200).json(result);
-        connection.release();
       });
-    });
+    } else {
+      res.status(200).json(result);
+    }
   } catch (error) {
     throw error;
   }
