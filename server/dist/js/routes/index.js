@@ -11,4 +11,5 @@ router.get("/get-plot", controllers_1.getPlotItems);
 router.get("/get-systems", controllers_1.getSystems);
 router.get("/get-system-version", controllers_1.getSystemVersion);
 router.get("/get-cart", controllers_1.getCartItems);
+router.get("/get-file-id", controllers_1.getFildId);
 exports.default = router;

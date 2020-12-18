@@ -183,7 +183,7 @@ function TwoViewSection(props: any) {
       }}
       onHover={(e: any) => (e.event.target.style.cursor = "pointer")}
       onUnhover={(e: any) => (e.event.target.style.cursor = "crosshair")}
-      onClick={() => props.onClick()}
+      onClick={(e) => props.onClick(e)}
       onDoubleClick={() => props.onClick()}
     />
   );

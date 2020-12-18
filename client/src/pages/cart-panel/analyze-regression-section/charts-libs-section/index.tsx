@@ -18,7 +18,7 @@ function ChartsLibsSection(props: any) {
     }
     setAnchorEl(null);
   };
-
+  
   return (
     <>
       {selected.length === 0 && (

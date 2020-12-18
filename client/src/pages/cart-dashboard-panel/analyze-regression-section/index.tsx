@@ -6,7 +6,12 @@ import ChartsLibsSection from "./charts-libs-section";
 import HeaderSection from "./header-section";
 import OptionAddon from "../../../components/Button/OptionAddon";
 import useStyles from "../../../utils/styles";
-import { getItems, getSystems, getSystemVersion } from "../../../API";
+import {
+  getItems,
+  getSystems,
+  getSystemVersion,
+  getFileId,
+} from "../../../API";
 
 const INIT_CHECK_STATUS = {
   show_surface: true,
@@ -18,6 +23,7 @@ function AnalyzeRegressionSection(props: any) {
   const [dataSet, setDataSet] = useState("as_needed_handoff" as any);
   const [systems, setSystems] = useState([] as any);
   const [versions, setVersions] = useState([] as any);
+  const [fileId, setFileId] = useState([] as any);
   const [lineType, setLineType] = useState("coverage" as any);
   const [checked, setChecked] = useState(INIT_CHECK_STATUS);
   const [traces, setTraces] = useState({} as any);
@@ -27,10 +33,10 @@ function AnalyzeRegressionSection(props: any) {
   const surface_rows: Array<any> = [];
   const zAxisLabel = props.data.label;
   const classes = useStyles();
-  
+
   useEffect(() => {
-    if (props.version !== "") {
-      getItems({ dataSet, version: props.version })
+    if (fileId.length > 0)
+      getItems({ dataSet, fileId: fileId[0]["id"], version: props.version })
         .then((res) => {
           Object.keys(res.data).map((el) => {
             let ctype: String = res.data[el]["type"];
@@ -71,8 +77,7 @@ function AnalyzeRegressionSection(props: any) {
         .catch(() => {
           setTraces({});
         });
-    }
-  }, [dataSet, props.version]);
+  }, [dataSet, props.version, fileId]);
 
   useEffect(() => {
     getSystems()
@@ -99,7 +104,23 @@ function AnalyzeRegressionSection(props: any) {
     setDataSet(id);
     setLineType(name);
   };
-  
+
+  const handleClick = (event: any) => {
+    if (event) {
+      const params = {
+        user_altitude: event.points[0].x,
+        user_inclination: props.inc,
+        system: props.system,
+        version: props.version,
+      };
+
+      getFileId(params)
+        .then((res: any) => setFileId(res.data))
+        .catch((err: any) => setFileId([]));
+    }
+    setSelected(true);
+  };
+
   return (
     <Grid container justify="center" alignItems="flex-start" spacing={2}>
       <HeaderSection
@@ -147,7 +168,7 @@ function AnalyzeRegressionSection(props: any) {
                     surface_rows={surface_rows}
                     zAxisLabel={zAxisLabel}
                     checked={checked}
-                    onClick={() => setSelected(true)}
+                    onClick={handleClick}
                   />
                 </Grid>
               ) : (
@@ -165,7 +186,7 @@ function AnalyzeRegressionSection(props: any) {
                     surface_rows={surface_rows}
                     yAxisLabel={zAxisLabel}
                     checked={checked}
-                    onClick={() => setSelected(true)}
+                    onClick={handleClick}
                   />
                 </Grid>
               )}
@@ -174,7 +195,10 @@ function AnalyzeRegressionSection(props: any) {
         </Card>
       </Grid>
       {selected && <></>}
-      <ChartsLibsSection traces={traces} dataSet={dataSet} />
+      {fileId.length === 0 && <Grid item md={6} />}
+      {fileId.length > 0 && (
+        <ChartsLibsSection traces={traces} dataSet={dataSet} />
+      )}
     </Grid>
   );
 }

@@ -85,8 +85,9 @@ const getCartItems = async (req: Request, res: Response): Promise<void> => {
 
 const getItem = async (req: Request, res: Response): Promise<void> => {
   try {
-    const sql = `select gap_duration from stk_report \
-      where gap_duration is not null`;
+    const { dataSet, fileId } = req.query as any;
+    const sql = `select a.gap_duration from stk_report as a inner join file_id_usat as b \
+      on a.file_id = b.id where b.id=${fileId} or b.id=null and b.is_active=1`;
     let result: any = {};
 
     db.getConnection(function (err, connection) {
@@ -182,6 +183,31 @@ const getSystemVersion = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+const getFildId = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { user_altitude, user_inclination, system, version } = req.query;
+    const sql = `select id from file_id_usat where system_id=${system} and system_attribute_version_id=${version} and \
+      user_altitude=${user_altitude} and user_inclination=${user_inclination} and is_active=1`;
+
+    db.getConnection(function (err, connection) {
+      if (err) {
+        connection.release();
+        console.log(" Error getting mysql_pool connection: " + err);
+        throw err;
+      }
+
+      connection.query(sql, (err, data, fields) => {
+        if (err) throw err;
+
+        res.status(200).json(data);
+        connection.release();
+      });
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 export {
   getItems,
   getPlotItems,
@@ -189,4 +215,5 @@ export {
   getItem,
   getSystems,
   getSystemVersion,
+  getFildId,
 };

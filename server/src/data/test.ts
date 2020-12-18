@@ -20,7 +20,7 @@ export const cartData = {
     reduced_coverage: [0.001, 0.001, 0.001, 0.001],
   },
   data: {
-    label: "RF Coverage (%)",
+    label: "No Coverage (%)",
     plot_value: [
       { altitude: 300, inclination: 30, value: 50 },
       { altitude: 400, inclination: 30, value: 40 },

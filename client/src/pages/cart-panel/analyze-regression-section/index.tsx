@@ -17,7 +17,12 @@ import TwoViewSection from "./two-view-section";
 import ThreeViewSection from "./three-view-section";
 import ChartsLibsSection from "./charts-libs-section";
 import OptionAddon from "../../../components/Button/OptionAddon";
-import { getItems, getSystems, getSystemVersion } from "../../../API";
+import {
+  getItems,
+  getSystems,
+  getSystemVersion,
+  getFileId,
+} from "../../../API";
 import useStyles from "../../../utils/styles";
 
 const INIT_CHECK_STATUS = {
@@ -25,11 +30,17 @@ const INIT_CHECK_STATUS = {
   show_scatter: true,
 };
 
+const INIT_PLOTS = {
+  user_altitude: 0,
+  user_inclination: 0,
+};
+
 function AnalyzeRegressionSection(props: any) {
   const [viewMethod, setViewMethod] = useState("2d_view");
   const [dataSet, setDataSet] = useState("as_needed_handoff" as any);
   const [systems, setSystems] = useState([] as any);
   const [versions, setVersions] = useState([] as any);
+  const [fileId, setFileId] = useState([] as any);
   const [lineType, setLineType] = useState("coverage" as any);
   const [checked, setChecked] = useState(INIT_CHECK_STATUS);
   const [traces, setTraces] = useState({} as any);
@@ -41,48 +52,50 @@ function AnalyzeRegressionSection(props: any) {
   const zAxisLabel = props.data.label;
 
   useEffect(() => {
-    getItems(dataSet)
-      .then((res) => {
-        Object.keys(res.data).map((el) => {
-          let ctype: String = res.data[el]["type"];
-          let gaps: Array<any> = [];
-          let durations: Array<any> = [];
-          let avgs: Array<any> = [];
+    if (fileId.length > 0)
+      getItems({ dataSet, fileId: fileId[0]['id'], version: props.version })
+        .then((res) => {
+          console.log(res.data)
+          Object.keys(res.data).map((el) => {
+            let ctype: String = res.data[el]["type"];
+            let gaps: Array<any> = [];
+            let durations: Array<any> = [];
+            let avgs: Array<any> = [];
 
-          // Detect chart type and set Traces
-          if (ctype === "line") {
-            res.data[el]["data"].map((item: Array<any>, idx: number) => {
-              gaps.push(idx + 1);
-              durations.push(item[0]);
-              avgs.push(item[1]);
-            });
+            // Detect chart type and set Traces
+            if (ctype === "line") {
+              res.data[el]["data"].map((item: Array<any>, idx: number) => {
+                gaps.push(idx + 1);
+                durations.push(item[0]);
+                avgs.push(item[1]);
+              });
 
-            setTraces((prevState: any) => ({
-              ...prevState,
-              [el]: {
-                xTraces: gaps,
-                yTraces: durations,
-                avgTraces: avgs,
-                type: ctype,
-                title: res.data[el]["title"],
-              },
-            }));
-          } else if (ctype === "histogram") {
-            setTraces((prevState: any) => ({
-              ...prevState,
-              [el]: {
-                xTraces: res.data[el]["data"],
-                type: ctype,
-                title: res.data[el]["title"],
-              },
-            }));
-          }
+              setTraces((prevState: any) => ({
+                ...prevState,
+                [el]: {
+                  xTraces: gaps,
+                  yTraces: durations,
+                  avgTraces: avgs,
+                  type: ctype,
+                  title: res.data[el]["title"],
+                },
+              }));
+            } else if (ctype === "histogram") {
+              setTraces((prevState: any) => ({
+                ...prevState,
+                [el]: {
+                  xTraces: res.data[el]["data"],
+                  type: ctype,
+                  title: res.data[el]["title"],
+                },
+              }));
+            }
+          });
+        })
+        .catch(() => {
+          setTraces({});
         });
-      })
-      .catch(() => {
-        setTraces({});
-      });
-  }, [dataSet]);
+  }, [dataSet, fileId]);
 
   useEffect(() => {
     getSystems()
@@ -108,6 +121,22 @@ function AnalyzeRegressionSection(props: any) {
     const { id, name } = event.currentTarget;
     setDataSet(id);
     setLineType(name);
+  };
+
+  const handleClick = (event: any) => {
+    if (event) {
+      const params = {
+        user_altitude: event.points[0].x,
+        user_inclination: props.inc,
+        system: props.system,
+        version: props.version,
+      };
+
+      getFileId(params)
+        .then((res: any) => setFileId(res.data))
+        .catch((err: any) => setFileId([]));
+    }
+    setSelected(true);
   };
 
   return (
@@ -246,7 +275,7 @@ function AnalyzeRegressionSection(props: any) {
                   surface_rows={surface_rows}
                   zAxisLabel={zAxisLabel}
                   checked={checked}
-                  onClick={() => setSelected(true)}
+                  onClick={handleClick}
                 />
               </Grid>
             ) : (
@@ -264,7 +293,7 @@ function AnalyzeRegressionSection(props: any) {
                   surface_rows={surface_rows}
                   yAxisLabel={zAxisLabel}
                   checked={checked}
-                  onClick={() => setSelected(true)}
+                  onClick={handleClick}
                 />
               </Grid>
             )}
