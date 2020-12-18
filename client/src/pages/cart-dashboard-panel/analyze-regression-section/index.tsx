@@ -128,6 +128,7 @@ function AnalyzeRegressionSection(props: any) {
         systems={systems}
         version={props.version}
         versions={versions}
+        dataSet={dataSet}
         onSystem={(value: any) => props.onSystem(value)}
         onVersion={(value: any) => props.onVersion(value)}
         onClick={handleDataSetClick}

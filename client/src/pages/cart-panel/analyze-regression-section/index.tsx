@@ -12,6 +12,7 @@ import {
   CardContent,
 } from "@material-ui/core";
 import { grey } from "@material-ui/core/colors";
+import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 
 import TwoViewSection from "./two-view-section";
 import ThreeViewSection from "./three-view-section";
@@ -28,11 +29,6 @@ import useStyles from "../../../utils/styles";
 const INIT_CHECK_STATUS = {
   show_surface: true,
   show_scatter: true,
-};
-
-const INIT_PLOTS = {
-  user_altitude: 0,
-  user_inclination: 0,
 };
 
 function AnalyzeRegressionSection(props: any) {
@@ -53,9 +49,8 @@ function AnalyzeRegressionSection(props: any) {
 
   useEffect(() => {
     if (fileId.length > 0)
-      getItems({ dataSet, fileId: fileId[0]['id'], version: props.version })
+      getItems({ dataSet, fileId: fileId[0]["id"], version: props.version })
         .then((res) => {
-          console.log(res.data)
           Object.keys(res.data).map((el) => {
             let ctype: String = res.data[el]["type"];
             let gaps: Array<any> = [];
@@ -119,6 +114,7 @@ function AnalyzeRegressionSection(props: any) {
   const handleDataSetClick = (event: any) => {
     event.preventDefault();
     const { id, name } = event.currentTarget;
+    
     setDataSet(id);
     setLineType(name);
   };
@@ -149,31 +145,25 @@ function AnalyzeRegressionSection(props: any) {
           spacing={2}
           style={{ backgroundColor: grey[300], minHeight: "10vh" }}
         >
-          <Grid item md={3}>
-            <Button
-              id="as_needed_handoff"
-              name="coverage"
-              variant="contained"
-              size="small"
-              onClick={handleDataSetClick}
-              style={{ marginLeft: "15px" }}
-              fullWidth
-            >
-              {`RF Coverage (%)`}
-            </Button>
-          </Grid>
-          <Grid item md={2}>
-            <Button
-              id="maximum_powee_handoff"
-              name="gap"
-              variant="contained"
-              size="small"
-              onClick={handleDataSetClick}
-              style={{ marginLeft: "15px" }}
-              fullWidth
-            >
-              {`Gap (%)`}
-            </Button>
+          <Grid item md={4} style={{ marginLeft: 15 }}>
+            <ToggleButtonGroup value={dataSet} onChange={handleDataSetClick}>
+              <ToggleButton
+                id="as_needed_handoff"
+                name="coverage"
+                value="as_needed_handoff"
+                size="small"
+              >
+                {`RF Coverage (%)`}
+              </ToggleButton>
+              <ToggleButton
+                id="gap maximum_powee_handoff"
+                name="gap"
+                value="gap maximum_powee_handoff"
+                size="small"
+              >
+                {`Gap (%)`}
+              </ToggleButton>
+            </ToggleButtonGroup>
           </Grid>
           <Grid item md={3} style={{ marginLeft: "15px" }}>
             <FormControl

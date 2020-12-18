@@ -7,9 +7,9 @@ import {
   InputLabel,
   MenuItem,
 } from "@material-ui/core";
+import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
 import { grey } from "@material-ui/core/colors";
 import useStyles from "../../../../utils/styles";
-import {} from "../../../../API";
 
 function HeaderSection(props: any) {
   const classes = useStyles();
@@ -23,27 +23,28 @@ function HeaderSection(props: any) {
         spacing={1}
         style={{ backgroundColor: grey[300], minHeight: "6vh" }}
       >
-        <Grid item md={3}>
-          <Button
-            id="as_needed_handoff"
-            name="coverage"
-            variant="contained"
-            size="small"
-            onClick={(e) => props.onClick(e)}
-            style={{ marginLeft: "15px" }}
+        <Grid item md={2} style={{ marginLeft: 15 }}>
+          <ToggleButtonGroup
+            value={props.dataSet}
+            onChange={(e) => props.onClick(e)}
           >
-            {`RF Coverage (%)`}
-          </Button>
-          <Button
-            id="maximum_powee_handoff"
-            name="gap"
-            variant="contained"
-            size="small"
-            onClick={(e) => props.onClick(e)}
-            style={{ marginLeft: "15px" }}
-          >
-            {`Gap (%)`}
-          </Button>
+            <ToggleButton
+              id="as_needed_handoff"
+              name="coverage"
+              value="as_needed_handoff"
+              size="small"
+            >
+              {`RF Coverage (%)`}
+            </ToggleButton>
+            <ToggleButton
+              id="gap maximum_powee_handoff"
+              name="gap"
+              value="gap maximum_powee_handoff"
+              size="small"
+            >
+              {`Gap (%)`}
+            </ToggleButton>
+          </ToggleButtonGroup>
         </Grid>
         <Grid item md={2}>
           <FormControl
