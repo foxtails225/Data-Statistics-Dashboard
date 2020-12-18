@@ -53,7 +53,7 @@ const getCartItems = async (req: Request, res: Response): Promise<void> => {
 
     if (system && version) {
       const sql = `select distinct a.user_altitude as altitude, a.user_inclination as inclination, \
-        b.percent_coverage as value from file_id_usat as a inner join stk_report_summary_stats \
+        100 - b.percent_coverage as value from file_id_usat as a inner join stk_report_summary_stats \
         as b on a.id = b.file_id where system_id=${system} and b.is_active=1 and a.system_attribute_version_id=${version} \
         order by a.system_id, a.system_attribute_version_id, a.id`;
 
