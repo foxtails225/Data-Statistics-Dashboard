@@ -23,7 +23,8 @@ function AnalyzeRegressionSection(props: any) {
   const [dataSet, setDataSet] = useState("as_needed_handoff" as any);
   const [systems, setSystems] = useState([] as any);
   const [versions, setVersions] = useState([] as any);
-  const [fileId, setFileId] = useState([] as any);
+  const [dot, setDot] = useState({ x: props.alt, y: props.value } as any);
+  const [fileId, setFileId] = useState([{ id: 1620 }, { id: 1729 }] as any);
   const [lineType, setLineType] = useState("coverage" as any);
   const [checked, setChecked] = useState(INIT_CHECK_STATUS);
   const [traces, setTraces] = useState({} as any);
@@ -114,13 +115,14 @@ function AnalyzeRegressionSection(props: any) {
         version: props.version,
       };
 
+      setDot({ x: event.points[0].x, y: event.points[0].y });
       getFileId(params)
         .then((res: any) => setFileId(res.data))
         .catch((err: any) => setFileId([]));
     }
     setSelected(true);
   };
-
+  
   return (
     <Grid container justify="center" alignItems="flex-start" spacing={2}>
       <HeaderSection
@@ -141,7 +143,7 @@ function AnalyzeRegressionSection(props: any) {
                 <Typography variant="h6">
                   {dataSet === "as_needed_handoff"
                     ? `RF Coverage (%) vs. User Inclination`
-                    : `GAP (%) vs. User Inclination`}
+                    : `No Coverage (%) vs. User Inclination`}
                 </Typography>
               </Grid>
               <Grid item md={12} style={{ marginLeft: "15px", padding: 0 }}>
@@ -186,6 +188,7 @@ function AnalyzeRegressionSection(props: any) {
                     plot_rows={plot_rows}
                     surface_rows={surface_rows}
                     yAxisLabel={zAxisLabel}
+                    dot={dot}
                     checked={checked}
                     onClick={handleClick}
                   />
@@ -197,7 +200,9 @@ function AnalyzeRegressionSection(props: any) {
       </Grid>
       {selected && <></>}
       {fileId.length === 0 && <Grid item md={6} />}
-      <ChartsLibsSection traces={traces} dataSet={dataSet} />
+      {Object.keys(traces).length > 0 && (
+        <ChartsLibsSection traces={traces} dataSet={dataSet} />
+      )}
     </Grid>
   );
 }

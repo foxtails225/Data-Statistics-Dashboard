@@ -7,7 +7,7 @@ import SelectedChartSection from "./selected-chart-section";
 import * as Constants from "../../../../constants";
 
 function ChartsLibsSection(props: any) {
-  const [selected, setSelected] = useState([] as any);
+  const [selected, setSelected] = useState([1, 2, 3] as any);
   const [anchorEl, setAnchorEl] = useState(null as any);
 
   const handleSelected = (id: any, type: string) => {
@@ -18,7 +18,7 @@ function ChartsLibsSection(props: any) {
     }
     setAnchorEl(null);
   };
-  
+
   return (
     <>
       {selected.length === 0 && (
@@ -30,41 +30,43 @@ function ChartsLibsSection(props: any) {
           onSelected={(value: any) => handleSelected(value, "add")}
         />
       )}
-      {selected.map((item: any, idx: number) => (
-        <React.Fragment key={item}>
-          <MinusAddon
-            id={item}
-            type={0}
-            selected={selected}
-            anchorEl={anchorEl}
-            onAnchorEl={(value: any) => setAnchorEl(value)}
-            onSelected={(value: any) => handleSelected(value, "remove")}
-          />
-          <Grid item md={12}>
-            <Card style={{ marginLeft: "2.5rem", marginRight: "2.5rem" }}>
-              <CardContent>
-                <SelectedChartSection
-                  id={item}
-                  data={
-                    props.traces[
-                      Constants.MENU_ITEMS[props.dataSet][item].dataset
-                    ]
-                  }
-                />
-              </CardContent>
-            </Card>
-          </Grid>
-          {idx === selected.length - 1 && (
-            <PlusAddon
+      {selected.map((item: any, idx: number) => {
+        let dset = Constants.MENU_ITEMS[props.dataSet][item].dataset;
+        return (
+          <React.Fragment key={item}>
+            <MinusAddon
+              id={item}
               type={0}
               selected={selected}
               anchorEl={anchorEl}
               onAnchorEl={(value: any) => setAnchorEl(value)}
-              onSelected={(value: any) => handleSelected(value, "add")}
+              onSelected={(value: any) => handleSelected(value, "remove")}
             />
-          )}
-        </React.Fragment>
-      ))}
+            <Grid item md={12}>
+              <Card style={{ marginLeft: "2.5rem", marginRight: "2.5rem" }}>
+                <CardContent>
+                  {props.traces[dset] &&
+                    Object.keys(props.traces[dset]).length > 0 && (
+                      <SelectedChartSection
+                        id={item}
+                        data={props.traces[dset]}
+                      />
+                    )}
+                </CardContent>
+              </Card>
+            </Grid>
+            {idx === selected.length - 1 && (
+              <PlusAddon
+                type={0}
+                selected={selected}
+                anchorEl={anchorEl}
+                onAnchorEl={(value: any) => setAnchorEl(value)}
+                onSelected={(value: any) => handleSelected(value, "add")}
+              />
+            )}
+          </React.Fragment>
+        );
+      })}
     </>
   );
 }

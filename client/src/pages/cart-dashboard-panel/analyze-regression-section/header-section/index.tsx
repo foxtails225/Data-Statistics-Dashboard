@@ -23,7 +23,7 @@ function HeaderSection(props: any) {
         spacing={1}
         style={{ backgroundColor: grey[300], minHeight: "6vh" }}
       >
-        <Grid item md={2} style={{ marginLeft: 15 }}>
+        <Grid item md={3} style={{ marginLeft: 15 }}>
           <ToggleButtonGroup
             value={props.dataSet}
             onChange={(e) => props.onClick(e)}
@@ -37,12 +37,12 @@ function HeaderSection(props: any) {
               {`RF Coverage (%)`}
             </ToggleButton>
             <ToggleButton
-              id="gap maximum_powee_handoff"
+              id="maximum_powee_handoff"
               name="gap"
-              value="gap maximum_powee_handoff"
+              value="maximum_powee_handoff"
               size="small"
             >
-              {`Gap (%)`}
+              {`No Coverage (%)`}
             </ToggleButton>
           </ToggleButtonGroup>
         </Grid>

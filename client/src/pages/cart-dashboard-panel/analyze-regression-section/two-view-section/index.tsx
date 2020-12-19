@@ -48,8 +48,8 @@ function TwoViewSection(props: any) {
           },
         },
         {
-          x: [props.alt],
-          y: [props.value],
+          x: [props.dot.x],
+          y: [props.dot.y],
           name: "User",
           mode: "markers",
           type: "scatter",
@@ -79,8 +79,8 @@ function TwoViewSection(props: any) {
           type: "scatter",
         },
         {
-          x: [props.alt],
-          y: [props.value],
+          x: [props.dot.x],
+          y: [props.dot.y],
           name: "User",
           mode: "markers",
           type: "scatter",
@@ -111,8 +111,8 @@ function TwoViewSection(props: any) {
           type: "scatter",
         },
         {
-          x: [props.alt],
-          y: [props.value],
+          x: [props.dot.x],
+          y: [props.dot.y],
           name: "User",
           mode: "markers",
           type: "scatter",
@@ -139,8 +139,8 @@ function TwoViewSection(props: any) {
           type: "scatter",
         },
         {
-          x: [props.alt],
-          y: [props.value],
+          x: [props.dot.x],
+          y: [props.dot.y],
           name: "User",
           mode: "markers",
           type: "scatter",
