@@ -26,9 +26,15 @@ function LineChartSection(props: any) {
         },
       ]}
       layout={{
-        title: `<b>${props.title}</b>`,
+        title: {
+          text: `<b>${props.title}</b>`,
+          font: {
+            family: "Roboto",
+            size: 15,
+          },
+        },
         width: size.width * 0.3,
-        height: size.width * 0.08,
+        height: size.width * 0.11,
         showlegend: true,
         legend: {
           orientation: "h",

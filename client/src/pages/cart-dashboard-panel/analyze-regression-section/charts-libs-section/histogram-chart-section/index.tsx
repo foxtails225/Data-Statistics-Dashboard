@@ -16,9 +16,15 @@ function HistogramChartSection(props: any) {
         },
       ]}
       layout={{
-        title: `<b>${props.title.split('_').join(' ')}</b>`,
+        title: {
+          text: `<b>${props.title.split('_').join(' ')}</b>`,
+          font: {
+            family: "Roboto",
+            size: 15,
+          },
+        },
         width: size.width * 0.3,
-        height: size.width * 0.08,
+        height: size.width * 0.11,
         showlegend: true,
         legend: {
           orientation: "h",

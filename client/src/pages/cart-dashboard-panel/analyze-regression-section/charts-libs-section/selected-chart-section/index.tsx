@@ -12,6 +12,7 @@ import {
 import LineChartSection from "../line-chart-section";
 import HistogramChartSection from "../histogram-chart-section";
 import BoxChartSection from "../box-chart-section";
+import { useWindowSize } from "../../../../../utils/util";
 
 function createData(name: String, value: String) {
   return { name, value };
@@ -28,10 +29,20 @@ const rows = [
 ];
 
 function SelectedChartSection(props: any) {
+  const size = useWindowSize();
+
   return (
     <>
       {props.id === 0 && (
-        <Grid container justify="center" alignItems="center">
+        <Grid
+          container
+          justify="center"
+          alignItems="center"
+          style={{
+            height: size.width ? size.width * 0.11 : "100%",
+            overflow: "auto",
+          }}
+        >
           <Grid item md={10} style={{ textAlign: "center" }}>
             <Typography variant="h6">{`Key Metrics`}</Typography>
           </Grid>

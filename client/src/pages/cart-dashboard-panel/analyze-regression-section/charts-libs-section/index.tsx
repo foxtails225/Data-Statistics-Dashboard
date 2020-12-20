@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Grid, Card, CardContent } from "@material-ui/core";
 
-import MinusAddon from "../../../../components/Button/MinusAddon";
-import PlusAddon from "../../../../components/Button/PlusAddon";
+import DashAddon from "../../../../components/Button/DashAddon";
 import SelectedChartSection from "./selected-chart-section";
 import * as Constants from "../../../../constants";
 import useStyles from "../../../../utils/styles";
@@ -10,33 +9,23 @@ import useStyles from "../../../../utils/styles";
 function ChartsLibsSection(props: any) {
   const [selected, setSelected] = useState([1, 2, 3] as any);
   const [anchorEl, setAnchorEl] = useState(null as any);
+  const [index, setIndex] = useState(0);
   const classes = useStyles();
 
-  const handleSelected = (id: any, type: string) => {
-    if (!selected.includes(id) && type === "add") {
-      setSelected((prevState: any) => [...prevState, id]);
-    } else if (type === "remove") {
-      setSelected(selected.filter((item: any) => item !== id));
-    }
+  const handleSelected = (id: any) => {
+    setSelected(
+      selected.map((item: any, idx: any) => {
+        if (idx === Number(index)) item = id;
+        return item;
+      })
+    );
     setAnchorEl(null);
   };
-
+  console.log(selected);
   return (
     <>
-      {selected.length === 0 && (
-        <Grid item md={6}>
-          <PlusAddon
-            type={1}
-            selected={selected}
-            anchorEl={anchorEl}
-            onAnchorEl={(value: any) => setAnchorEl(value)}
-            onSelected={(value: any) => handleSelected(value, "add")}
-          />
-        </Grid>
-      )}
       {selected.map((item: any, idx: number) => {
         let dset = Constants.MENU_ITEMS[props.dataSet][item].dataset;
-        
         return (
           <Grid
             item
@@ -49,13 +38,14 @@ function ChartsLibsSection(props: any) {
           >
             <Card className={classes.dashCard}>
               <CardContent>
-                <MinusAddon
-                  id={item}
+                <DashAddon
                   type={1}
                   selected={selected}
                   anchorEl={anchorEl}
+                  index={idx}
+                  onIndex={(value: any) => setIndex(value)}
                   onAnchorEl={(value: any) => setAnchorEl(value)}
-                  onSelected={(value: any) => handleSelected(value, "remove")}
+                  onSelected={(value: any) => handleSelected(value)}
                 />
                 <Grid item md={12}>
                   {props.traces[dset] &&
@@ -66,15 +56,6 @@ function ChartsLibsSection(props: any) {
                       />
                     )}
                 </Grid>
-                {idx === selected.length - 1 && (
-                  <PlusAddon
-                    type={1}
-                    selected={selected}
-                    anchorEl={anchorEl}
-                    onAnchorEl={(value: any) => setAnchorEl(value)}
-                    onSelected={(value: any) => handleSelected(value, "add")}
-                  />
-                )}
               </CardContent>
             </Card>
           </Grid>

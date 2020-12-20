@@ -73,6 +73,7 @@ const getCartItems = async (req: Request, res: Response): Promise<void> => {
 
         connection.query(sql, (err, data, fields) => {
           if (err) throw err;
+          tdata["data"]["label"] = dataType === "coverage" ? "RF Coverage (%)" : "No Coverage (%)";
           tdata["data"]["plot_value"] = data;
           result["terrestrial"] = testData;
           result["data"] = tdata;

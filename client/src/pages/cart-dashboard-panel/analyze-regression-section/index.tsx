@@ -152,14 +152,12 @@ function AnalyzeRegressionSection(props: any) {
         <Card className={classes.dashCard}>
           <CardContent>
             <Grid container justify="center" spacing={2}>
-              <Grid item md={12} style={{ textAlign: "center" }}>
-                <Typography variant="h6">
+              <Grid item md={12} style={{ textAlign: "center", position: "relative"}}>
+                <Typography style={{fontSize: 15, fontWeight: "bold"}}>
                   {dataSet === "as_needed_handoff"
                     ? `RF Coverage (%) vs. User Inclination`
                     : `No Coverage (%) vs. User Inclination`}
                 </Typography>
-              </Grid>
-              <Grid item md={12} style={{ marginLeft: "15px", padding: 0 }}>
                 <OptionAddon
                   checked={checked}
                   viewMethod={viewMethod}

@@ -57,7 +57,6 @@ function AnalyzeRegressionSection(props: any) {
         version: props.version,
       })
         .then((res) => {
-          console.log(res.data)
           Object.keys(res.data).map((el) => {
             let ctype: String = res.data[el]["type"];
             let gaps: Array<any> = [];
@@ -240,14 +239,12 @@ function AnalyzeRegressionSection(props: any) {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item md={12} style={{ textAlign: "center" }}>
+      <Grid item md={12} style={{ textAlign: "center", position: "relative" }}>
         <Typography variant="h6">
           {dataSet === "as_needed_handoff"
             ? `RF Coverage (%) vs. User Inclination`
             : `No Coverage (%) vs. User Inclination`}
         </Typography>
-      </Grid>
-      <Grid item md={12} style={{ marginLeft: "15px" }}>
         <OptionAddon
           checked={checked}
           viewMethod={viewMethod}

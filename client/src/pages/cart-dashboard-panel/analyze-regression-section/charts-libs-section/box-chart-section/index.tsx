@@ -16,9 +16,15 @@ function BoxChartSection(props: any) {
         },
       ]}
       layout={{
-        title: `<b>${props.title.split(" ")[0]} Statistics</b>`,
+        title: {
+          text: `<b>${props.title.split(" ")[0]} Statistics</b>`,
+          font: {
+            family: "Roboto",
+            size: 15,
+          },
+        },
         width: size.width * 0.3,
-        height: size.width * 0.08,
+        height: size.width * 0.11,
         margin: {
           l: 60,
           b: 0,
