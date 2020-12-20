@@ -38,11 +38,12 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="left" ref={ref} {...props} />;
 });
 
-function CartDashBoardPanel(props: any) {
+function CartPanel(props: any) {
   const [source, setSource] = useState({} as any);
   const [system, setSystem] = useState(5 as any);
   const [version, setVersion] = useState(3 as any);
-  const [isLoading, setIsLoading] = useState(false);
+  const [dataType, setDataType] = useState("coverage" as any);
+  const [isLoading, setIsLoading] = useState(true);
   const [terrestrial, setTerrestrial] = useState({});
   const [maxAltitude, setMaxAltitude] = useState(0);
   const [coefficients, setCoefficients] = useState({} as any);
@@ -54,15 +55,18 @@ function CartDashBoardPanel(props: any) {
 
   useEffect(() => {
     setText("");
-    setIsLoading(true);
-    getCartItems({ type: missionType, version, system })
+    getCartItems({
+      type: missionType,
+      system: system,
+      version: version,
+      dataType,
+    })
       .then((res: any) => {
         setTerrestrial(res.data.terrestrial);
         setSource(res.data.data.data);
         setMaxAltitude(res.data.data.maxAltitude);
         setCoefficients(res.data.data.coefficients);
-        setText(res.data.text);
-        setIsLoading(false);
+        setText(res.data.data.text);
 
         // FIXME: there is no real data for it.
         //
@@ -75,7 +79,7 @@ function CartDashBoardPanel(props: any) {
       .then(() => {
         setIsLoading(false);
       });
-  }, [system, version]);
+  }, [system, version, dataType]);
 
   const equation = (inc: any, alt: any, metric: string) => {
     // FIXME: activate in integration of cart.
@@ -89,7 +93,7 @@ function CartDashBoardPanel(props: any) {
     // return eqn(coefs, altitude, inclination);
     return inc;
   };
-
+  
   return (
     <Dialog
       open={props.isOpen}
@@ -116,7 +120,7 @@ function CartDashBoardPanel(props: any) {
       >
         <Grid container justify="center" alignItems="center">
           <Grid item md={12}>
-            {Object.keys(source).length > 0 &&
+            {!isLoading &&
               (missionType === "orbital" ? (
                 <AnalyzeRegressionSection
                   equation={(x: any, y: any, m: any) => equation(x, y, m)}
@@ -125,12 +129,14 @@ function CartDashBoardPanel(props: any) {
                   inc={INIT_PARAMS.inclination}
                   value={INIT_PARAMS.value}
                   data={source}
+                  dataType={dataType}
                   selectedItem={metric}
                   text={text}
                   system={system}
                   version={version}
                   onSystem={(value: any) => setSystem(value)}
                   onVersion={(value: any) => setVersion(value)}
+                  onDataType={(value: any) => setDataType(value)}
                 />
               ) : (
                 <></>
@@ -142,4 +148,4 @@ function CartDashBoardPanel(props: any) {
   );
 }
 
-export default CartDashBoardPanel;
+export default CartPanel;

@@ -42,6 +42,7 @@ function CartPanel(props: any) {
   const [source, setSource] = useState({} as any);
   const [system, setSystem] = useState(5 as any);
   const [version, setVersion] = useState(3 as any);
+  const [dataType, setDataType] = useState("coverage" as any);
   const [isLoading, setIsLoading] = useState(true);
   const [terrestrial, setTerrestrial] = useState({});
   const [maxAltitude, setMaxAltitude] = useState(0);
@@ -54,7 +55,12 @@ function CartPanel(props: any) {
 
   useEffect(() => {
     setText("");
-    getCartItems({ type: missionType, system: system, version: version })
+    getCartItems({
+      type: missionType,
+      system: system,
+      version: version,
+      dataType,
+    })
       .then((res: any) => {
         setTerrestrial(res.data.terrestrial);
         setSource(res.data.data.data);
@@ -73,7 +79,7 @@ function CartPanel(props: any) {
       .then(() => {
         setIsLoading(false);
       });
-  }, [system, version]);
+  }, [system, version, dataType]);
 
   const equation = (inc: any, alt: any, metric: string) => {
     // FIXME: activate in integration of cart.
@@ -87,7 +93,7 @@ function CartPanel(props: any) {
     // return eqn(coefs, altitude, inclination);
     return inc;
   };
-
+  
   return (
     <Dialog
       open={props.isOpen}
@@ -123,12 +129,14 @@ function CartPanel(props: any) {
                   inc={INIT_PARAMS.inclination}
                   value={INIT_PARAMS.value}
                   data={source}
+                  dataType={dataType}
                   selectedItem={metric}
                   text={text}
                   system={system}
                   version={version}
                   onSystem={(value: any) => setSystem(value)}
                   onVersion={(value: any) => setVersion(value)}
+                  onDataType={(value: any) => setDataType(value)}
                 />
               ) : (
                 <></>

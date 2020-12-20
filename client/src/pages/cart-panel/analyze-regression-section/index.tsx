@@ -31,14 +31,15 @@ const INIT_CHECK_STATUS = {
   show_scatter: true,
 };
 
+const INIT_FILE_ID = [{ id: 1620 }, { id: 1729 }];
+
 function AnalyzeRegressionSection(props: any) {
   const [viewMethod, setViewMethod] = useState("2d_view");
   const [dataSet, setDataSet] = useState("as_needed_handoff" as any);
   const [systems, setSystems] = useState([] as any);
   const [versions, setVersions] = useState([] as any);
   const [dot, setDot] = useState({ x: props.alt, y: props.value } as any);
-  const [fileId, setFileId] = useState([{ id: 1620 }, { id: 1729 }] as any);
-  const [lineType, setLineType] = useState("coverage" as any);
+  const [fileId, setFileId] = useState(INIT_FILE_ID);
   const [checked, setChecked] = useState(INIT_CHECK_STATUS);
   const [traces, setTraces] = useState({} as any);
   const [reset, setReset] = useState(false);
@@ -50,8 +51,13 @@ function AnalyzeRegressionSection(props: any) {
 
   useEffect(() => {
     if (fileId.length > 0)
-      getItems({ dataSet, fileId: fileId, version: props.version })
+      getItems({
+        dataType: props.dataType,
+        fileId: fileId,
+        version: props.version,
+      })
         .then((res) => {
+          console.log(res.data)
           Object.keys(res.data).map((el) => {
             let ctype: String = res.data[el]["type"];
             let gaps: Array<any> = [];
@@ -91,13 +97,20 @@ function AnalyzeRegressionSection(props: any) {
         .catch(() => {
           setTraces({});
         });
-  }, [dataSet, fileId]);
+  }, [props.dataType, props.version, fileId]);
 
   useEffect(() => {
     getSystems()
       .then((res: any) => setSystems(res.data))
       .catch((err: any) => setSystems([]));
   }, []);
+
+  useEffect(() => {
+    setDot({
+      x: props.data.plot_value[0].altitude,
+      y: props.data.plot_value[0].value,
+    });
+  }, [props.data]);
 
   useEffect(() => {
     if (props.system !== "") {
@@ -117,7 +130,7 @@ function AnalyzeRegressionSection(props: any) {
     const { id, name } = event.currentTarget;
 
     setDataSet(id);
-    setLineType(name);
+    props.onDataType(name);
   };
 
   const handleClick = (event: any) => {
@@ -128,7 +141,7 @@ function AnalyzeRegressionSection(props: any) {
         system: props.system,
         version: props.version,
       };
-      
+
       setDot({ x: event.points[0].x, y: event.points[0].y });
       getFileId(params)
         .then((res: any) => setFileId(res.data))

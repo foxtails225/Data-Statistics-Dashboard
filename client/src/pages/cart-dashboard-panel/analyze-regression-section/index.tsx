@@ -18,14 +18,15 @@ const INIT_CHECK_STATUS = {
   show_scatter: true,
 };
 
+const INIT_FILE_ID = [{ id: 1620 }, { id: 1729 }];
+
 function AnalyzeRegressionSection(props: any) {
   const [viewMethod, setViewMethod] = useState("2d_view");
   const [dataSet, setDataSet] = useState("as_needed_handoff" as any);
   const [systems, setSystems] = useState([] as any);
   const [versions, setVersions] = useState([] as any);
   const [dot, setDot] = useState({ x: props.alt, y: props.value } as any);
-  const [fileId, setFileId] = useState([{ id: 1620 }, { id: 1729 }] as any);
-  const [lineType, setLineType] = useState("coverage" as any);
+  const [fileId, setFileId] = useState(INIT_FILE_ID);
   const [checked, setChecked] = useState(INIT_CHECK_STATUS);
   const [traces, setTraces] = useState({} as any);
   const [reset, setReset] = useState(false);
@@ -37,7 +38,11 @@ function AnalyzeRegressionSection(props: any) {
 
   useEffect(() => {
     if (fileId.length > 0)
-      getItems({ dataSet, fileId: fileId, version: props.version })
+      getItems({
+        dataType: props.dataType,
+        fileId: fileId,
+        version: props.version,
+      })
         .then((res) => {
           Object.keys(res.data).map((el) => {
             let ctype: String = res.data[el]["type"];
@@ -78,7 +83,7 @@ function AnalyzeRegressionSection(props: any) {
         .catch(() => {
           setTraces({});
         });
-  }, [dataSet, props.version, fileId]);
+  }, [props.dataType, props.version, fileId]);
 
   useEffect(() => {
     getSystems()
@@ -94,6 +99,13 @@ function AnalyzeRegressionSection(props: any) {
     }
   }, [props.system]);
 
+  useEffect(() => {
+    setDot({
+      x: props.data.plot_value[0].altitude,
+      y: props.data.plot_value[0].value,
+    });
+  }, [props.data]);
+
   const handleCheck = (event: any) => {
     const { name, checked } = event.currentTarget;
     setChecked((prevState) => ({ ...prevState, [name]: checked }));
@@ -102,8 +114,9 @@ function AnalyzeRegressionSection(props: any) {
   const handleDataSetClick = (event: any) => {
     event.preventDefault();
     const { id, name } = event.currentTarget;
+
     setDataSet(id);
-    setLineType(name);
+    props.onDataType(name);
   };
 
   const handleClick = (event: any) => {

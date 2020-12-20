@@ -49,13 +49,17 @@ const getPlotItems = async (req: Request, res: Response): Promise<void> => {
 
 const getCartItems = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { system, version } = req.query;
+    const { system, version, dataType } = req.query;
 
     if (system && version) {
+      const query =
+        dataType === "coverage"
+          ? "b.percent_coverage"
+          : "100 - b.percent_coverage";
       const sql = `select distinct a.user_altitude as altitude, a.user_inclination as inclination, \
-        100 - b.percent_coverage as value from file_id_usat as a inner join stk_report_summary_stats \
+        ${query} as value from file_id_usat as a inner join stk_report_summary_stats \
         as b on a.id = b.file_id where system_id=${system} and b.is_active=1 and a.system_attribute_version_id=${version} \
-        order by a.system_id, a.system_attribute_version_id, a.id`;
+        order by a.user_altitude, a.system_id, a.system_attribute_version_id, a.id`;
 
       let result: any = {};
       let tdata: any = cartData;
@@ -85,17 +89,21 @@ const getCartItems = async (req: Request, res: Response): Promise<void> => {
 
 const getItem = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { dataSet, fileId } = req.query as any;
+    const { dataType, fileId } = req.query as any;
     let result: any = {};
     let sql: string;
 
     if (fileId.length > 0) {
       if (fileId.length === 1) {
-        sql = `select a.gap_duration from stk_report as a inner join file_id_usat as b on a.file_id = b.id \
-          where b.id=${JSON.parse(fileId[0]).id} and b.is_active=1 order by a.simulation_time`;
+        sql = `select a.simulation_time, a.gap_duration from stk_report as a inner join file_id_usat as b on a.file_id = b.id \
+          where b.id=${
+            JSON.parse(fileId[0]).id
+          } and b.is_active=1 order by a.simulation_time`;
       } else {
-        sql = `select a.gap_duration from stk_report as a inner join file_id_usat as b on a.file_id = b.id \
-          where b.id=${JSON.parse(fileId[0]).id} or b.id=${JSON.parse(fileId[1]).id} and \
+        sql = `select a.simulation_time, a.gap_duration from stk_report as a inner join file_id_usat as b on a.file_id = b.id \
+          where b.id=${JSON.parse(fileId[0]).id} or b.id=${
+          JSON.parse(fileId[1]).id
+        } and \
           b.is_active=1 order by a.simulation_time`;
       }
 
@@ -109,33 +117,46 @@ const getItem = async (req: Request, res: Response): Promise<void> => {
         connection.query(sql, (err, data, fields) => {
           if (err) throw err;
 
-          let tdata = data.map((item: any) => {
-            return Number(item.gap_duration);
-          });
+          if (dataType === "coverage") {
+            let fVal = Number(data[0].simulation_time);
+            let preVal = 0;
+            let tdata: Array<number> = [];
 
-          result["coverage"] = {
-            data: getAvgs(tdata),
-            title: "Coverage Running Average",
-            type: "line",
-          };
+            data.map((item: any) => {
+              if (Number(item.gap_duration)) {
+                let pVal = preVal - fVal
+                fVal = Number(item.simulation_time);
+                tdata.push(pVal)
+              }
+              preVal = Number(item.simulation_time);
+            }); 
+            
+            result["coverage"] = {
+              data: getAvgs(tdata),
+              title: "Coverage Running Average",
+              type: "line",
+            };
+            result["coverage_histogram"] = {
+              data: tdata,
+              title: "Coverage Distribution",
+              type: "histogram",
+            };
+          } else {
+            let tdata = data.map((item: any) => {
+              return Number(item.gap_duration);
+            });
 
-          result["gap"] = {
-            data: getAvgs(tdata),
-            title: "Gaps Running Average",
-            type: "line",
-          };
-
-          result["coverage_histogram"] = {
-            data: tdata,
-            title: "Coverage Distribution",
-            type: "histogram",
-          };
-
-          result["gap_histogram"] = {
-            data: tdata,
-            title: "Gaps Distribution",
-            type: "histogram",
-          };
+            result["gap"] = {
+              data: getAvgs(tdata),
+              title: "Gaps Running Average",
+              type: "line",
+            };
+            result["gap_histogram"] = {
+              data: tdata,
+              title: "Gaps Distribution",
+              type: "histogram",
+            };
+          }
 
           res.status(200).json(result);
           connection.release();
