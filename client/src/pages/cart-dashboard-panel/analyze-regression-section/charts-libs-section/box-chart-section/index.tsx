@@ -24,7 +24,7 @@ function BoxChartSection(props: any) {
           },
         },
         width: size.width * 0.3,
-        height: size.width * 0.11,
+        height: size.width > 1800 ? size.width * 0.16: size.width * 0.11,
         margin: {
           l: 60,
           b: 0,

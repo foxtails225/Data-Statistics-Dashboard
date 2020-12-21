@@ -93,7 +93,7 @@ function CartPanel(props: any) {
     // return eqn(coefs, altitude, inclination);
     return inc;
   };
-  
+
   return (
     <Dialog
       open={props.isOpen}
@@ -118,31 +118,27 @@ function CartPanel(props: any) {
         dividers={true}
         style={{ paddingRight: 0, paddingLeft: 0, overflowX: "hidden" }}
       >
-        <Grid container justify="center" alignItems="center">
-          <Grid item md={12}>
-            {!isLoading &&
-              (missionType === "orbital" ? (
-                <AnalyzeRegressionSection
-                  equation={(x: any, y: any, m: any) => equation(x, y, m)}
-                  maxAltitude={maxAltitude}
-                  alt={INIT_PARAMS.altitude}
-                  inc={INIT_PARAMS.inclination}
-                  value={INIT_PARAMS.value}
-                  data={source}
-                  dataType={dataType}
-                  selectedItem={metric}
-                  text={text}
-                  system={system}
-                  version={version}
-                  onSystem={(value: any) => setSystem(value)}
-                  onVersion={(value: any) => setVersion(value)}
-                  onDataType={(value: any) => setDataType(value)}
-                />
-              ) : (
-                <></>
-              ))}
-          </Grid>
-        </Grid>
+        {!isLoading &&
+          (missionType === "orbital" ? (
+            <AnalyzeRegressionSection
+              equation={(x: any, y: any, m: any) => equation(x, y, m)}
+              maxAltitude={maxAltitude}
+              alt={INIT_PARAMS.altitude}
+              inc={INIT_PARAMS.inclination}
+              value={INIT_PARAMS.value}
+              data={source}
+              dataType={dataType}
+              selectedItem={metric}
+              text={text}
+              system={system}
+              version={version}
+              onSystem={(value: any) => setSystem(value)}
+              onVersion={(value: any) => setVersion(value)}
+              onDataType={(value: any) => setDataType(value)}
+            />
+          ) : (
+            <></>
+          ))}
       </DialogContent>
     </Dialog>
   );

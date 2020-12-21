@@ -167,7 +167,7 @@ function ThreeViewSection(props: any) {
       layout={{
         autosize: true,
         width: size.width * 0.3,
-        height: size.width * 0.1,
+        height: size.width > 1800 ? size.width * 0.16: size.width * 0.11,
         margin: {
           l: 0,
           r: 0,

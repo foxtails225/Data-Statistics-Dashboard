@@ -5,7 +5,7 @@ import ThreeViewSection from "./three-view-section";
 import ChartsLibsSection from "./charts-libs-section";
 import HeaderSection from "./header-section";
 import OptionAddon from "../../../components/Button/OptionAddon";
-import useStyles from "../../../utils/styles";
+import { useWindowSize } from "../../../utils/util";
 import {
   getItems,
   getSystems,
@@ -13,12 +13,17 @@ import {
   getFileId,
 } from "../../../API";
 
+const INIT_FILE_ID = [{ id: 1620 }, { id: 1729 }];
+
 const INIT_CHECK_STATUS = {
   show_surface: true,
   show_scatter: true,
 };
 
-const INIT_FILE_ID = [{ id: 1620 }, { id: 1729 }];
+const viewStyle = {
+  paddingLeft: "2rem",
+  paddingRight: "0.8rem",
+};
 
 function AnalyzeRegressionSection(props: any) {
   const [viewMethod, setViewMethod] = useState("2d_view");
@@ -30,11 +35,10 @@ function AnalyzeRegressionSection(props: any) {
   const [checked, setChecked] = useState(INIT_CHECK_STATUS);
   const [traces, setTraces] = useState({} as any);
   const [reset, setReset] = useState(false);
-  const [selected, setSelected] = useState(false);
+  const size = useWindowSize();
   const plot_rows = props.data.plot_value;
   const surface_rows: Array<any> = [];
   const zAxisLabel = props.data.label;
-  const classes = useStyles();
 
   useEffect(() => {
     if (fileId.length > 0)
@@ -133,11 +137,10 @@ function AnalyzeRegressionSection(props: any) {
         .then((res: any) => setFileId(res.data))
         .catch((err: any) => setFileId([]));
     }
-    setSelected(true);
   };
-  
+
   return (
-    <Grid container justify="center" alignItems="flex-start" spacing={2}>
+    <Grid container justify="center" alignItems="center" spacing={2}>
       <HeaderSection
         system={props.system}
         systems={systems}
@@ -148,15 +151,33 @@ function AnalyzeRegressionSection(props: any) {
         onVersion={(value: any) => props.onVersion(value)}
         onClick={handleDataSetClick}
       />
-      <Grid item md={6} style={{ paddingLeft: "2rem" }}>
-        <Card className={classes.dashCard}>
+      <Grid item md={6} style={viewStyle}>
+        <Card
+          style={{
+            minHeight: size.width
+              ? size.width > 1600
+                ? size.height * 0.367
+                : size.height * 0.3
+              : "",
+          }}
+        >
           <CardContent>
             <Grid container justify="center" spacing={2}>
-              <Grid item md={12} style={{ textAlign: "center", position: "relative"}}>
-                <Typography style={{fontSize: 15, fontWeight: "bold"}}>
+              <Grid
+                item
+                md={12}
+                style={{ textAlign: "center", position: "relative" }}
+              >
+                <Typography
+                  style={{
+                    fontSize: 15,
+                    fontWeight: "bold",
+                  }}
+                >
                   {dataSet === "as_needed_handoff"
-                    ? `RF Coverage (%) vs. User Inclination`
-                    : `No Coverage (%) vs. User Inclination`}
+                    ? `RF Coverage (%)`
+                    : `No Coverage (%)`}
+                  {` vs. User Inclination`}
                 </Typography>
                 <OptionAddon
                   checked={checked}
@@ -209,7 +230,6 @@ function AnalyzeRegressionSection(props: any) {
           </CardContent>
         </Card>
       </Grid>
-      {selected && <></>}
       {fileId.length === 0 && <Grid item md={6} />}
       {Object.keys(traces).length > 0 && (
         <ChartsLibsSection traces={traces} dataSet={dataSet} />

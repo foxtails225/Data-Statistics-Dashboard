@@ -34,8 +34,8 @@ const useStyles = makeStyles((theme) => ({
   },
 
   dashDialogDeep: {
+    height: "93vh !important",
     minWidth: "80vw !important",
-    height: "98vh !important",
     maxWidth: "80vw !important",
     backgroundColor: theme.palette.grey[100],
   },
@@ -59,13 +59,8 @@ const useStyles = makeStyles((theme) => ({
     fontSize: 14,
   },
 
-  dashCard: {
-    minHeight: '32vh !important'
-  },
-
   formControl: {
     margin: theme.spacing(1),
-    // minWidth: 120,
   },
 }));
 
