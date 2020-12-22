@@ -10,23 +10,23 @@ function LineChartSection(props: any) {
     <Plot
       data={[
         {
-          x: props.xTraces,
-          y: props.yTraces,
+          x: props.source.xTraces,
+          y: props.source.yTraces,
           name: "Gap Event Duration",
           type: "scatter",
           mode: "lines+markers",
           marker: { color: "red" },
         },
         {
-          x: props.xTraces,
-          y: props.avgTraces,
+          x: props.source.xTraces,
+          y: props.source.avgTraces,
           name: "Running Average",
           type: "scatter",
           marker: { color: "blue" },
         },
       ]}
       layout={{
-        title: `<b>${props.title}</b>`,
+        title: `<b>${props.source.title}</b>`,
         width: size.width * 0.37,
         showlegend: true,
         legend: {
@@ -46,7 +46,10 @@ function LineChartSection(props: any) {
           pad: 5,
         },
         xaxis: {
-          title: "Gap Event (Sequence)",
+          title:
+            props.dataType === "coverage"
+              ? "Coverage Event Number"
+              : "Gap Event Number",
           titlefont: {
             size: 12,
             color: "#212529",
@@ -56,7 +59,10 @@ function LineChartSection(props: any) {
           zerolinewidth: 1,
         },
         yaxis: {
-          title: "Gap Duration (seconds)",
+          title:
+            props.dataType === "coverage"
+              ? "Coverage Duration (Sec.)"
+              : "Gap Duration (Sec.)",
           titlefont: {
             size: 12,
             color: "#212529",

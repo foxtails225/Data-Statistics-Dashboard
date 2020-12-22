@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 
 import {
-  Grid,
   CssBaseline,
   Slide,
   Typography,
@@ -22,7 +21,7 @@ const INIT_PARAMS = {
   availabilityThreshold: 0.999,
   dataVolumeNeed: 0.1,
   gapThreshold: 6,
-  inclination: 30,
+  inclination: 0,
   latitude: 30,
   launchYear: 2030,
   longitude: 30,
@@ -40,8 +39,11 @@ const Transition = React.forwardRef(function Transition(
 
 function CartPanel(props: any) {
   const [source, setSource] = useState({} as any);
+  const [dataSource, setDataSource] = useState({} as any);
   const [system, setSystem] = useState(5 as any);
   const [version, setVersion] = useState(3 as any);
+  const [inclination, setInclination] = useState("");
+  const [incs, setIncs] = useState([] as any);
   const [dataType, setDataType] = useState("coverage" as any);
   const [isLoading, setIsLoading] = useState(true);
   const [terrestrial, setTerrestrial] = useState({});
@@ -64,9 +66,18 @@ function CartPanel(props: any) {
       .then((res: any) => {
         setTerrestrial(res.data.terrestrial);
         setSource(res.data.data.data);
+        setDataSource(res.data.data.data);
         setMaxAltitude(res.data.data.maxAltitude);
         setCoefficients(res.data.data.coefficients);
         setText(res.data.data.text);
+
+        if (Object.keys(res.data.data.data).includes("plot_value")) {
+          let tmp = res.data.data.data.plot_value.map(
+            (item: any) => item["inclination"]
+          );
+          let uniqueArray: Array<any> = [...new Set(tmp)];
+          setIncs(uniqueArray.sort());
+        }
 
         // FIXME: there is no real data for it.
         //
@@ -80,6 +91,15 @@ function CartPanel(props: any) {
         setIsLoading(false);
       });
   }, [system, version, dataType]);
+
+  useEffect(() => {
+    if (Object.keys(dataSource).includes("plot_value")) {
+      let data = dataSource.plot_value.filter(
+        (item: any) => item.inclination === inclination
+      );
+      setSource((prevState: any) => ({ ...prevState, plot_value: data }));
+    }
+  }, [inclination]);
 
   const equation = (inc: any, alt: any, metric: string) => {
     // FIXME: activate in integration of cart.
@@ -114,32 +134,30 @@ function CartPanel(props: any) {
           <CloseIcon />
         </IconButton>
       </MuiDialogTitle>
-      <DialogContent
-        dividers={true}
-        style={{ paddingRight: 0, paddingLeft: 0, overflowX: "hidden" }}
-      >
-        {!isLoading &&
-          (missionType === "orbital" ? (
-            <AnalyzeRegressionSection
-              equation={(x: any, y: any, m: any) => equation(x, y, m)}
-              maxAltitude={maxAltitude}
-              alt={INIT_PARAMS.altitude}
-              inc={INIT_PARAMS.inclination}
-              value={INIT_PARAMS.value}
-              data={source}
-              dataType={dataType}
-              selectedItem={metric}
-              text={text}
-              system={system}
-              version={version}
-              onSystem={(value: any) => setSystem(value)}
-              onVersion={(value: any) => setVersion(value)}
-              onDataType={(value: any) => setDataType(value)}
-            />
-          ) : (
-            <></>
-          ))}
-      </DialogContent>
+      {!isLoading &&
+        (missionType === "orbital" ? (
+          <AnalyzeRegressionSection
+            equation={(x: any, y: any, m: any) => equation(x, y, m)}
+            maxAltitude={maxAltitude}
+            alt={INIT_PARAMS.altitude}
+            inc={INIT_PARAMS.inclination}
+            value={INIT_PARAMS.value}
+            data={source}
+            dataType={dataType}
+            selectedItem={metric}
+            text={text}
+            system={system}
+            version={version}
+            inclination={inclination}
+            incs={incs}
+            onInc={(value: any) => setInclination(value)}
+            onSystem={(value: any) => setSystem(value)}
+            onVersion={(value: any) => setVersion(value)}
+            onDataType={(value: any) => setDataType(value)}
+          />
+        ) : (
+          <></>
+        ))}
     </Dialog>
   );
 }

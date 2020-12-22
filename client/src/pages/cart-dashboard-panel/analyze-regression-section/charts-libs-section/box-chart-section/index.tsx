@@ -10,21 +10,22 @@ function BoxChartSection(props: any) {
     <Plot
       data={[
         {
-          y: props.xTraces,
+          y: props.source.xTraces,
+          boxpoints: 'all',
           name: "",
           type: "box",
         },
       ]}
       layout={{
         title: {
-          text: `<b>${props.title.split(" ")[0]} Statistics</b>`,
+          text: `<b>${props.source.title.split(" ")[0]} Statistics</b>`,
           font: {
             family: "Roboto",
             size: 15,
           },
         },
-        width: size.width * 0.3,
-        height: size.width > 1800 ? size.width * 0.16: size.width * 0.11,
+        width: Number(props.size.width.replace('px', '')) * 0.4,
+        height: Number(props.size.height.replace('px', '')) * 0.3,
         margin: {
           l: 60,
           b: 0,

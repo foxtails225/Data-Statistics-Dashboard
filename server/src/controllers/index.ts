@@ -59,7 +59,7 @@ const getCartItems = async (req: Request, res: Response): Promise<void> => {
       const sql = `select distinct a.user_altitude as altitude, a.user_inclination as inclination, \
         ${query} as value from file_id_usat as a inner join stk_report_summary_stats \
         as b on a.id = b.file_id where system_id=${system} and b.is_active=1 and a.system_attribute_version_id=${version} \
-        order by a.user_altitude, a.system_id, a.system_attribute_version_id, a.id`;
+        order by altitude, user_inclination, value, a.id`;
 
       let result: any = {};
       let tdata: any = cartData;
@@ -73,7 +73,7 @@ const getCartItems = async (req: Request, res: Response): Promise<void> => {
 
         connection.query(sql, (err, data, fields) => {
           if (err) throw err;
-          tdata["data"]["label"] = dataType === "coverage" ? "RF Coverage (%)" : "No Coverage (%)";
+          tdata["data"]["label"] = dataType === "coverage" ? "Coverage (%)" : "No Coverage (%)";
           tdata["data"]["plot_value"] = data;
           result["terrestrial"] = testData;
           result["data"] = tdata;

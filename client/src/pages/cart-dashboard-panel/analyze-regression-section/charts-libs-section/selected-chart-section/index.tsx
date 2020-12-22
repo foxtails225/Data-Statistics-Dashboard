@@ -68,9 +68,19 @@ function SelectedChartSection(props: any) {
           </Grid>
         </Grid>
       )}
-      {props.id === 1 && <LineChartSection {...props.data} />}
-      {props.id === 2 && <HistogramChartSection {...props.data} />}
-      {props.id === 3 && <BoxChartSection {...props.data} />}
+      {props.id === 1 && (
+        <LineChartSection
+          source={props.data}
+          dataType={props.dataType}
+          size={props.size}
+        />
+      )}
+      {props.id === 2 && (
+        <HistogramChartSection source={props.data} size={props.size} />
+      )}
+      {props.id === 3 && (
+        <BoxChartSection source={props.data} size={props.size} />
+      )}
     </>
   );
 }

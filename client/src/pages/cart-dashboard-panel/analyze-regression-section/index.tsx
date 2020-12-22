@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { Grid, Typography, Card, CardContent } from "@material-ui/core";
+import React, { useState, useEffect, useRef } from "react";
+import {
+  Grid,
+  Typography,
+  Card,
+  CardContent,
+  DialogContent,
+} from "@material-ui/core";
 import TwoViewSection from "./two-view-section";
 import ThreeViewSection from "./three-view-section";
 import ChartsLibsSection from "./charts-libs-section";
 import HeaderSection from "./header-section";
 import OptionAddon from "../../../components/Button/OptionAddon";
-import { useWindowSize } from "../../../utils/util";
 import {
   getItems,
   getSystems,
@@ -35,7 +40,8 @@ function AnalyzeRegressionSection(props: any) {
   const [checked, setChecked] = useState(INIT_CHECK_STATUS);
   const [traces, setTraces] = useState({} as any);
   const [reset, setReset] = useState(false);
-  const size = useWindowSize();
+  const [count, setCount] = useState({ width: "0px", height: "0px" });
+  const chartEl: any = useRef();
   const plot_rows = props.data.plot_value;
   const surface_rows: Array<any> = [];
   const zAxisLabel = props.data.label;
@@ -110,6 +116,13 @@ function AnalyzeRegressionSection(props: any) {
     });
   }, [props.data]);
 
+  useEffect(() => {
+    if (chartEl) {
+      let size = window.getComputedStyle(chartEl.current);
+      setCount({ width: size.width, height: size.height });
+    }
+  }, [chartEl, traces]);
+
   const handleCheck = (event: any) => {
     const { name, checked } = event.currentTarget;
     setChecked((prevState) => ({ ...prevState, [name]: checked }));
@@ -140,101 +153,121 @@ function AnalyzeRegressionSection(props: any) {
   };
 
   return (
-    <Grid container justify="center" alignItems="center" spacing={2}>
-      <HeaderSection
-        system={props.system}
-        systems={systems}
-        version={props.version}
-        versions={versions}
-        dataSet={dataSet}
-        onSystem={(value: any) => props.onSystem(value)}
-        onVersion={(value: any) => props.onVersion(value)}
-        onClick={handleDataSetClick}
-      />
-      <Grid item md={6} style={viewStyle}>
-        <Card
-          style={{
-            minHeight: size.width
-              ? size.width > 1600
-                ? size.height * 0.367
-                : size.height * 0.3
-              : "",
-          }}
-        >
-          <CardContent>
-            <Grid container justify="center" spacing={2}>
-              <Grid
-                item
-                md={12}
-                style={{ textAlign: "center", position: "relative" }}
-              >
-                <Typography
-                  style={{
-                    fontSize: 15,
-                    fontWeight: "bold",
-                  }}
+    <DialogContent
+      dividers={true}
+      ref={chartEl}
+      style={{ paddingRight: 0, paddingLeft: 0, overflowX: "hidden" }}
+    >
+      <Grid
+        container
+        justify="center"
+        alignItems="center"
+        spacing={2}
+      >
+        <HeaderSection
+          system={props.system}
+          systems={systems}
+          version={props.version}
+          versions={versions}
+          dataSet={dataSet}
+          onSystem={(value: any) => props.onSystem(value)}
+          onVersion={(value: any) => props.onVersion(value)}
+          onClick={handleDataSetClick}
+        />
+        <Grid item md={6} style={viewStyle}>
+          <Card style={{ height: `calc(${count.height} * 0.4)` }}>
+            <CardContent>
+              <Grid container justify="center" spacing={2}>
+                <Grid
+                  item
+                  md={12}
+                  style={{ textAlign: "center", position: "relative" }}
                 >
-                  {dataSet === "as_needed_handoff"
-                    ? `RF Coverage (%)`
-                    : `No Coverage (%)`}
-                  {` vs. User Inclination`}
-                </Typography>
-                <OptionAddon
-                  checked={checked}
-                  viewMethod={viewMethod}
-                  onChecked={handleCheck}
-                  resetPlot={() => setReset(!reset)}
-                  onViewMethod={(e: any) => setViewMethod(e.currentTarget.name)}
-                />
+                  <Typography
+                    style={{
+                      fontSize: 15,
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {dataSet === "as_needed_handoff"
+                      ? `RF Coverage (%)`
+                      : `No Coverage (%)`}
+                    {` vs. User Inclination`}
+                  </Typography>
+                  <OptionAddon
+                    source={props.data}
+                    checked={checked}
+                    viewMethod={viewMethod}
+                    inc={props.inclination}
+                    incs={props.incs}
+                    onInc={(value: any) => props.onInc(value)}
+                    onChecked={handleCheck}
+                    resetPlot={() => setReset(!reset)}
+                    onViewMethod={(e: any) =>
+                      setViewMethod(e.currentTarget.name)
+                    }
+                  />
+                </Grid>
+                {viewMethod === "3d_view" ? (
+                  <Grid item md={12}>
+                    <ThreeViewSection
+                      data={props.data}
+                      equation={props.equation}
+                      maxAltitude={props.maxAltitude}
+                      alt={props.alt}
+                      inc={
+                        props.inclination !== "" ? props.inclination : props.inc
+                      }
+                      value={props.value}
+                      reset={reset}
+                      isLegend={false}
+                      isSub={true}
+                      plot_rows={plot_rows}
+                      surface_rows={surface_rows}
+                      zAxisLabel={zAxisLabel}
+                      checked={checked}
+                      size={count}
+                      onClick={handleClick}
+                    />
+                  </Grid>
+                ) : (
+                  <Grid item md={12}>
+                    <TwoViewSection
+                      data={props.data}
+                      equation={props.equation}
+                      maxAltitude={props.maxAltitude}
+                      alt={props.alt}
+                      inc={
+                        props.inclination !== "" ? props.inclination : props.inc
+                      }
+                      value={props.value}
+                      isLegend={false}
+                      isSub={true}
+                      plot_rows={plot_rows}
+                      surface_rows={surface_rows}
+                      yAxisLabel={zAxisLabel}
+                      dot={dot}
+                      size={count}
+                      checked={checked}
+                      onClick={handleClick}
+                    />
+                  </Grid>
+                )}
               </Grid>
-              {viewMethod === "3d_view" ? (
-                <Grid item md={12}>
-                  <ThreeViewSection
-                    data={props.data}
-                    equation={props.equation}
-                    maxAltitude={props.maxAltitude}
-                    alt={props.alt}
-                    inc={props.inc}
-                    value={props.value}
-                    reset={reset}
-                    isLegend={false}
-                    isSub={true}
-                    plot_rows={plot_rows}
-                    surface_rows={surface_rows}
-                    zAxisLabel={zAxisLabel}
-                    checked={checked}
-                    onClick={handleClick}
-                  />
-                </Grid>
-              ) : (
-                <Grid item md={12}>
-                  <TwoViewSection
-                    data={props.data}
-                    equation={props.equation}
-                    maxAltitude={props.maxAltitude}
-                    alt={props.alt}
-                    inc={props.inc}
-                    value={props.value}
-                    isLegend={false}
-                    isSub={true}
-                    plot_rows={plot_rows}
-                    surface_rows={surface_rows}
-                    yAxisLabel={zAxisLabel}
-                    dot={dot}
-                    checked={checked}
-                    onClick={handleClick}
-                  />
-                </Grid>
-              )}
-            </Grid>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </Grid>
+        {fileId.length === 0 && <Grid item md={6} />}
+        {Object.keys(traces).length > 0 && (
+          <ChartsLibsSection
+            traces={traces}
+            dataSet={dataSet}
+            dataType={props.dataType}
+            size={count}
+          />
+        )}
       </Grid>
-      {fileId.length === 0 && <Grid item md={6} />}
-      {Object.keys(traces).length > 0 && (
-        <ChartsLibsSection traces={traces} dataSet={dataSet} />
-      )}
-    </Grid>
+    </DialogContent>
   );
 }
 

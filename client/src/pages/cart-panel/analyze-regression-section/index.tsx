@@ -246,8 +246,12 @@ function AnalyzeRegressionSection(props: any) {
             : `No Coverage (%) vs. User Inclination`}
         </Typography>
         <OptionAddon
+          source={props.data}
           checked={checked}
           viewMethod={viewMethod}
+          inc={props.inclination}
+          incs={props.incs}
+          onInc={(value: any) => props.onInc(value)}
           onChecked={handleCheck}
           resetPlot={() => setReset(!reset)}
           onViewMethod={(e: any) => setViewMethod(e.currentTarget.name)}
@@ -271,7 +275,7 @@ function AnalyzeRegressionSection(props: any) {
                   equation={props.equation}
                   maxAltitude={props.maxAltitude}
                   alt={props.alt}
-                  inc={props.inc}
+                  inc={props.inclination !== "" ? props.inclination : props.inc}
                   value={props.value}
                   reset={reset}
                   isLegend={false}
@@ -290,7 +294,7 @@ function AnalyzeRegressionSection(props: any) {
                   equation={props.equation}
                   maxAltitude={props.maxAltitude}
                   alt={props.alt}
-                  inc={props.inc}
+                  inc={props.inclination !== "" ? props.inclination : props.inc}
                   value={props.value}
                   isLegend={false}
                   isSub={true}
@@ -308,7 +312,11 @@ function AnalyzeRegressionSection(props: any) {
       </Grid>
       {selected && <></>}
       {Object.keys(traces).length > 0 && (
-        <ChartsLibsSection traces={traces} dataSet={dataSet} />
+        <ChartsLibsSection
+          traces={traces}
+          dataSet={dataSet}
+          dataType={props.dataType}
+        />
       )}
     </Grid>
   );

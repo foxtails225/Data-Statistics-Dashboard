@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Grid,
   Button,
@@ -7,8 +7,11 @@ import {
   Tooltip,
   IconButton,
   Divider,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@material-ui/core";
-import { grey } from "@material-ui/core/colors";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 
@@ -79,10 +82,38 @@ function OptionAddon(props: any) {
                   </Grid>
                 </Grid>
                 <Divider orientation="vertical" flexItem />
-                <Grid item md={5}>
-                  <Typography>
-                    {`Inclination selection for 2D will go here..`}
-                  </Typography>
+                <Grid item md={5} style={{ marginRight: 15 }}>
+                  {props.viewMethod === "2d_view" && (
+                    <FormControl
+                      variant="outlined"
+                      size="small"
+                      className={classes.formControl}
+                      fullWidth
+                    >
+                      <InputLabel id="demo-simple-select-outlined-label">{`Inclination`}</InputLabel>
+                      <Select
+                        labelId="inclination-label"
+                        id="inclination-label"
+                        value={props.inc}
+                        onChange={(e) => props.onInc(e.target.value)}
+                        label="Inclination"
+                      >
+                        <MenuItem value="" disabled>
+                          <em>{`None`}</em>
+                        </MenuItem>
+                        {props.incs.map((item: number) => (
+                          <MenuItem key={`inclination-${item}`} value={item}>
+                            {item}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    </FormControl>
+                  )}
+                  {props.viewMethod === "3d_view" && (
+                    <Typography>
+                      {`Inclination selection for 2D will go here..`}
+                    </Typography>
+                  )}
                 </Grid>
                 <Divider orientation="vertical" flexItem />
                 <Grid item md={3}>

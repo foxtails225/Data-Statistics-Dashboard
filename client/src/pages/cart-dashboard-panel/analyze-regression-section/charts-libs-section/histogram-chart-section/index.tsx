@@ -10,21 +10,21 @@ function HistogramChartSection(props: any) {
     <Plot
       data={[
         {
-          x: props.xTraces,
+          x: props.source.xTraces,
           name: "Duration",
           type: "histogram",
         },
       ]}
       layout={{
         title: {
-          text: `<b>${props.title.split('_').join(' ')}</b>`,
+          text: `<b>${props.source.title.split('_').join(' ')}</b>`,
           font: {
             family: "Roboto",
             size: 15,
           },
         },
-        width: size.width * 0.3,
-        height: size.width > 1800 ? size.width * 0.16: size.width * 0.11,
+        width: Number(props.size.width.replace('px', '')) * 0.4,
+        height: Number(props.size.height.replace('px', '')) * 0.3,
         showlegend: true,
         legend: {
           orientation: "h",

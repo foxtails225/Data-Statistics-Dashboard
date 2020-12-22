@@ -11,6 +11,7 @@ function BoxChartSection(props: any) {
       data={[
         {
           y: props.xTraces,
+          boxpoints: 'all',
           name: "",
           type: "box",
         },

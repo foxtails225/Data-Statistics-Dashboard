@@ -50,6 +50,7 @@ function ChartsLibsSection(props: any) {
                       <SelectedChartSection
                         id={item}
                         data={props.traces[dset]}
+                        dataType={props.dataType}
                       />
                     )}
                 </CardContent>

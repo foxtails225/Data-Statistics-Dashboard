@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
-import { useWindowSize } from "../../../../utils/util";
 
 function TwoViewSection(props: any) {
   const [checked, setChecked] = useState(props.checked);
   const [config, setConfig] = useState([]);
-  const size = useWindowSize();
   const plot_rows = props.plot_rows;
   const surface_rows = props.surface_rows;
   
@@ -18,7 +16,7 @@ function TwoViewSection(props: any) {
       return row[key];
     });
   };
-
+  
   useEffect(() => {
     let configData: any = [];
     const inclination = parseInt(props.inc);
@@ -154,7 +152,7 @@ function TwoViewSection(props: any) {
 
     setConfig(configData);
   }, [checked, plot_rows, surface_rows, props.inc]);
-
+  
   return (
     <Plot
       data={config}
@@ -162,8 +160,8 @@ function TwoViewSection(props: any) {
         autosize: true,
         showlegend: false,
         hovermode: "closest",
-        width: size.width * 0.3,
-        height: size.width > 1800 ? size.width * 0.16: size.width * 0.11,
+        width: Number(props.size.width.replace('px', '')) * 0.4,
+        height: Number(props.size.height.replace('px', '')) * 0.3,
         margin: {
           l: 60,
           r: 15,

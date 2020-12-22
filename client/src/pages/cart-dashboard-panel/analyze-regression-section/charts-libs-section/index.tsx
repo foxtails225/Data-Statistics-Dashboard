@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Grid, Card, CardContent } from "@material-ui/core";
 
 import DashAddon from "../../../../components/Button/DashAddon";
@@ -21,7 +21,7 @@ function ChartsLibsSection(props: any) {
     );
     setAnchorEl(null);
   };
-
+  
   return (
     <>
       {selected.map((item: any, idx: number) => {
@@ -36,15 +36,7 @@ function ChartsLibsSection(props: any) {
               paddingRight: idx % 2 === 0 ? "2rem" : "0.8rem",
             }}
           >
-            <Card
-              style={{
-                minHeight: size.width
-                  ? size.width > 1600
-                    ? size.height * 0.367
-                    : size.height * 0.3
-                  : "",
-              }}
-            >
+            <Card style={{ height: `calc(${props.size.height} * 0.4)` }}>
               <CardContent>
                 <DashAddon
                   type={1}
@@ -60,7 +52,9 @@ function ChartsLibsSection(props: any) {
                     Object.keys(props.traces[dset]).length > 0 && (
                       <SelectedChartSection
                         id={item}
+                        size={props.size}
                         data={props.traces[dset]}
+                        dataType={props.dataType}
                       />
                     )}
                 </Grid>

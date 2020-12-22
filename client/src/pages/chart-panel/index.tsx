@@ -205,7 +205,7 @@ function ChartPanel() {
                         <Grid container spacing={3}>
                           {traces[item].type === "line" && (
                             <Grid item md={12}>
-                              <LineChartSection {...traces[item]} />
+                              <LineChartSection source={traces[item]} dataType={`coverage`} />
                             </Grid>
                           )}
                           {traces[item].type === "histogram" && (
