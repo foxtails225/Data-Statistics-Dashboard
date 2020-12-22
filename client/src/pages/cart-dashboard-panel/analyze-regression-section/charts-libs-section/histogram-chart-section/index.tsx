@@ -4,8 +4,6 @@ import Plot from "react-plotly.js";
 import { useWindowSize } from "../../../../../utils/util";
 
 function HistogramChartSection(props: any) {
-  const size = useWindowSize();
-  
   return (
     <Plot
       data={[
@@ -23,8 +21,12 @@ function HistogramChartSection(props: any) {
             size: 15,
           },
         },
-        width: Number(props.size.width.replace('px', '')) * 0.4,
-        height: Number(props.size.height.replace('px', '')) * 0.3,
+        width: props.isSubChart
+          ? Number(props.size.width.replace("px", "")) * 0.56
+          : Number(props.size.width.replace('px', '')) * 0.4,
+        height: props.isSubChart
+          ? Number(props.size.width.replace("px", "")) * 0.33
+          : Number(props.size.height.replace('px', '')) * 0.3,
         showlegend: true,
         legend: {
           orientation: "h",

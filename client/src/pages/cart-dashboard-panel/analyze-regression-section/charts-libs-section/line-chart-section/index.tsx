@@ -33,8 +33,12 @@ function LineChartSection(props: any) {
             size: 15,
           },
         },
-        width: Number(props.size.width.replace('px', '')) * 0.38,
-        height: Number(props.size.height.replace('px', '')) * 0.3,
+        width: props.isSubChart
+          ? Number(props.size.width.replace("px", "")) * 0.52
+          : Number(props.size.width.replace("px", "")) * 0.38,
+        height: props.isSubChart
+          ? Number(props.size.width.replace("px", "")) * 0.33
+          : Number(props.size.height.replace("px", "")) * 0.3,
         showlegend: true,
         legend: {
           orientation: "h",

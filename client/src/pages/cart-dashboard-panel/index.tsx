@@ -7,7 +7,6 @@ import {
   IconButton,
   Dialog,
   DialogTitle as MuiDialogTitle,
-  DialogContent,
 } from "@material-ui/core";
 import { TransitionProps } from "@material-ui/core/transitions";
 import { Close as CloseIcon } from "@material-ui/icons";

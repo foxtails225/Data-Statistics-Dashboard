@@ -4,14 +4,12 @@ import Plot from "react-plotly.js";
 import { useWindowSize } from "../../../../../utils/util";
 
 function BoxChartSection(props: any) {
-  const size = useWindowSize();
-
   return (
     <Plot
       data={[
         {
           y: props.source.xTraces,
-          boxpoints: 'all',
+          boxpoints: "all",
           name: "",
           type: "box",
         },
@@ -24,8 +22,12 @@ function BoxChartSection(props: any) {
             size: 15,
           },
         },
-        width: Number(props.size.width.replace('px', '')) * 0.4,
-        height: Number(props.size.height.replace('px', '')) * 0.3,
+        width: props.isSubChart
+          ? Number(props.size.width.replace("px", "")) * 0.56
+          : Number(props.size.width.replace("px", "")) * 0.38,
+        height: props.isSubChart
+          ? Number(props.size.width.replace("px", "")) * 0.33
+          : Number(props.size.height.replace("px", "")) * 0.3,
         margin: {
           l: 60,
           b: 0,

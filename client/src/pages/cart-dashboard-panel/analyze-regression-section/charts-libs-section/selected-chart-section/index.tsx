@@ -39,14 +39,18 @@ function SelectedChartSection(props: any) {
           justify="center"
           alignItems="center"
           style={{
-            height: size.width ? size.width * 0.11 : "100%",
+            height: size.width
+              ? props.isSubChart
+                ? "100%"
+                : size.width * 0.11
+              : "100%",
             overflow: "auto",
           }}
         >
-          <Grid item md={10} style={{ textAlign: "center" }}>
-            <Typography variant="h6">{`Key Metrics`}</Typography>
-          </Grid>
           <Grid item md={10}>
+            <Typography variant="h6" style={{ textAlign: "center" }}>
+              {`Key Metrics`}
+            </Typography>
             <Table aria-label="simple table" size="small">
               <TableHead>
                 <TableRow>
@@ -73,13 +77,22 @@ function SelectedChartSection(props: any) {
           source={props.data}
           dataType={props.dataType}
           size={props.size}
+          isSubChart={props.isSubChart}
         />
       )}
       {props.id === 2 && (
-        <HistogramChartSection source={props.data} size={props.size} />
+        <HistogramChartSection
+          source={props.data}
+          size={props.size}
+          isSubChart={props.isSubChart}
+        />
       )}
       {props.id === 3 && (
-        <BoxChartSection source={props.data} size={props.size} />
+        <BoxChartSection
+          source={props.data}
+          size={props.size}
+          isSubChart={props.isSubChart}
+        />
       )}
     </>
   );

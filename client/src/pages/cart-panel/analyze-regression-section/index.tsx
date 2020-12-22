@@ -105,6 +105,21 @@ function AnalyzeRegressionSection(props: any) {
   }, []);
 
   useEffect(() => {
+    if (props.inclination !== "") {
+      const params = {
+        user_altitude: dot.x,
+        user_inclination: props.inclination,
+        system: props.system,
+        version: props.version,
+      };
+
+      getFileId(params)
+        .then((res: any) => setFileId(res.data))
+        .catch((err: any) => setFileId([]));
+    }
+  }, [props.inclination]);
+
+  useEffect(() => {
     setDot({
       x: props.data.plot_value[0].altitude,
       y: props.data.plot_value[0].value,

@@ -45,7 +45,7 @@ function AnalyzeRegressionSection(props: any) {
   const plot_rows = props.data.plot_value;
   const surface_rows: Array<any> = [];
   const zAxisLabel = props.data.label;
-
+  
   useEffect(() => {
     if (fileId.length > 0)
       getItems({
@@ -100,6 +100,21 @@ function AnalyzeRegressionSection(props: any) {
       .then((res: any) => setSystems(res.data))
       .catch((err: any) => setSystems([]));
   }, []);
+
+  useEffect(() => {
+    if (props.inclination !== "") {
+      const params = {
+        user_altitude: dot.x,
+        user_inclination: props.inclination,
+        system: props.system,
+        version: props.version,
+      };
+
+      getFileId(params)
+        .then((res: any) => setFileId(res.data))
+        .catch((err: any) => setFileId([]));
+    }
+  }, [props.inclination]);
 
   useEffect(() => {
     if (props.system !== "") {
@@ -158,12 +173,7 @@ function AnalyzeRegressionSection(props: any) {
       ref={chartEl}
       style={{ paddingRight: 0, paddingLeft: 0, overflowX: "hidden" }}
     >
-      <Grid
-        container
-        justify="center"
-        alignItems="center"
-        spacing={2}
-      >
+      <Grid container justify="center" alignItems="center" spacing={2}>
         <HeaderSection
           system={props.system}
           systems={systems}
