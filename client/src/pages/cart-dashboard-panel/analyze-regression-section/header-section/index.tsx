@@ -21,7 +21,7 @@ function HeaderSection(props: any) {
         justify="flex-start"
         alignItems="center"
         spacing={1}
-        style={{ backgroundColor: grey[300], minHeight: '80px' }}
+        style={{ backgroundColor: grey[300], minHeight: '6vh' }}
       >
         <Grid item md={3} style={{ marginLeft: 15 }}>
           <ToggleButtonGroup
