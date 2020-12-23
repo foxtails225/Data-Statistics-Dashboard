@@ -170,7 +170,7 @@ function ThreeViewSection(props: any) {
           ? Number(props.size.width.replace("px", "")) * 0.55
           : Number(props.size.width.replace("px", "")) * 0.4,
         height: props.isChart
-          ? Number(props.size.height.replace("px", "")) * 0.6
+          ? Number(props.size.height.replace("px", "")) * 0.4
           : Number(props.size.height.replace("px", "")) * 0.3,
         margin: {
           l: 0,
