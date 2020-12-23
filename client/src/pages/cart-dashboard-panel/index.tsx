@@ -142,6 +142,7 @@ function CartPanel(props: any) {
             inc={INIT_PARAMS.inclination}
             value={INIT_PARAMS.value}
             data={source}
+            source={dataSource}
             dataType={dataType}
             selectedItem={metric}
             text={text}

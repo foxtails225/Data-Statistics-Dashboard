@@ -102,8 +102,8 @@ function ChartsLibsSection(props: any) {
           PaperProps={{
             style: {
               height: Number(props.size.width.replace("px", "")) * 0.42,
-              maxWidth: Number(props.size.width.replace("px", "")) * 0.58,
-              minWidth: Number(props.size.width.replace("px", "")) * 0.58,
+              maxWidth: Number(props.size.width.replace("px", "")) * 0.6,
+              minWidth: Number(props.size.width.replace("px", "")) * 0.6,
             },
           }}
         >

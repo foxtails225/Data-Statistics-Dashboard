@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 
 import {
   Grid,
-  Button,
   Typography,
   FormControl,
   InputLabel,
@@ -203,6 +202,7 @@ function AnalyzeRegressionSection(props: any) {
               size="small"
               className={classes.formControl}
               fullWidth
+              disabled={viewMethod === "3d_view"}
             >
               <InputLabel id="demo-simple-select-outlined-label">{`System`}</InputLabel>
               <Select
@@ -286,7 +286,7 @@ function AnalyzeRegressionSection(props: any) {
             {viewMethod === "3d_view" ? (
               <Grid item md={12}>
                 <ThreeViewSection
-                  data={props.data}
+                  data={props.source}
                   equation={props.equation}
                   maxAltitude={props.maxAltitude}
                   alt={props.alt}
@@ -295,7 +295,7 @@ function AnalyzeRegressionSection(props: any) {
                   reset={reset}
                   isLegend={false}
                   isSub={true}
-                  plot_rows={plot_rows}
+                  plot_rows={props.source.plot_value}
                   surface_rows={surface_rows}
                   zAxisLabel={zAxisLabel}
                   checked={checked}

@@ -16,6 +16,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 
 import useStyles from "../../utils/styles";
+import { grey } from "@material-ui/core/colors";
 
 function OptionAddon(props: any) {
   const [isOpen, setIsOpen] = useState(false);
@@ -60,6 +61,12 @@ function OptionAddon(props: any) {
                         name="2d_view"
                         variant="outlined"
                         size="small"
+                        style={{
+                          backgroundColor:
+                            props.viewMethod !== "3d_view"
+                              ? grey[300]
+                              : "inherit",
+                        }}
                         onClick={(e) => props.onViewMethod(e)}
                         fullWidth
                       >
@@ -72,6 +79,12 @@ function OptionAddon(props: any) {
                         name="3d_view"
                         variant="outlined"
                         size="small"
+                        style={{
+                          backgroundColor:
+                            props.viewMethod === "3d_view"
+                              ? grey[300]
+                              : "inherit",
+                        }}
                         onClick={(e) => props.onViewMethod(e)}
                         fullWidth
                       >
@@ -83,37 +96,31 @@ function OptionAddon(props: any) {
                 </Grid>
                 <Divider orientation="vertical" flexItem />
                 <Grid item md={5} style={{ marginRight: 15 }}>
-                  {props.viewMethod === "2d_view" && (
-                    <FormControl
-                      variant="outlined"
-                      size="small"
-                      className={classes.formControl}
-                      fullWidth
+                  <FormControl
+                    variant="outlined"
+                    size="small"
+                    className={classes.formControl}
+                    fullWidth
+                  >
+                    <InputLabel id="demo-simple-select-outlined-label">{`Inclination`}</InputLabel>
+                    <Select
+                      labelId="inclination-label"
+                      id="inclination-label"
+                      value={props.inc}
+                      onChange={(e) => props.onInc(e.target.value)}
+                      label="Inclination"
+                      disabled={props.viewMethod === "3d_view"}
                     >
-                      <InputLabel id="demo-simple-select-outlined-label">{`Inclination`}</InputLabel>
-                      <Select
-                        labelId="inclination-label"
-                        id="inclination-label"
-                        value={props.inc}
-                        onChange={(e) => props.onInc(e.target.value)}
-                        label="Inclination"
-                      >
-                        <MenuItem value="" disabled>
-                          <em>{`None`}</em>
+                      <MenuItem value="" disabled>
+                        <em>{`None`}</em>
+                      </MenuItem>
+                      {props.incs.map((item: number) => (
+                        <MenuItem key={`inclination-${item}`} value={item}>
+                          {item}
                         </MenuItem>
-                        {props.incs.map((item: number) => (
-                          <MenuItem key={`inclination-${item}`} value={item}>
-                            {item}
-                          </MenuItem>
-                        ))}
-                      </Select>
-                    </FormControl>
-                  )}
-                  {props.viewMethod === "3d_view" && (
-                    <Typography>
-                      {`Inclination selection for 2D will go here..`}
-                    </Typography>
-                  )}
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
                 <Divider orientation="vertical" flexItem />
                 <Grid item md={3}>

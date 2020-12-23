@@ -221,7 +221,7 @@ function AnalyzeRegressionSection(props: any) {
                 {viewMethod === "3d_view" ? (
                   <Grid item md={12}>
                     <ThreeViewSection
-                      data={props.data}
+                      data={props.source}
                       equation={props.equation}
                       maxAltitude={props.maxAltitude}
                       alt={props.alt}
@@ -232,7 +232,7 @@ function AnalyzeRegressionSection(props: any) {
                       reset={reset}
                       isLegend={false}
                       isSub={true}
-                      plot_rows={plot_rows}
+                      plot_rows={props.source.plot_value}
                       surface_rows={surface_rows}
                       zAxisLabel={zAxisLabel}
                       checked={checked}
