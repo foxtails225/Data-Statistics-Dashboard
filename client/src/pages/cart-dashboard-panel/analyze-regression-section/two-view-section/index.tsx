@@ -6,7 +6,7 @@ function TwoViewSection(props: any) {
   const [config, setConfig] = useState([]);
   const plot_rows = props.plot_rows;
   const surface_rows = props.surface_rows;
-  
+
   useEffect(() => {
     setChecked(props.checked);
   }, [props.checked]);
@@ -16,7 +16,7 @@ function TwoViewSection(props: any) {
       return row[key];
     });
   };
-  
+
   useEffect(() => {
     let configData: any = [];
     const inclination = parseInt(props.inc);
@@ -152,7 +152,7 @@ function TwoViewSection(props: any) {
 
     setConfig(configData);
   }, [checked, plot_rows, surface_rows, props.inc]);
-  
+
   return (
     <Plot
       data={config}
@@ -160,8 +160,12 @@ function TwoViewSection(props: any) {
         autosize: true,
         showlegend: false,
         hovermode: "closest",
-        width: Number(props.size.width.replace('px', '')) * 0.4,
-        height: Number(props.size.height.replace('px', '')) * 0.3,
+        width: props.isChart
+          ? Number(props.size.width.replace("px", "")) * 0.55
+          : Number(props.size.width.replace("px", "")) * 0.4,
+        height: props.isChart
+          ? Number(props.size.height.replace("px", "")) * 0.6
+          : Number(props.size.height.replace("px", "")) * 0.3,
         margin: {
           l: 60,
           r: 15,

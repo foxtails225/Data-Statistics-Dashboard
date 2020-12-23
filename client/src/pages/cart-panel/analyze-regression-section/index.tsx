@@ -266,6 +266,7 @@ function AnalyzeRegressionSection(props: any) {
           viewMethod={viewMethod}
           inc={props.inclination}
           incs={props.incs}
+          isDash={false}
           onInc={(value: any) => props.onInc(value)}
           onChecked={handleCheck}
           resetPlot={() => setReset(!reset)}

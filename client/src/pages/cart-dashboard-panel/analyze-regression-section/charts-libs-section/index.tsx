@@ -32,7 +32,6 @@ function ChartsLibsSection(props: any) {
   const [subChart, setSubChart] = useState(null as any);
   const [isOpen, setIsOpen] = useState(false);
   const [index, setIndex] = useState(0);
-  const [size, setSize] = useState({});
   const classes = useStyles();
 
   useEffect(() => {}, [subChart]);

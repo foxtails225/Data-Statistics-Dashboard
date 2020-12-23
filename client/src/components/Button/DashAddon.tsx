@@ -7,7 +7,12 @@ import Selection from "../Select";
 function DashAddon(props: any) {
   return (
     <Grid item md={12}>
-      <Grid container justify="flex-start" alignItems="center">
+      <Grid
+        container
+        justify="flex-start"
+        alignItems="center"
+        style={{ position: "relative" }}
+      >
         <Grid item md={1}>
           <IconButton
             id={props.index}
@@ -29,8 +34,13 @@ function DashAddon(props: any) {
         <Grid item md={10} />
         <Grid item md={1}>
           <IconButton
+            style={{
+              padding: 0,
+              position: "absolute",
+              right: 0,
+              top: 10,
+            }}
             onClick={() => props.onSubChart(props.index)}
-            style={{ padding: 0 }}
           >
             <LaunchIcon />
           </IconButton>

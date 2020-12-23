@@ -166,8 +166,12 @@ function ThreeViewSection(props: any) {
       data={config}
       layout={{
         autosize: true,
-        width: size.width * 0.3,
-        height: size.width > 1800 ? size.width * 0.16: size.width * 0.11,
+        width: props.isChart
+          ? Number(props.size.width.replace("px", "")) * 0.55
+          : Number(props.size.width.replace("px", "")) * 0.4,
+        height: props.isChart
+          ? Number(props.size.height.replace("px", "")) * 0.6
+          : Number(props.size.height.replace("px", "")) * 0.3,
         margin: {
           l: 0,
           r: 0,
