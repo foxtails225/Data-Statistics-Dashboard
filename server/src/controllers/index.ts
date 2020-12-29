@@ -123,7 +123,7 @@ export const getItem = async (req: Request, res: Response): Promise<void> => {
 
   if (fileId.length === 1) {
     sql =
-      `select a.simulation_time, a.gap_duration from stk_report as a inner join file_id_usat as b on a.file_id = b.id where b.id` +
+      `select a.simulation_time, a.gap_duration from stk_report as a inner join file_id_usat as b on a.file_id = b.id where b.id=` +
       JSON.parse(fileId[0]).id +
       ` and b.is_active=1 order by a.simulation_time`;
   } else {

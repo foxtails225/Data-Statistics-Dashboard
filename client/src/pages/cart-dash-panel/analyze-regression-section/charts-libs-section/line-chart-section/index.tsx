@@ -1,11 +1,7 @@
 import React from "react";
 import Plot from "react-plotly.js";
 
-import { useWindowSize } from "../../../../../utils/util";
-
-function LineChartSection(props: any) {
-  const size = useWindowSize();
-
+const LineChartSection: React.FC<any> = (props: any) => {
   return (
     <Plot
       data={[
@@ -86,6 +82,6 @@ function LineChartSection(props: any) {
       config={{ displayModeBar: false }}
     />
   );
-}
+};
 
 export default LineChartSection;

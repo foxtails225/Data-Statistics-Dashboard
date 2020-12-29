@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Plot from "react-plotly.js";
 
-function TwoViewSection(props: any) {
+const TwoViewSection: React.FC<any> = (props: any) => {
   const [checked, setChecked] = useState(props.checked);
   const [config, setConfig] = useState([]);
   const plot_rows = props.plot_rows;
@@ -11,12 +11,9 @@ function TwoViewSection(props: any) {
     setChecked(props.checked);
   }, [props.checked]);
 
-  const unpack = (rows: Array<any>, key: any) => {
-    return rows.map(function (row: any) {
-      return row[key];
-    });
-  };
-
+  const unpack = (rows: Array<any>, key: any) =>
+    rows.map((row: any) => row[key]);
+  
   useEffect(() => {
     let configData: any = [];
     const inclination = parseInt(props.inc);
@@ -161,11 +158,11 @@ function TwoViewSection(props: any) {
         showlegend: false,
         hovermode: "closest",
         width: props.isChart
-          ? Number(props.size.width.replace("px", "")) * 0.55
-          : Number(props.size.width.replace("px", "")) * 0.4,
+          ? parseFloat(props.size.width.replace("px", "")) * 0.55
+          : parseFloat(props.size.width.replace("px", "")) * 0.4,
         height: props.isChart
-          ? Number(props.size.height.replace("px", "")) * 0.55
-          : Number(props.size.height.replace("px", "")) * 0.3,
+          ? parseFloat(props.size.height.replace("px", "")) * 0.55
+          : parseFloat(props.size.height.replace("px", "")) * 0.3,
         margin: {
           l: 60,
           r: 15,
@@ -189,6 +186,6 @@ function TwoViewSection(props: any) {
       onDoubleClick={() => props.onClick()}
     />
   );
-}
+};
 
 export default TwoViewSection;

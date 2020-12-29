@@ -130,23 +130,13 @@ function ChartPanel() {
                 </Typography>
               }
               action={
-                <>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setIsOpenDash(true)}
-                    style={{ marginRight: 10 }}
-                  >
-                    {"Open Dashboard"}
-                  </Button>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={() => setIsOpen(true)}
-                  >
-                    {"Open Chart"}
-                  </Button>
-                </>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => setIsOpen(true)}
+                >
+                  {"Open Chart"}
+                </Button>
               }
             />
             <CardContent className="ml-3 mr-3">
@@ -204,7 +194,10 @@ function ChartPanel() {
                         <Grid container spacing={3}>
                           {traces[item].type === "line" && (
                             <Grid item md={12}>
-                              <LineChartSection source={traces[item]} dataType={`coverage`} />
+                              <LineChartSection
+                                source={traces[item]}
+                                dataType={`coverage`}
+                              />
                             </Grid>
                           )}
                           {traces[item].type === "histogram" && (

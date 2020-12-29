@@ -28,6 +28,11 @@ import {
 } from "../../../API";
 import useStyles from "../../../utils/styles";
 
+interface IDot {
+  x: number;
+  y: number;
+}
+
 const INIT_FILE_ID = [{ id: 1620 }, { id: 1729 }];
 
 const INIT_CHECK_STATUS = {
@@ -50,20 +55,20 @@ const Transition = React.forwardRef(function Transition(
 const AnalyzeRegressionSection = (props: any) => {
   const [viewMethod, setViewMethod] = useState<string>("2d_view");
   const [dataSet, setDataSet] = useState<string>("as_needed_handoff");
-  const [systems, setSystems] = useState([] as any);
-  const [versions, setVersions] = useState<Array<any>>([]);
+  const [systems, setSystems] = useState<string[]>([]);
+  const [versions, setVersions] = useState<number[]>([]);
   const [db, setDb] = useState<string>("staging_db");
-  const [dot, setDot] = useState({ x: props.alt, y: props.value } as any);
+  const [dot, setDot] = useState<IDot>({ x: props.alt, y: props.value });
   const [fileId, setFileId] = useState(INIT_FILE_ID);
   const [checked, setChecked] = useState(INIT_CHECK_STATUS);
-  const [traces, setTraces] = useState({} as any);
+  const [traces, setTraces] = useState<any>({});
   const [reset, setReset] = useState(false);
   const [count, setCount] = useState({ width: "0px", height: "0px" });
   const [isChart, setIsChart] = useState(false);
   const classes = useStyles();
-  const chartEl: any = useRef();
+  const chartEl = useRef<any>(null);
   const plot_rows = props.data.plot_value;
-  const surface_rows: Array<any> = [];
+  const surface_rows: number[] = [];
   const zAxisLabel = props.data.label;
 
   useEffect(() => {

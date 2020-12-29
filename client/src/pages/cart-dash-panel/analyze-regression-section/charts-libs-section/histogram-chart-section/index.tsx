@@ -1,9 +1,7 @@
 import React from "react";
 import Plot from "react-plotly.js";
 
-import { useWindowSize } from "../../../../../utils/util";
-
-function HistogramChartSection(props: any) {
+const HistogramChartSection: React.FC<any> = (props: any) => {
   return (
     <Plot
       data={[
@@ -15,7 +13,7 @@ function HistogramChartSection(props: any) {
       ]}
       layout={{
         title: {
-          text: `<b>${props.source.title.split('_').join(' ')}</b>`,
+          text: `<b>${props.source.title.split("_").join(" ")}</b>`,
           font: {
             family: "Roboto",
             size: 15,
@@ -23,10 +21,10 @@ function HistogramChartSection(props: any) {
         },
         width: props.isSubChart
           ? Number(props.size.width.replace("px", "")) * 0.56
-          : Number(props.size.width.replace('px', '')) * 0.4,
+          : Number(props.size.width.replace("px", "")) * 0.4,
         height: props.isSubChart
           ? Number(props.size.width.replace("px", "")) * 0.33
-          : Number(props.size.height.replace('px', '')) * 0.3,
+          : Number(props.size.height.replace("px", "")) * 0.3,
         showlegend: true,
         legend: {
           orientation: "h",
@@ -68,6 +66,6 @@ function HistogramChartSection(props: any) {
       config={{ displayModeBar: false }}
     />
   );
-}
+};
 
 export default HistogramChartSection;

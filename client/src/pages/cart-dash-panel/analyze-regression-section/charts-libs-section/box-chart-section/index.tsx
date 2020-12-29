@@ -1,9 +1,7 @@
 import React from "react";
 import Plot from "react-plotly.js";
 
-import { useWindowSize } from "../../../../../utils/util";
-
-function BoxChartSection(props: any) {
+const BoxChartSection: React.FC<any> = (props: any) => {
   return (
     <Plot
       data={[
@@ -49,6 +47,6 @@ function BoxChartSection(props: any) {
       config={{ displayModeBar: false }}
     />
   );
-}
+};
 
 export default BoxChartSection;

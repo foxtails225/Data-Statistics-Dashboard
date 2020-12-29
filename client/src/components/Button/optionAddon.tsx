@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import { CSVLink } from "react-csv";
 import {
   Grid,
   Button,
@@ -19,7 +20,7 @@ import LaunchIcon from "@material-ui/icons/Launch";
 import useStyles from "../../utils/styles";
 import { grey } from "@material-ui/core/colors";
 
-function OptionAddon(props: any) {
+const OptionAddon: React.FC<any> = (props: any) => {
   const [isOpen, setIsOpen] = useState(false);
   const classes = useStyles();
 
@@ -46,7 +47,7 @@ function OptionAddon(props: any) {
           </IconButton>
         </Typography>
       </Grid>
-      <Grid item md={7} />
+      <Grid item md={6} />
       {props.isDash && (
         <Grid item md={1}>
           <IconButton
@@ -59,6 +60,25 @@ function OptionAddon(props: any) {
             onClick={() => props.onChart()}
           >
             <LaunchIcon />
+          </IconButton>
+          <IconButton
+            style={{
+              padding: 0,
+              position: "absolute",
+              right: 50,
+              top: 12,
+            }}
+          >
+            <CSVLink
+              data={props.source.plot_value}
+              filename={`Plot-${Date.now()}.csv`}
+              className="btn btn-primary"
+              target="_blank"
+            >
+              <Typography component="p" variant="body2">
+                {"csv"}
+              </Typography>
+            </CSVLink>
           </IconButton>
         </Grid>
       )}
@@ -182,6 +202,6 @@ function OptionAddon(props: any) {
       )}
     </Grid>
   );
-}
+};
 
 export default OptionAddon;

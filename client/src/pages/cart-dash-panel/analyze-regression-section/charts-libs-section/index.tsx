@@ -26,17 +26,17 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="left" ref={ref} {...props} />;
 });
 
-const ChartsLibsSection = (props: {
+const ChartsLibsSection: React.FC<any> = (props: {
   dataSet: string;
   size: { width: string; height: string };
   traces: any;
   dataType: string;
 }) => {
-  const [selected, setSelected] = useState([1, 2, 3] as any);
+  const [selected, setSelected] = useState<number[]>([1, 2, 3]);
   const [anchorEl, setAnchorEl] = useState(null);
-  const [subChart, setSubChart] = useState(null as any);
+  const [subChart, setSubChart] = useState<number | null>(null);
   const [isOpen, setIsOpen] = useState(false);
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState<number>(0);
   const classes = useStyles();
 
   const handleSelected = (id: any) => {
@@ -71,6 +71,12 @@ const ChartsLibsSection = (props: {
                   selected={selected}
                   anchorEl={anchorEl}
                   index={idx}
+                  source={
+                    props.traces[dset] &&
+                    Object.keys(props.traces[dset]).length > 0
+                      ? props.traces[dset]
+                      : null
+                  }
                   onIndex={(value: any) => setIndex(value)}
                   onAnchorEl={(value: any) => setAnchorEl(value)}
                   onSelected={(value: any) => handleSelected(value)}

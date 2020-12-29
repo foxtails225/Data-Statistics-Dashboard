@@ -1,10 +1,45 @@
-import React from "react";
-import { Grid, IconButton } from "@material-ui/core";
+import React, { useState, useEffect } from "react";
+import { CSVLink } from "react-csv";
+import { Grid, IconButton, Typography } from "@material-ui/core";
 import LaunchIcon from "@material-ui/icons/Launch";
 import DehazeIcon from "@material-ui/icons/Dehaze";
 import Selection from "../Select";
 
-function DashAddon(props: any) {
+interface IDataSource {
+  xTrace: number;
+  yTrace?: number;
+  avgTrace?: number;
+}
+
+const DashAddon: React.FC<any> = (props: any) => {
+  const [dataSource, setDataSource] = useState<IDataSource[]>([]);
+  const [title, setTitle] = useState<string>("");
+
+  useEffect(() => {
+    if (props.source) {
+      let data: Array<any> = [];
+      let csvTitle: string = props.source.title.split(" ").join("-");
+
+      if (props.source.type === "line") {
+        data = props.source.xTraces.map((item: number, idx: number) => {
+          return {
+            xTrace: item,
+            yTrace: props.source.yTraces[idx],
+            avgTrace: props.source.avgTraces[idx],
+          };
+        });
+      } else {
+        data = props.source.xTraces.map((item: number) => {
+          return {
+            xTrace: item,
+          };
+        });
+      }
+      setTitle(csvTitle);
+      setDataSource(data);
+    }
+  }, [props.source]);
+
   return (
     <Grid item md={12}>
       <Grid
@@ -44,10 +79,36 @@ function DashAddon(props: any) {
           >
             <LaunchIcon />
           </IconButton>
+          <IconButton
+            style={{
+              padding: 0,
+              position: "absolute",
+              right: 50,
+              top: 12,
+            }}
+          >
+            {props.source && (
+              <CSVLink
+                data={dataSource}
+                filename={`${title}-${Date.now()}.csv`}
+                className="btn btn-primary"
+                target="_blank"
+              >
+                <Typography component="p" variant="body2">
+                  {"csv"}
+                </Typography>
+              </CSVLink>
+            )}
+            {!props.source && (
+              <Typography component="p" variant="body2">
+                {"csv"}
+              </Typography>
+            )}
+          </IconButton>
         </Grid>
       </Grid>
     </Grid>
   );
-}
+};
 
 export default DashAddon;

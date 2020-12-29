@@ -8,15 +8,21 @@ import {
   TableCell,
   TableBody,
 } from "@material-ui/core";
-
 import LineChartSection from "../line-chart-section";
 import HistogramChartSection from "../histogram-chart-section";
 import BoxChartSection from "../box-chart-section";
 import { useWindowSize } from "../../../../../utils/util";
-
-function createData(name: String, value: String) {
-  return { name, value };
+interface TRowAttribute {
+  name: string;
+  value: string;
 }
+
+const createData: (name: string, value: string) => TRowAttribute = (
+  name: string,
+  value: string
+) => {
+  return { name, value };
+};
 
 const rows = [
   createData("Average (sec)", "xx"),
@@ -28,7 +34,7 @@ const rows = [
   createData("Average # Gaps Per Day", "xx"),
 ];
 
-function SelectedChartSection(props: any) {
+const SelectedChartSection: React.FC<any> = (props: any) => {
   const size = useWindowSize();
 
   return (
@@ -96,6 +102,6 @@ function SelectedChartSection(props: any) {
       )}
     </>
   );
-}
+};
 
 export default SelectedChartSection;
