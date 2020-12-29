@@ -21,9 +21,9 @@ function HeaderSection(props: any) {
         justify="flex-start"
         alignItems="center"
         spacing={1}
-        style={{ backgroundColor: grey[300], minHeight: '6vh' }}
+        style={{ backgroundColor: grey[300], minHeight: "6vh" }}
       >
-        <Grid item md={3} style={{ marginLeft: 15 }}>
+        <Grid item md={2} style={{ marginLeft: 15 }}>
           <ToggleButtonGroup
             value={props.dataSet}
             onChange={(e) => props.onClick(e)}
@@ -72,7 +72,7 @@ function HeaderSection(props: any) {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item md={2}>
+        <Grid item md={1}>
           <FormControl
             variant="outlined"
             size="small"
@@ -101,7 +101,31 @@ function HeaderSection(props: any) {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item md={5} />
+        <Grid item md={2}>
+          <FormControl
+            variant="outlined"
+            size="small"
+            className={classes.formControl}
+            fullWidth
+          >
+            <InputLabel id="database-select-label">{`DataBase`}</InputLabel>
+            <Select
+              labelId="database-select-label"
+              id="database-select-outlined"
+              value={props.db}
+              onChange={(e) => props.onDb(e.target.value)}
+              label="DataBase"
+            >
+              <MenuItem key="staging_db" value="staging_db">
+                {`Staging Database`}
+              </MenuItem>
+              <MenuItem key="product_db" value="product_db">
+                {`Production Database`}
+              </MenuItem>
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item md={4} />
       </Grid>
     </Grid>
   );

@@ -24,6 +24,7 @@ import {
   getSystems,
   getSystemVersion,
   getFileId,
+  changeDB,
 } from "../../../API";
 import useStyles from "../../../utils/styles";
 
@@ -46,11 +47,12 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="left" ref={ref} {...props} />;
 });
 
-function AnalyzeRegressionSection(props: any) {
-  const [viewMethod, setViewMethod] = useState("2d_view");
-  const [dataSet, setDataSet] = useState("as_needed_handoff" as any);
+const AnalyzeRegressionSection = (props: any) => {
+  const [viewMethod, setViewMethod] = useState<string>("2d_view");
+  const [dataSet, setDataSet] = useState<string>("as_needed_handoff");
   const [systems, setSystems] = useState([] as any);
-  const [versions, setVersions] = useState([] as any);
+  const [versions, setVersions] = useState<Array<any>>([]);
+  const [db, setDb] = useState<string>("staging_db");
   const [dot, setDot] = useState({ x: props.alt, y: props.value } as any);
   const [fileId, setFileId] = useState(INIT_FILE_ID);
   const [checked, setChecked] = useState(INIT_CHECK_STATUS);
@@ -135,6 +137,10 @@ function AnalyzeRegressionSection(props: any) {
   }, [props.inclination]);
 
   useEffect(() => {
+    changeDB({ database: db }).catch((err) => setDb("staging_db"));
+  }, [db]);
+
+  useEffect(() => {
     if (props.system !== "") {
       getSystemVersion({ system: props.system })
         .then((res: any) => setVersions(res.data))
@@ -187,18 +193,16 @@ function AnalyzeRegressionSection(props: any) {
 
   return (
     <>
-      <DialogContent
-        dividers={true}
-        ref={chartEl}
-        style={{ paddingRight: 0, paddingLeft: 0, overflowX: "hidden" }}
-      >
+      <CardContent ref={chartEl} className={classes.cartCardContent}>
         <Grid container justify="center" alignItems="center" spacing={2}>
           <HeaderSection
+            db={db}
             system={props.system}
             systems={systems}
             version={props.version}
             versions={versions}
             dataSet={dataSet}
+            onDb={(value: string) => setDb(value)}
             onSystem={(value: any) => props.onSystem(value)}
             onVersion={(value: any) => props.onVersion(value)}
             onClick={handleDataSetClick}
@@ -305,7 +309,7 @@ function AnalyzeRegressionSection(props: any) {
             />
           )}
         </Grid>
-      </DialogContent>
+      </CardContent>
       {isChart && (
         <Dialog
           open={isChart}
@@ -313,9 +317,9 @@ function AnalyzeRegressionSection(props: any) {
           onClose={() => setIsChart(true)}
           PaperProps={{
             style: {
-              height: Number(count.width.replace("px", "")) * 0.42,
-              maxWidth: Number(count.width.replace("px", "")) * 0.6,
-              minWidth: Number(count.width.replace("px", "")) * 0.6,
+              height: parseFloat(count.width.replace("px", "")) * 0.42,
+              maxWidth: parseFloat(count.width.replace("px", "")) * 0.6,
+              minWidth: parseFloat(count.width.replace("px", "")) * 0.6,
             },
           }}
         >
@@ -385,6 +389,6 @@ function AnalyzeRegressionSection(props: any) {
       )}
     </>
   );
-}
+};
 
 export default AnalyzeRegressionSection;

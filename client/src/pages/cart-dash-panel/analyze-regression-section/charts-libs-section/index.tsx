@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Props } from "react";
 import {
   Grid,
   Card,
@@ -16,7 +16,7 @@ import { Close as CloseIcon } from "@material-ui/icons";
 
 import DashAddon from "../../../../components/Button/DashAddon";
 import SelectedChartSection from "./selected-chart-section";
-import * as Constants from "../../../../constants";
+import { MENU_ITEMS } from "../../../../constants";
 import useStyles from "../../../../utils/styles";
 
 const Transition = React.forwardRef(function Transition(
@@ -26,15 +26,18 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="left" ref={ref} {...props} />;
 });
 
-function ChartsLibsSection(props: any) {
+const ChartsLibsSection = (props: {
+  dataSet: string;
+  size: { width: string; height: string };
+  traces: any;
+  dataType: string;
+}) => {
   const [selected, setSelected] = useState([1, 2, 3] as any);
-  const [anchorEl, setAnchorEl] = useState(null as any);
+  const [anchorEl, setAnchorEl] = useState(null);
   const [subChart, setSubChart] = useState(null as any);
   const [isOpen, setIsOpen] = useState(false);
   const [index, setIndex] = useState(0);
   const classes = useStyles();
-
-  useEffect(() => {}, [subChart]);
 
   const handleSelected = (id: any) => {
     setSelected(
@@ -45,11 +48,12 @@ function ChartsLibsSection(props: any) {
     );
     setAnchorEl(null);
   };
-  
+
   return (
     <>
-      {selected.map((item: any, idx: number) => {
-        let dset = Constants.MENU_ITEMS[props.dataSet][item].dataset;
+      {selected.map((item: number, idx: number) => {
+        let dset = MENU_ITEMS[props.dataSet][item].dataset;
+
         return (
           <Grid
             item
@@ -109,7 +113,7 @@ function ChartsLibsSection(props: any) {
           <CssBaseline />
           <MuiDialogTitle>
             <Typography component="strong" variant="h6">
-              {Constants.MENU_ITEMS[props.dataSet][subChart].name}
+              {MENU_ITEMS[props.dataSet][subChart].name}
             </Typography>
             <IconButton
               aria-label="Close"
@@ -122,12 +126,11 @@ function ChartsLibsSection(props: any) {
           <hr />
           <DialogContent>
             {props.traces[
-              Constants.MENU_ITEMS[props.dataSet][selected[subChart]].dataset
+              MENU_ITEMS[props.dataSet][selected[subChart]].dataset
             ] &&
               Object.keys(
                 props.traces[
-                  Constants.MENU_ITEMS[props.dataSet][selected[subChart]]
-                    .dataset
+                  MENU_ITEMS[props.dataSet][selected[subChart]].dataset
                 ]
               ).length > 0 && (
                 <SelectedChartSection
@@ -137,8 +140,7 @@ function ChartsLibsSection(props: any) {
                   isSubChart={true}
                   data={
                     props.traces[
-                      Constants.MENU_ITEMS[props.dataSet][selected[subChart]]
-                        .dataset
+                      MENU_ITEMS[props.dataSet][selected[subChart]].dataset
                     ]
                   }
                 />
@@ -148,6 +150,6 @@ function ChartsLibsSection(props: any) {
       )}
     </>
   );
-}
+};
 
 export default ChartsLibsSection;

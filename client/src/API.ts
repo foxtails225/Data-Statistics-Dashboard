@@ -64,3 +64,14 @@ export const getFileId = async (params: Object) => {
     throw new Error(error);
   }
 };
+
+export const changeDB = async (params: { [key: string]: string }) => {
+  try {
+    const res: AxiosResponse = await axios.get(baseUrl + "/change-db", {
+      params,
+    });
+    return res;
+  } catch (error) {
+    throw new Error(error);
+  }
+};

@@ -14,6 +14,18 @@ const useStyles = makeStyles((theme) => ({
     textDecoration: "none",
   },
 
+  cartCard: {
+    padding: 0,
+  },
+
+  cartCardContent: {
+    paddingRight: 0,
+    paddingLeft: 0,
+    overflowX: "hidden",
+    height: "82vh",
+    backgroundColor: grey[50]
+  },
+
   chartCard: {
     padding: theme.spacing(3),
   },

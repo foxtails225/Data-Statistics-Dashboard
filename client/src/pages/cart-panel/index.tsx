@@ -66,14 +66,14 @@ function CartPanel(props: any) {
     })
       .then((res: any) => {
         setTerrestrial(res.data.terrestrial);
-        setSource(res.data.data.data);
-        setDataSource(res.data.data.data);
-        setMaxAltitude(res.data.data.maxAltitude);
-        setCoefficients(res.data.data.coefficients);
-        setText(res.data.data.text);
+        setSource(res.data.data);
+        setDataSource(res.data.data);
+        setMaxAltitude(res.data.maxAltitude);
+        setCoefficients(res.data.coefficients);
+        setText(res.data.text);
 
-        if (Object.keys(res.data.data.data).includes("plot_value")) {
-          let tmp = res.data.data.data.plot_value.map(
+        if (Object.keys(res.data.data).includes("plot_value")) {
+          let tmp = res.data.data.plot_value.map(
             (item: any) => item["inclination"]
           );
           let uniqueArray: Array<any> = [...new Set(tmp)];

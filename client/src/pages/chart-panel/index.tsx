@@ -27,7 +27,6 @@ import LineChartSection from "./line-chart-section";
 import HistogramChartSection from "./histogram-chart-section";
 import BoxChartSection from "./box-chart-section";
 import TerrestrialHeatMap from "./terrestrial-heatmap-chart";
-import CartDashBoardPanel from "../cart-dashboard-panel";
 import CartPanel from "../cart-panel";
 
 const INIT_MENUS = [
@@ -78,7 +77,7 @@ function ChartPanel() {
       getItems(selected)
         .then((res) => {
           Object.keys(res.data).map((el) => {
-            let ctype: String = res.data[el]["type"];
+            let ctype: string = res.data[el]["type"];
             let gaps: Array<any> = [];
             let durations: Array<any> = [];
             let avgs: Array<any> = [];
@@ -236,10 +235,6 @@ function ChartPanel() {
         </Container>
       </Grid>
       <CartPanel isOpen={isOpen} onClose={() => setIsOpen(false)} />
-      <CartDashBoardPanel
-        isOpen={isOpenDash}
-        onClose={() => setIsOpenDash(false)}
-      />
     </>
   );
 }
