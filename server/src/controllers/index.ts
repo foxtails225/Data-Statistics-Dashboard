@@ -7,7 +7,7 @@ import { testData, cartData } from "../data/test";
 let db = mysql.createPool({
   host: env.NODE_ENV === "production" ? "40.79.17.32" : "127.0.0.1",
   user: "root",
-  password: env.NODE_ENV === "production" ? "1qaz2wxx" : "",
+  password: env.NODE_ENV === "production" ? "1qaz2wsx" : "",
   database: "cartdb",
   port: 3306,
 });
@@ -19,7 +19,7 @@ export const changeDB = async (req: Request, res: Response): Promise<void> => {
     db = mysql.createPool({
       host: env.NODE_ENV === "production" ? "40.79.17.32" : "127.0.0.1",
       user: "root",
-      password: env.NODE_ENV === "production" ? "1qaz2wxx" : "",
+      password: env.NODE_ENV === "production" ? "1qaz2wsx" : "",
       database: "cartdb_pro",
       port: 3306,
     });
