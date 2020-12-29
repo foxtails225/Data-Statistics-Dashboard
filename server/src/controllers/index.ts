@@ -5,16 +5,16 @@ import { getAvgs } from "../utils";
 import { testData, cartData } from "../data/test";
 
 let db = mysql.createPool({
-  host: "127.0.0.1",
+  host: env.NODE_ENV === "production" ? "40.79.17.32" : "127.0.0.1",
   user: "root",
-  password: "",
+  password: env.NODE_ENV === "production" ? "1qaz2wxx" : "",
   database: "cartdb",
   port: 3306,
 });
 
 export const changeDB = async (req: Request, res: Response): Promise<void> => {
   const { database } = req.query;
-  
+
   if (database === "product_db")
     db = mysql.createPool({
       host: env.NODE_ENV === "production" ? "40.79.17.32" : "127.0.0.1",
