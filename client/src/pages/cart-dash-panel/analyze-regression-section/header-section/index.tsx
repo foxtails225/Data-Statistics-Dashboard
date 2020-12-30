@@ -131,7 +131,7 @@ const HeaderSection: React.FC<any> = (props: any) => {
             variant="outlined"
             size="small"
             className={classes.formControl}
-            style={{ width: "30%" }}
+            style={{ width: "30%", marginLeft: 15 }}
           >
             <InputLabel id="demo-simple-select-outlined-label">{`Version`}</InputLabel>
             <Select
