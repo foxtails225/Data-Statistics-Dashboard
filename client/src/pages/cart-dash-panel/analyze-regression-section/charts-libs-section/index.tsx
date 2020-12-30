@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Props } from "react";
+import React, { useState } from "react";
 import {
   Grid,
   Card,

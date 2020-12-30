@@ -20,11 +20,12 @@ const CartDashPanel: React.FC = () => {
   const [inclination, setInclination] = useState<string>("");
   const [incs, setIncs] = useState<Array<any>>([]);
   const [dataType, setDataType] = useState<string>("coverage");
-  const [isLoading, setIsLoading] = useState(true);
+  const [isRefresh, setIsRefresh] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
   const [terrestrial, setTerrestrial] = useState({});
   const [maxAltitude, setMaxAltitude] = useState(0);
   const [coefficients, setCoefficients] = useState({} as any);
-  const [text, setText] = useState("");
+  const [text, setText] = useState<string>("");
   const deepDive = "system1/coverage";
   const metric = deepDive.split("/")[1];
   const missionType = "orbital";
@@ -64,12 +65,14 @@ const CartDashPanel: React.FC = () => {
       .then(() => {
         setIsLoading(false);
       });
-  }, [system, version, dataType]);
+    setIsRefresh(false);
+  }, [system, version, dataType, isRefresh]);
 
   useEffect(() => {
     if (Object.keys(dataSource).includes("plot_value")) {
+      let user_inclination: number | string = inclination !== "" ? inclination : 30;
       let data = dataSource.plot_value.filter(
-        (item: any) => item.inclination === inclination
+        (item: any) => item.inclination === user_inclination
       );
       setSource((prevState: any) => ({ ...prevState, plot_value: data }));
     }
@@ -84,7 +87,7 @@ const CartDashPanel: React.FC = () => {
     // return eqn(coefs, altitude, inclination);
     return inc;
   };
-
+  console.log(source);
   return (
     <Grid container>
       <Container component="main" maxWidth="xl">
@@ -93,7 +96,7 @@ const CartDashPanel: React.FC = () => {
           <CardHeader
             title={
               <Typography component="h1" variant="h5" style={{ margin: 5 }}>
-                {`CART Integration Panel (Prototype)`}
+                {`CAESAR Data Dashboard`}
               </Typography>
             }
           />
@@ -114,6 +117,8 @@ const CartDashPanel: React.FC = () => {
                 version={version}
                 inclination={inclination}
                 incs={incs}
+                isRefresh={isRefresh}
+                onRefresh={() => setIsRefresh(true)}
                 onInc={(value: any) => setInclination(value)}
                 onSystem={(value: any) => setSystem(value)}
                 onVersion={(value: any) => setVersion(value)}

@@ -1,12 +1,19 @@
 import express, { Express } from "express";
 import path from "path";
 import cors from "cors";
+import bodyParser from "body-parser";
 import itemsRouter from "./routes";
 
 const app: Express = express();
 
 const PORT: string | number = process.env.PORT || 7000;
 
+app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 app.use(cors());
 app.use(express.static("./build"));
 app.use(itemsRouter);

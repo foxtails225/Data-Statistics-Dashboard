@@ -264,3 +264,104 @@ export const getFildId = async (req: Request, res: Response): Promise<void> => {
     throw error;
   }
 };
+
+export const deleteRecord = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  const { system, version, alt, inc, fileId } = req.body;
+  let sqls: string[] = [];
+
+  sqls.push(`delete from file_id_usat where system_id=${system} and system_attribute_version_id=${version} and \
+      user_altitude=${alt} and user_inclination=${inc} and is_active=1 and id=${fileId[1].id}`);
+  sqls.push(`delete from stk_report\ 
+      where file_id=${fileId[1].id} and is_active=1`);
+  sqls.push(`delete from stk_report_summary_stats\ 
+      where file_id=${fileId[1].id} and is_active=1`);
+  sqls.push(`delete from stk_pointing_report_summary_stats\
+       where file_id=${fileId[1].id} and is_active=1`);
+
+  db.getConnection((err: MysqlError, connection: PoolConnection) => {
+    if (err) {
+      connection.release();
+      console.log(" Error getting mysql_pool connection: " + err);
+      throw err;
+    }
+
+    sqls.map((sql: string) => {
+      connection.query(sql, (err, data) => {
+        if (err) throw err;
+      });
+    });
+
+    res.status(200).send("success");
+    connection.release();
+  });
+};
+
+export const deleteAll = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { system, version } = req.body;
+    let sqls: string[] = [];
+
+    sqls.push(`delete from stk_report where file_id in \
+      (select id from file_id_usat where system_id=${system} and system_attribute_version_id=${version} and is_active=1)`);
+    sqls.push(`delete from stk_report_summary_stats where file_id in \
+      (select id from file_id_usat where system_id=${system} and system_attribute_version_id=${version} and is_active=1)`);
+    sqls.push(`delete from stk_pointing_report_summary_stats where file_id in \
+      (select id from file_id_usat where system_id=${system} and system_attribute_version_id=${version} and is_active=1)`);
+    sqls.push(
+      `delete from file_id_usat where system_id=${system} and system_attribute_version_id=${version} and is_active=1`
+    );
+
+    db.getConnection((err: MysqlError, connection: PoolConnection) => {
+      if (err) {
+        connection.release();
+        console.log(" Error getting mysql_pool connection: " + err);
+        throw err;
+      }
+
+      sqls.map((sql: string) => {
+        connection.query(sql, (err) => {
+          if (err) throw err;
+        });
+      });
+
+      res.status(200).send("success");
+      connection.release();
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const migrate = async (req: Request, res: Response): Promise<void> => {
+  try {
+    console.log(req.body);
+    const { system, version, alt, inc, fildId } = req.body;
+    const sql = `select * from file_id_usat where system_id=${system} and system_attribute_version_id=${version} and \
+      user_altitude=${alt} and user_inclination=${inc} and is_active=1 and id=${
+      JSON.parse(fildId[0]).id
+    };\
+      select * from stk_report where file_id=${
+        JSON.parse(fildId[0]).id
+      } and is_active=1`;
+
+    db.getConnection((err: MysqlError, connection: PoolConnection) => {
+      if (err) {
+        connection.release();
+        console.log(" Error getting mysql_pool connection: " + err);
+        throw err;
+      }
+
+      connection.query(sql, [1, 2], (err, data, fields) => {
+        if (err) throw err;
+        console.log(data[0]);
+        res.status(200).json(data);
+        connection.release();
+      });
+    });
+  } catch (error) {
+    throw error;
+  }
+};

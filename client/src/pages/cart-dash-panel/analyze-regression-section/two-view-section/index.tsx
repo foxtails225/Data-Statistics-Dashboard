@@ -170,7 +170,7 @@ const TwoViewSection: React.FC<any> = (props: any) => {
           t: 15,
         },
         xaxis: {
-          title: `Altitude (km), Inclination=${props.inc} deg`,
+          title: `Altitude ${props.alt}(km), Inclination=${props.inc} deg`,
           type: "linear",
           zeroline: false,
         },

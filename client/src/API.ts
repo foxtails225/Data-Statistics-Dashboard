@@ -75,3 +75,33 @@ export const changeDB = async (params: { [key: string]: string }) => {
     throw new Error(error);
   }
 };
+
+export const deleteRecord = async (params: { [key: string]: string }) => {
+  try {
+    const res: AxiosResponse = await axios.post(
+      baseUrl + "/delete-record",
+      params
+    );
+    return res;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const deleteAll = async (params: { [key: string]: string }) => {
+  try {
+    const res: AxiosResponse = await axios.post(baseUrl + "/delete-all", params);
+    return res;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const migrate = async (params: { [key: string]: string }) => {
+  try {
+    const res: AxiosResponse = await axios.post(baseUrl + "/migrate", params);
+    return res;
+  } catch (error) {
+    throw new Error(error);
+  }
+};

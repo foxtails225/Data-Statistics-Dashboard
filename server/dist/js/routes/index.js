@@ -10,4 +10,7 @@ router.get("/get-system-version", controllers_1.getSystemVersion);
 router.get("/get-cart", controllers_1.getCartItems);
 router.get("/get-file-id", controllers_1.getFildId);
 router.get("/change-db", controllers_1.changeDB);
+router.post("/delete-record", controllers_1.deleteRecord);
+router.post("/delete-all", controllers_1.deleteAll);
+router.post("/migrate", controllers_1.migrate);
 exports.default = router;

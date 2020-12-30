@@ -13,7 +13,6 @@ import {
 } from "@material-ui/core";
 import { TransitionProps } from "@material-ui/core/transitions";
 import { Close as CloseIcon } from "@material-ui/icons";
-
 import TwoViewSection from "./two-view-section";
 import ThreeViewSection from "./three-view-section";
 import ChartsLibsSection from "./charts-libs-section";
@@ -33,7 +32,11 @@ interface IDot {
   y: number;
 }
 
-const INIT_FILE_ID = [{ id: 1620 }, { id: 1729 }];
+interface IFileId {
+  id: number;
+}
+
+// const INIT_FILE_ID = [{ id: 1620 }, { id: 1729 }];
 
 const INIT_CHECK_STATUS = {
   show_surface: true,
@@ -52,14 +55,14 @@ const Transition = React.forwardRef(function Transition(
   return <Slide direction="left" ref={ref} {...props} />;
 });
 
-const AnalyzeRegressionSection = (props: any) => {
+const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
   const [viewMethod, setViewMethod] = useState<string>("2d_view");
   const [dataSet, setDataSet] = useState<string>("as_needed_handoff");
   const [systems, setSystems] = useState<string[]>([]);
   const [versions, setVersions] = useState<number[]>([]);
-  const [db, setDb] = useState<string>("staging_db");
+  const [db, setDB] = useState<string>("staging_db");
   const [dot, setDot] = useState<IDot>({ x: props.alt, y: props.value });
-  const [fileId, setFileId] = useState(INIT_FILE_ID);
+  const [fileId, setFileId] = useState<IFileId[]>([]);
   const [checked, setChecked] = useState(INIT_CHECK_STATUS);
   const [traces, setTraces] = useState<any>({});
   const [reset, setReset] = useState(false);
@@ -72,22 +75,32 @@ const AnalyzeRegressionSection = (props: any) => {
   const zAxisLabel = props.data.label;
 
   useEffect(() => {
-    if (fileId.length > 0)
+    getSystems()
+      .then((res: any) => {
+        setSystems(res.data);
+        console.log(res.data);
+        props.onSystem(res.data[1].system_id);
+      })
+      .catch((err: any) => setSystems([]));
+  }, [props.isRefresh]);
+
+  useEffect(() => {
+    if (fileId.length > 0) {
       getItems({
         dataType: props.dataType,
         fileId: fileId,
         version: props.version,
       })
         .then((res) => {
-          Object.keys(res.data).map((el) => {
-            let ctype: String = res.data[el]["type"];
-            let gaps: Array<any> = [];
-            let durations: Array<any> = [];
-            let avgs: Array<any> = [];
+          Object.keys(res.data).map((el: string) => {
+            let ctype: string = res.data[el]["type"];
+            let gaps: number[] = [];
+            let durations: number[] = [];
+            let avgs: number[] = [];
 
             // Detect chart type and set Traces
             if (ctype === "line") {
-              res.data[el]["data"].map((item: Array<any>, idx: number) => {
+              res.data[el]["data"].map((item: number[], idx: number) => {
                 gaps.push(idx + 1);
                 durations.push(item[0]);
                 avgs.push(item[1]);
@@ -118,46 +131,46 @@ const AnalyzeRegressionSection = (props: any) => {
         .catch(() => {
           setTraces({});
         });
+    }
   }, [props.dataType, props.version, fileId]);
 
   useEffect(() => {
-    getSystems()
-      .then((res: any) => setSystems(res.data))
-      .catch((err: any) => setSystems([]));
-  }, []);
+    let user_inclination: number | string =
+      props.inclination !== "" ? props.inclination : 30;
 
-  useEffect(() => {
-    if (props.inclination !== "") {
-      const params = {
-        user_altitude: dot.x,
-        user_inclination: props.inclination,
-        system: props.system,
-        version: props.version,
-      };
+    const params = {
+      user_altitude: dot.x,
+      user_inclination,
+      system: props.system,
+      version: props.version,
+    };
 
-      getFileId(params)
-        .then((res: any) => setFileId(res.data))
-        .catch((err: any) => setFileId([]));
-    }
+    getFileId(params)
+      .then((res: any) => setFileId(res.data))
+      .catch(() => setFileId([]));
   }, [props.inclination]);
 
   useEffect(() => {
-    changeDB({ database: db }).catch((err) => setDb("staging_db"));
+    changeDB({ database: db }).catch((err) => setDB("staging_db"));
   }, [db]);
 
   useEffect(() => {
     if (props.system !== "") {
       getSystemVersion({ system: props.system })
-        .then((res: any) => setVersions(res.data))
+        .then((res: any) => {
+          setVersions(res.data);
+          props.onVersion(res.data[0].versions);
+        })
         .catch((err: any) => setVersions([]));
     }
   }, [props.system]);
 
   useEffect(() => {
-    setDot({
-      x: props.data.plot_value[0].altitude,
-      y: props.data.plot_value[0].value,
-    });
+    if (props.data.plot_value.length > 0)
+      setDot({
+        x: props.data.plot_value[0].altitude,
+        y: props.data.plot_value[0].value,
+      });
   }, [props.data]);
 
   useEffect(() => {
@@ -207,9 +220,13 @@ const AnalyzeRegressionSection = (props: any) => {
             version={props.version}
             versions={versions}
             dataSet={dataSet}
-            onDb={(value: string) => setDb(value)}
-            onSystem={(value: any) => props.onSystem(value)}
-            onVersion={(value: any) => props.onVersion(value)}
+            alt={dot.x}
+            inc={props.inclination !== "" ? props.inclination : props.inc}
+            fileId={fileId}
+            onRefresh={() => props.onRefresh()}
+            onSetDB={(value: string) => setDB(value)}
+            onSystem={(value: number) => props.onSystem(value)}
+            onVersion={(value: number) => props.onVersion(value)}
             onClick={handleDataSetClick}
           />
           <Grid item md={6} style={viewStyle}>
@@ -280,7 +297,7 @@ const AnalyzeRegressionSection = (props: any) => {
                         data={props.data}
                         equation={props.equation}
                         maxAltitude={props.maxAltitude}
-                        alt={props.alt}
+                        alt={dot.x}
                         inc={
                           props.inclination !== ""
                             ? props.inclination
