@@ -30,7 +30,7 @@ const HeaderSection: React.FC<any> = (props: any) => {
           minHeight: "6vh",
         }}
       >
-        <Grid item md={2}>
+        <Grid item md={2} style={{ marginLeft: 15 }}>
           <FormControl
             variant="outlined"
             size="small"
