@@ -20,7 +20,7 @@ import LaunchIcon from "@material-ui/icons/Launch";
 import useStyles from "../../utils/styles";
 import { grey } from "@material-ui/core/colors";
 
-const OptionAddon: React.FC<any> = (props: any) => {
+function OptionAddon (props: any) {
   const [isOpen, setIsOpen] = useState(false);
   const classes = useStyles();
 

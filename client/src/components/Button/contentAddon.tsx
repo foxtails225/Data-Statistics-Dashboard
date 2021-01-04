@@ -13,7 +13,6 @@ const SECTIONS = [
 
 function ContentAddon(props: any) {
   const [isOpen, setIsOpen] = useState(true);
-  const classes = useStyles();
 
   return (
     <Grid

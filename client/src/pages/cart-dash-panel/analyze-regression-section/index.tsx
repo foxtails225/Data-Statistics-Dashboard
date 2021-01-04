@@ -36,8 +36,6 @@ interface IFileId {
   id: number;
 }
 
-// const INIT_FILE_ID = [{ id: 1620 }, { id: 1729 }];
-
 const INIT_CHECK_STATUS = {
   show_surface: true,
   show_scatter: true,
