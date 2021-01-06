@@ -1,3 +1,7 @@
 /node_modules
 /dist
-# /src/config
+/src/config
+
+# yarn
+yarn-error.log*
+yarn.lock
