@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import {
   Grid,
   Typography,
@@ -6,12 +6,12 @@ import {
   TableHead,
   TableRow,
   TableCell,
-  TableBody,
-} from "@material-ui/core";
-import LineChartSection from "../line-chart-section";
-import HistogramChartSection from "../histogram-chart-section";
-import BoxChartSection from "../box-chart-section";
-import { useWindowSize } from "../../../../../utils/util";
+  TableBody
+} from '@material-ui/core';
+import LineChartSection from '../line-chart-section';
+import HistogramChartSection from '../histogram-chart-section';
+import BoxChartSection from '../box-chart-section';
+import { useWindowSize } from '../../../../../utils/util';
 interface TRowAttribute {
   name: string;
   value: string;
@@ -25,13 +25,13 @@ const createData: (name: string, value: string) => TRowAttribute = (
 };
 
 const rows = [
-  createData("Average (sec)", "xx"),
-  createData("Time-Averaged Gap", "xx"),
-  createData("Median (sec)", "xx"),
-  createData("Maximum (minutes)", "xx"),
-  createData("Minimum (sec)", "xx"),
-  createData("Average # Gaps Per Orbit", "xx"),
-  createData("Average # Gaps Per Day", "xx"),
+  createData('Average (sec)', 'xx'),
+  createData('Time-Averaged Gap', 'xx'),
+  createData('Median (sec)', 'xx'),
+  createData('Maximum (minutes)', 'xx'),
+  createData('Minimum (sec)', 'xx'),
+  createData('Average # Gaps Per Orbit', 'xx'),
+  createData('Average # Gaps Per Day', 'xx')
 ];
 
 const SelectedChartSection: React.FC<any> = (props: any) => {
@@ -45,16 +45,12 @@ const SelectedChartSection: React.FC<any> = (props: any) => {
           justify="center"
           alignItems="center"
           style={{
-            height: size.width
-              ? props.isSubChart
-                ? "100%"
-                : size.width * 0.11
-              : "100%",
-            overflow: "auto",
+            height: size.width ? (props.isSubChart ? '100%' : size.width * 0.11) : '100%',
+            overflow: 'auto'
           }}
         >
           <Grid item md={10}>
-            <Typography variant="h6" style={{ textAlign: "center" }}>
+            <Typography variant="h6" style={{ textAlign: 'center' }}>
               {`Key Metrics`}
             </Typography>
             <Table aria-label="simple table" size="small">

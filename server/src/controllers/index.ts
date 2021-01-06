@@ -1,42 +1,26 @@
-import { Response, Request } from "express";
-import mysql, { MysqlError, PoolConnection } from "mysql";
-import env from "../config";
-import { getAvgs } from "../utils";
-import { testData, cartData } from "../data/test";
+import { Response, Request } from 'express';
+import { config, env, localEnv } from '../config';
+import { getAvgs } from '../utils';
+import { testData, cartData } from '../data/test';
+import sql, { IResult } from 'mssql';
 
-let db = mysql.createPool({
-  host: env.NODE_ENV === "production" ? "40.79.17.32" : "127.0.0.1",
-  user: "root",
-  password: env.NODE_ENV === "production" ? "1qaz2wsx" : "",
-  database: "cartdb",
-  port: 3306,
-});
+const conf = config.NODE_ENV === 'production' ? env : localEnv;
+let connection = new sql.ConnectionPool(`mssql://${conf.username}:${conf.password}@${conf.server}/${conf.defaultDB}`);
 
 export const changeDB = async (req: Request, res: Response): Promise<void> => {
   const { database } = req.query;
+  const db: string = database === 'product_db' ? 'CaesarModelResults_Production' : 'CaesarModelResults_Stage';
 
-  if (database === "product_db")
-    db = mysql.createPool({
-      host: env.NODE_ENV === "production" ? "40.79.17.32" : "127.0.0.1",
-      user: "root",
-      password: env.NODE_ENV === "production" ? "1qaz2wsx" : "",
-      database: "cartdb_pro",
-      port: 3306,
-    });
-
-  res.status(200).send("success");
+  connection = new sql.ConnectionPool(`mssql://${conf.username}:${conf.password}@${conf.server}/${db}`);
+  res.status(200).send('success');
 };
 
 export const getItems = async (req: Request, res: Response): Promise<void> => {
   try {
-    const { spawn } = require("child_process");
-    var child = await spawn("python", [
-      `${process.cwd()}/src/controllers/scripts/gap_data_v1.py`,
-      req.query.selected,
-      "csv",
-    ]);
+    const { spawn } = require('child_process');
+    var child = await spawn('python', [`${process.cwd()}/src/controllers/scripts/gap_data_v1.py`, req.query.selected, 'csv']);
 
-    child.stdout.on("data", function (data: any) {
+    child.stdout.on('data', function (data: any) {
       res.status(200).send(data.toString());
     });
   } catch (error) {
@@ -44,28 +28,22 @@ export const getItems = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
-export const getPlotItems = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getPlotItems = async (req: Request, res: Response): Promise<void> => {
   let result: any = [];
 
   try {
-    const { spawn } = require("child_process");
-    var child = await spawn("python", [
-      `${process.cwd()}/src/controllers/scripts/plot_data_v1.py`,
-      JSON.stringify(testData),
-    ]);
+    const { spawn } = require('child_process');
+    var child = await spawn('python', [`${process.cwd()}/src/controllers/scripts/plot_data_v1.py`, JSON.stringify(testData)]);
 
-    child.stderr.on("data", (data: any) => {
+    child.stderr.on('data', (data: any) => {
       console.log(data.toString());
     });
 
-    child.stdout.on("data", (data: any) => {
+    child.stdout.on('data', (data: any) => {
       result += data.toString();
     });
 
-    child.on("exit", (code: any) => {
+    child.on('exit', (code: any) => {
       console.log(`process has finished and exited with code: ${code}`);
       res.status(200).send({ heatmap: testData, intrpl: JSON.parse(result) });
     });
@@ -74,76 +52,62 @@ export const getPlotItems = async (
   }
 };
 
-export const getCartItems = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getCartItems = async (req: Request, res: Response): Promise<void> => {
   const { system, version, dataType } = req.query;
+  const query: string = dataType === 'coverage' ? 's.[Percent Coverage]' : '100 - s.[Percent Coverage]';
+  const sql: string = `SELECT DISTINCT f.[FILE_ID] as file_id, f.[User Altitude] as altitude, f.[User Inclination] as inclination, \
+    ${query} as value FROM FILE_ID_USAT as f INNER JOIN StkReportSummaryStats as s \
+    ON f.FILE_ID=s.FILE_ID WHERE system_id=${system} AND f.Is_Active=1 AND f.SYSTEM_ATTRIBUTE_VERSION_ID=${version} \
+    ORDER BY altitude, inclination, value, file_id`;
 
   if (system && version) {
-    const query: string =
-      dataType === "coverage"
-        ? "b.percent_coverage"
-        : "100 - b.percent_coverage";
-    const sql: string = `select distinct a.user_altitude as altitude, a.user_inclination as inclination, \
-        ${query} as value from file_id_usat as a inner join stk_report_summary_stats \
-        as b on a.id = b.file_id where system_id=${system} and b.is_active=1 and a.system_attribute_version_id=${version} \
-        order by altitude, user_inclination, value, a.id`;
-    let result: any = {};
+    let result2: any = {};
     let tdata: any = cartData;
 
-    db.getConnection((err: MysqlError, connection: PoolConnection) => {
-      if (err) {
-        connection.release();
-        console.log(" Error getting mysql_pool connection: " + err);
+    connection
+      .connect()
+      .then(async () => {
+        const result: IResult<any> = await connection.query(sql);
+        const data = result.recordset;
+
+        tdata['label'] = dataType === 'coverage' ? 'Coverage (%)' : 'No Coverage (%)';
+        tdata['plot_value'] = data;
+        result2['terrestrial'] = testData;
+        result2['data'] = tdata;
+
+        res.status(200).send(result2);
+      })
+      .catch((err: Error) => {
         throw err;
-      }
-
-      connection.query(sql, (err, data, _fields) => {
-        if (err) throw err;
-        tdata["label"] =
-          dataType === "coverage" ? "Coverage (%)" : "No Coverage (%)";
-        tdata["plot_value"] = data;
-        result["terrestrial"] = testData;
-        result["data"] = tdata;
-
-        res.status(200).send(result);
-        connection.release();
       });
-    });
   }
 };
 
 export const getItem = async (req: Request, res: Response): Promise<void> => {
   const { dataType, fileId } = req.query as any;
+  // TODO: Need to account for case where there are more than 2 file IDs
+  const sql =
+    fileId.length === 1
+      ? `SELECT s.[Simulation Time] as simulation_time, s.[Gap Duration] as gap_duration FROM StkReport as s \
+    INNER JOIN FILE_ID_USAT as f ON f.[FILE_ID]=s.[FILE_ID] \
+    WHERE f.Is_Active=1 AND f.FILE_ID=${JSON.parse(fileId[0]).FILE_ID} \
+    ORDER BY s.[Simulation Time]`
+      : `SELECT s.[Simulation Time] as simulation_time, s.[Gap Duration] as gap_duration FROM StkReport as s \
+    INNER JOIN FILE_ID_USAT as f ON s.FILE_ID=f.FILE_ID WHERE f.FILE_ID=${JSON.parse(fileId[0]).FILE_ID} OR \
+    f.FILE_ID=${JSON.parse(fileId[1]).FILE_ID} AND f.Is_Active=1 \
+    ORDER BY simulation_time`;
   let preVal: number = 0;
   let tdata: number[] = [];
-  let result: any = {};
-  let sql: string;
+  let result2: any = {};
 
-  if (fileId.length === 1) {
-    sql =
-      `select a.simulation_time, a.gap_duration from stk_report as a inner join file_id_usat as b on a.file_id = b.id where b.id=` +
-      JSON.parse(fileId[0]).id +
-      ` and b.is_active=1 order by a.simulation_time`;
-  } else {
-    sql = `select a.simulation_time, a.gap_duration from stk_report as a inner join file_id_usat as b on a.file_id = b.id \
-              where b.id=${JSON.parse(fileId[0]).id} or b.id=${
-      JSON.parse(fileId[1]).id
-    } and b.is_active=1 order by a.simulation_time`;
-  }
+  connection
+    .connect()
+    .then(async () => {
+      let result: IResult<any>;
+      result = await connection.query(sql);
+      const data = result.recordset;
 
-  db.getConnection((err: MysqlError, connection: PoolConnection) => {
-    if (err) {
-      connection.release();
-      console.log(" Error getting mysql_pool connection: " + err);
-      throw err;
-    }
-
-    connection.query(sql, (err, data, _fields) => {
-      if (err) throw err;
-
-      if (dataType === "coverage") {
+      if (dataType === 'coverage') {
         let fVal: number = parseFloat(data[0].simulation_time);
         data.map((item: any) => {
           if (Number(item.gap_duration)) {
@@ -154,214 +118,159 @@ export const getItem = async (req: Request, res: Response): Promise<void> => {
           preVal = parseFloat(item.simulation_time);
         });
 
-        result["coverage"] = {
+        result2['coverage'] = {
           data: getAvgs(tdata),
-          title: "Coverage Running Average",
-          type: "line",
+          title: 'Coverage Running Average',
+          type: 'line'
         };
-        result["coverage_histogram"] = {
+        result2['coverage_histogram'] = {
           data: tdata,
-          title: "Coverage Distribution",
-          type: "histogram",
+          title: 'Coverage Distribution',
+          type: 'histogram'
         };
       } else {
         let tdata = data.map((item: any) => {
           return Number(item.gap_duration);
         });
 
-        result["gap"] = {
+        result2['gap'] = {
           data: getAvgs(tdata),
-          title: "Gaps Running Average",
-          type: "line",
+          title: 'Gaps Running Average',
+          type: 'line'
         };
-        result["gap_histogram"] = {
+        result2['gap_histogram'] = {
           data: tdata,
-          title: "Gaps Distribution",
-          type: "histogram",
+          title: 'Gaps Distribution',
+          type: 'histogram'
         };
       }
 
-      res.status(200).json(result);
-      connection.release();
+      res.status(200).json(result2);
+    })
+    .catch((err: Error) => {
+      throw err;
     });
-  });
 };
 
-export const getSystems = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getSystems = async (req: Request, res: Response): Promise<void> => {
   try {
-    const sql = `select id as system_id, name as system_name from system_version`;
+    const sql = `SELECT SYSTEM_VERSION_ID AS system_id, NAME AS system_name FROM SYSTEM_VERSION`;
 
-    db.getConnection((err: MysqlError, connection: PoolConnection) => {
-      if (err) {
-        connection.release();
-        console.log(" Error getting mysql_pool connection: " + err);
-        throw err;
-      }
-
-      connection.query(sql, (err, data, fields) => {
-        if (err) throw err;
-
+    connection
+      .connect()
+      .then(async () => {
+        const result: IResult<any> = await connection.query(sql);
+        const data = result.recordset;
         res.status(200).json(data);
-        connection.release();
+      })
+      .catch((err: Error) => {
+        throw err;
       });
-    });
   } catch (error) {
     throw error;
   }
 };
 
-export const getSystemVersion = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const getSystemVersion = async (req: Request, res: Response): Promise<void> => {
   try {
     const { system } = req.query;
-    const sql = `select  distinct system_id, system_attribute_version_id as versions from file_id_usat where system_id=${system}`;
+    const sql = `SELECT DISTINCT SYSTEM_ID, SYSTEM_ATTRIBUTE_VERSION_ID AS versions FROM FILE_ID_USAT \
+      WHERE SYSTEM_ID=${system}`;
 
-    db.getConnection((err: MysqlError, connection: PoolConnection) => {
-      if (err) {
-        connection.release();
-        console.log(" Error getting mysql_pool connection: " + err);
-        throw err;
-      }
-
-      connection.query(sql, (err, data, fields) => {
-        if (err) throw err;
-
+    connection
+      .connect()
+      .then(async () => {
+        const result: IResult<any> = await connection.query(sql);
+        const data = result.recordset;
         res.status(200).json(data);
-        connection.release();
+      })
+      .catch((err: Error) => {
+        throw err;
       });
-    });
   } catch (error) {
     throw error;
   }
 };
 
-export const getFildId = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { user_altitude, user_inclination, system, version } = req.query;
-    const sql = `select id from file_id_usat where system_id=${system} and system_attribute_version_id=${version} and \
-      user_altitude=${user_altitude} and user_inclination=${user_inclination} and is_active=1`;
+export const getFileId = async (req: Request, res: Response): Promise<void> => {
+  const { user_altitude, user_inclination, system, version } = req.query;
+  const sql = `SELECT FILE_ID FROM FILE_ID_USAT WHERE SYSTEM_ID=${system} AND SYSTEM_ATTRIBUTE_VERSION_ID=${version} AND \
+      [User Altitude]=${user_altitude} AND [User Inclination]=${user_inclination} AND Is_Active=1`;
 
-    db.getConnection((err: MysqlError, connection: PoolConnection) => {
-      if (err) {
-        connection.release();
-        console.log(" Error getting mysql_pool connection: " + err);
-        throw err;
-      }
-
-      connection.query(sql, (err, data, fields) => {
-        if (err) throw err;
-
-        res.status(200).json(data);
-        connection.release();
-      });
+  connection
+    .connect()
+    .then(async () => {
+      const result: IResult<any> = await connection.query(sql);
+      const data = result.recordset;
+      res.status(200).json(data);
+    })
+    .catch((err: Error) => {
+      throw err;
     });
-  } catch (error) {
-    throw error;
-  }
 };
 
-export const deleteRecord = async (
-  req: Request,
-  res: Response
-): Promise<void> => {
+export const deleteRecord = async (req: Request, res: Response): Promise<void> => {
   const { system, version, alt, inc, fileId } = req.body;
   let sqls: string[] = [];
 
-  sqls.push(`delete from file_id_usat where system_id=${system} and system_attribute_version_id=${version} and \
-      user_altitude=${alt} and user_inclination=${inc} and is_active=1 and id=${fileId[1].id}`);
-  sqls.push(`delete from stk_report\ 
-      where file_id=${fileId[1].id} and is_active=1`);
-  sqls.push(`delete from stk_report_summary_stats\ 
-      where file_id=${fileId[1].id} and is_active=1`);
-  sqls.push(`delete from stk_pointing_report_summary_stats\
-       where file_id=${fileId[1].id} and is_active=1`);
+  sqls.push(`DELETE FROM FILE_ID_USAT WHERE SYSTEM_ID=${system} AND SYSTEM_ATTRIBUTE_VERSION_ID=${version} \
+    AND [User Altitude]=${alt} AND [User Inclination]=${inc} AND Is_Active=1 AND FILE_ID=${fileId[1].FILE_ID}`);
+  sqls.push(`DELETE FROM StkReport WHERE FILE_ID=${fileId[1].FILE_ID} AND Is_Active=1`);
+  sqls.push(`DELETE FROM StkReportSummaryStats WHERE FILE_ID=${fileId[1].FILE_ID} AND Is_Active=1`);
+  sqls.push(`DELETE FROM StkPointingReportSummaryStats WHERE FILE_ID=${fileId[1].FILE_ID} AND Is_Active=1`);
 
-  db.getConnection((err: MysqlError, connection: PoolConnection) => {
-    if (err) {
-      connection.release();
-      console.log(" Error getting mysql_pool connection: " + err);
+  connection
+    .connect()
+    .then(async () => {
+      for (let i = 0; i < sqls.length; i++) {
+        await connection.query(sqls[i]);
+      }
+      res.status(200).send('success');
+    })
+    .catch((err: Error) => {
       throw err;
-    }
-
-    sqls.map((sql: string) => {
-      connection.query(sql, (err, data) => {
-        if (err) throw err;
-      });
     });
-
-    res.status(200).send("success");
-    connection.release();
-  });
 };
 
 export const deleteAll = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { system, version } = req.body;
-    let sqls: string[] = [];
+  const { system, version } = req.body;
+  let sqls: string[] = [];
 
-    sqls.push(`delete from stk_report where file_id in \
-      (select id from file_id_usat where system_id=${system} and system_attribute_version_id=${version} and is_active=1)`);
-    sqls.push(`delete from stk_report_summary_stats where file_id in \
-      (select id from file_id_usat where system_id=${system} and system_attribute_version_id=${version} and is_active=1)`);
-    sqls.push(`delete from stk_pointing_report_summary_stats where file_id in \
-      (select id from file_id_usat where system_id=${system} and system_attribute_version_id=${version} and is_active=1)`);
-    sqls.push(
-      `delete from file_id_usat where system_id=${system} and system_attribute_version_id=${version} and is_active=1`
-    );
+  sqls.push(`DELETE FROM StkReport WHERE FILE_ID IN \
+      (SELECT FILE_ID FROM FILE_ID_USAT WHERE SYSTEM_ID=${system} AND SYSTEM_ATTRIBUTE_VERSION_ID=${version} AND Is_Active=1)`);
+  sqls.push(`DELETE FROM StkReportSummaryStats WHERE FILE_ID IN \
+      (SELECT FILE_ID FROM FILE_ID_USAT WHERE SYSTEM_ID=${system} AND SYSTEM_ATTRIBUTE_VERSION_ID=${version} AND Is_Active=1)`);
+  sqls.push(`DELETE FROM StkPointingReportSummaryStats WHERE FILE_ID IN \
+      (SELECT FILE_ID FROM FILE_ID_USAT WHERE SYSTEM_ID=${system} AND SYSTEM_ATTRIBUTE_VERSION_ID=${version} AND Is_Active=1)`);
+  sqls.push(`DELETE FROM FILE_ID_USAT WHERE SYSTEM_ID=${system} AND SYSTEM_ATTRIBUTE_VERSION_ID=${version} AND Is_Active=1`);
 
-    db.getConnection((err: MysqlError, connection: PoolConnection) => {
-      if (err) {
-        connection.release();
-        console.log(" Error getting mysql_pool connection: " + err);
-        throw err;
+  connection
+    .connect()
+    .then(async () => {
+      for (let i = 0; i < sqls.length; i++) {
+        await connection.query(sqls[i]);
       }
-
-      sqls.map((sql: string) => {
-        connection.query(sql, (err) => {
-          if (err) throw err;
-        });
-      });
-
-      res.status(200).send("success");
-      connection.release();
+      res.status(200).send('success');
+    })
+    .catch((err: Error) => {
+      throw err;
     });
-  } catch (error) {
-    throw error;
-  }
 };
 
 export const migrate = async (req: Request, res: Response): Promise<void> => {
-  try {
-    console.log(req.body);
-    const { system, version, alt, inc, fildId } = req.body;
-    const sql = `select * from file_id_usat where system_id=${system} and system_attribute_version_id=${version} and \
-      user_altitude=${alt} and user_inclination=${inc} and is_active=1 and id=${
-      JSON.parse(fildId[0]).id
-    };\
-      select * from stk_report where file_id=${
-        JSON.parse(fildId[0]).id
-      } and is_active=1`;
+  const { system, version, alt, inc, fildId } = req.body;
+  const sql = `SELECT * FROM FILE_ID_USAT WHERE SYSTEM_ID=${system} AND SYSTEM_ATTRIBUTE_VERSION_ID=${version} \
+    AND [User Altitude]=${alt} AND [User Inclination]=${inc} AND Is_Active=1 AND FILE_ID=${JSON.parse(fildId[0]).FILE_ID}; \
+    SELECT * FROM StkReport WHERE FILE_ID=${JSON.parse(fildId[0].FILE_ID)}`;
 
-    db.getConnection((err: MysqlError, connection: PoolConnection) => {
-      if (err) {
-        connection.release();
-        console.log(" Error getting mysql_pool connection: " + err);
-        throw err;
-      }
-
-      connection.query(sql, [1, 2], (err, data, fields) => {
-        if (err) throw err;
-        console.log(data[0]);
-        res.status(200).json(data);
-        connection.release();
-      });
+  connection
+    .connect()
+    .then(async () => {
+      const result: IResult<any> = await connection.query(sql);
+      const data = result.recordset;
+      res.status(200).json(data);
+    })
+    .catch((err: Error) => {
+      throw err;
     });
-  } catch (error) {
-    throw error;
-  }
 };

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Grid,
   Typography,
@@ -9,23 +9,23 @@ import {
   DialogContent,
   CssBaseline,
   DialogTitle as MuiDialogTitle,
-  IconButton,
-} from "@material-ui/core";
-import { TransitionProps } from "@material-ui/core/transitions";
-import { Close as CloseIcon } from "@material-ui/icons";
-import TwoViewSection from "./two-view-section";
-import ThreeViewSection from "./three-view-section";
-import ChartsLibsSection from "./charts-libs-section";
-import HeaderSection from "./header-section";
-import OptionAddon from "../../../components/Button/OptionAddon";
+  IconButton
+} from '@material-ui/core';
+import { TransitionProps } from '@material-ui/core/transitions';
+import { Close as CloseIcon } from '@material-ui/icons';
+import TwoViewSection from './two-view-section';
+import ThreeViewSection from './three-view-section';
+import ChartsLibsSection from './charts-libs-section';
+import HeaderSection from './header-section';
+import OptionAddon from '../../../components/Button/OptionAddon';
 import {
   getItems,
   getSystems,
   getSystemVersion,
   getFileId,
-  changeDB,
-} from "../../../API";
-import useStyles from "../../../utils/styles";
+  changeDB
+} from '../../../API';
+import useStyles from '../../../utils/styles';
 
 interface IDot {
   x: number;
@@ -38,12 +38,12 @@ interface IFileId {
 
 const INIT_CHECK_STATUS = {
   show_surface: true,
-  show_scatter: true,
+  show_scatter: true
 };
 
 const viewStyle = {
-  paddingLeft: "2rem",
-  paddingRight: "0.8rem",
+  paddingLeft: '2rem',
+  paddingRight: '0.8rem'
 };
 
 const Transition = React.forwardRef(function Transition(
@@ -54,17 +54,17 @@ const Transition = React.forwardRef(function Transition(
 });
 
 const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
-  const [viewMethod, setViewMethod] = useState<string>("2d_view");
-  const [dataSet, setDataSet] = useState<string>("as_needed_handoff");
+  const [viewMethod, setViewMethod] = useState<string>('2d_view');
+  const [dataSet, setDataSet] = useState<string>('as_needed_handoff');
   const [systems, setSystems] = useState<string[]>([]);
   const [versions, setVersions] = useState<number[]>([]);
-  const [db, setDB] = useState<string>("staging_db");
+  const [db, setDB] = useState<string>('staging_db');
   const [dot, setDot] = useState<IDot>({ x: props.alt, y: props.value });
   const [fileId, setFileId] = useState<IFileId[]>([]);
   const [checked, setChecked] = useState(INIT_CHECK_STATUS);
   const [traces, setTraces] = useState<any>({});
   const [reset, setReset] = useState(false);
-  const [count, setCount] = useState({ width: "0px", height: "0px" });
+  const [count, setCount] = useState({ width: '0px', height: '0px' });
   const [isChart, setIsChart] = useState(false);
   const classes = useStyles();
   const chartEl = useRef<any>(null);
@@ -87,18 +87,18 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
       getItems({
         dataType: props.dataType,
         fileId: fileId,
-        version: props.version,
+        version: props.version
       })
         .then((res) => {
           Object.keys(res.data).map((el: string) => {
-            let ctype: string = res.data[el]["type"];
+            let ctype: string = res.data[el]['type'];
             let gaps: number[] = [];
             let durations: number[] = [];
             let avgs: number[] = [];
 
             // Detect chart type and set Traces
-            if (ctype === "line") {
-              res.data[el]["data"].map((item: number[], idx: number) => {
+            if (ctype === 'line') {
+              res.data[el]['data'].map((item: number[], idx: number) => {
                 gaps.push(idx + 1);
                 durations.push(item[0]);
                 avgs.push(item[1]);
@@ -111,17 +111,17 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
                   yTraces: durations,
                   avgTraces: avgs,
                   type: ctype,
-                  title: res.data[el]["title"],
-                },
+                  title: res.data[el]['title']
+                }
               }));
-            } else if (ctype === "histogram") {
+            } else if (ctype === 'histogram') {
               setTraces((prevState: any) => ({
                 ...prevState,
                 [el]: {
-                  xTraces: res.data[el]["data"],
+                  xTraces: res.data[el]['data'],
                   type: ctype,
-                  title: res.data[el]["title"],
-                },
+                  title: res.data[el]['title']
+                }
               }));
             }
           });
@@ -134,13 +134,13 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
 
   useEffect(() => {
     let user_inclination: number | string =
-      props.inclination !== "" ? props.inclination : 30;
+      props.inclination !== '' ? props.inclination : 30;
 
     const params = {
       user_altitude: dot.x,
       user_inclination,
       system: props.system,
-      version: props.version,
+      version: props.version
     };
 
     getFileId(params)
@@ -149,11 +149,11 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
   }, [props.inclination]);
 
   useEffect(() => {
-    changeDB({ database: db }).catch((err) => setDB("staging_db"));
+    changeDB({ database: db }).catch((err) => setDB('staging_db'));
   }, [db]);
 
   useEffect(() => {
-    if (props.system !== "") {
+    if (props.system !== '') {
       getSystemVersion({ system: props.system })
         .then((res: any) => {
           setVersions(res.data);
@@ -167,7 +167,7 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
     if (props.data.plot_value.length > 0)
       setDot({
         x: props.data.plot_value[0].altitude,
-        y: props.data.plot_value[0].value,
+        y: props.data.plot_value[0].value
       });
   }, [props.data]);
 
@@ -197,7 +197,7 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
         user_altitude: event.points[0].x,
         user_inclination: props.inc,
         system: props.system,
-        version: props.version,
+        version: props.version
       };
 
       setDot({ x: event.points[0].x, y: event.points[0].y });
@@ -219,7 +219,7 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
             versions={versions}
             dataSet={dataSet}
             alt={dot.x}
-            inc={props.inclination !== "" ? props.inclination : props.inc}
+            inc={props.inclination !== '' ? props.inclination : props.inc}
             fileId={fileId}
             onRefresh={() => props.onRefresh()}
             onSetDB={(value: string) => setDB(value)}
@@ -234,15 +234,15 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
                   <Grid
                     item
                     md={12}
-                    style={{ textAlign: "center", position: "relative" }}
+                    style={{ textAlign: 'center', position: 'relative' }}
                   >
                     <Typography
                       style={{
                         fontSize: 15,
-                        fontWeight: "bold",
+                        fontWeight: 'bold'
                       }}
                     >
-                      {dataSet === "as_needed_handoff"
+                      {dataSet === 'as_needed_handoff'
                         ? `RF Coverage (%)`
                         : `No Coverage (%)`}
                       {` vs. User Inclination`}
@@ -259,23 +259,17 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
                       onChart={() => setIsChart(true)}
                       resetPlot={() => setReset(!reset)}
                       onInc={(value: any) => props.onInc(value)}
-                      onViewMethod={(e: any) =>
-                        setViewMethod(e.currentTarget.name)
-                      }
+                      onViewMethod={(e: any) => setViewMethod(e.currentTarget.name)}
                     />
                   </Grid>
-                  {viewMethod === "3d_view" ? (
+                  {viewMethod === '3d_view' ? (
                     <Grid item md={12}>
                       <ThreeViewSection
                         data={props.source}
                         equation={props.equation}
                         maxAltitude={props.maxAltitude}
                         alt={props.alt}
-                        inc={
-                          props.inclination !== ""
-                            ? props.inclination
-                            : props.inc
-                        }
+                        inc={props.inclination !== '' ? props.inclination : props.inc}
                         value={props.value}
                         reset={reset}
                         isLegend={false}
@@ -296,11 +290,7 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
                         equation={props.equation}
                         maxAltitude={props.maxAltitude}
                         alt={dot.x}
-                        inc={
-                          props.inclination !== ""
-                            ? props.inclination
-                            : props.inc
-                        }
+                        inc={props.inclination !== '' ? props.inclination : props.inc}
                         value={props.value}
                         isLegend={false}
                         isSub={true}
@@ -337,18 +327,16 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
           onClose={() => setIsChart(true)}
           PaperProps={{
             style: {
-              height: parseFloat(count.width.replace("px", "")) * 0.42,
-              maxWidth: parseFloat(count.width.replace("px", "")) * 0.6,
-              minWidth: parseFloat(count.width.replace("px", "")) * 0.6,
-            },
+              height: parseFloat(count.width.replace('px', '')) * 0.42,
+              maxWidth: parseFloat(count.width.replace('px', '')) * 0.6,
+              minWidth: parseFloat(count.width.replace('px', '')) * 0.6
+            }
           }}
         >
           <CssBaseline />
           <MuiDialogTitle>
             <Typography component="strong" variant="h6">
-              {dataSet === "as_needed_handoff"
-                ? `RF Coverage (%)`
-                : `No Coverage (%)`}
+              {dataSet === 'as_needed_handoff' ? `RF Coverage (%)` : `No Coverage (%)`}
               {` vs. User Inclination`}
             </Typography>
             <IconButton
@@ -361,14 +349,14 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
           </MuiDialogTitle>
           <hr />
           <DialogContent>
-            {viewMethod === "3d_view" ? (
+            {viewMethod === '3d_view' ? (
               <Grid item md={12}>
                 <ThreeViewSection
                   data={props.source}
                   equation={props.equation}
                   maxAltitude={props.maxAltitude}
                   alt={props.alt}
-                  inc={props.inclination !== "" ? props.inclination : props.inc}
+                  inc={props.inclination !== '' ? props.inclination : props.inc}
                   value={props.value}
                   reset={reset}
                   isLegend={false}
@@ -389,7 +377,7 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
                   equation={props.equation}
                   maxAltitude={props.maxAltitude}
                   alt={props.alt}
-                  inc={props.inclination !== "" ? props.inclination : props.inc}
+                  inc={props.inclination !== '' ? props.inclination : props.inc}
                   value={props.value}
                   isLegend={false}
                   isSub={true}

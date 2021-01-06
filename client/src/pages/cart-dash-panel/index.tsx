@@ -1,43 +1,43 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect } from 'react';
 import {
   Grid,
   Container,
   CssBaseline,
   Card,
   CardHeader,
-  Typography,
-} from "@material-ui/core";
-import { getCartItems } from "../../API";
-import useStyles from "../../utils/styles";
-import { INIT_PARAMS } from "../../constants";
-import AnalyzeRegressionSection from "./analyze-regression-section";
+  Typography
+} from '@material-ui/core';
+import { getCartItems } from '../../API';
+import useStyles from '../../utils/styles';
+import { INIT_PARAMS } from '../../constants';
+import AnalyzeRegressionSection from './analyze-regression-section';
 
 const CartDashPanel: React.FC = () => {
   const [source, setSource] = useState({});
   const [dataSource, setDataSource] = useState({} as any);
-  const [system, setSystem] = useState(5 as any);
-  const [version, setVersion] = useState(3 as any);
-  const [inclination, setInclination] = useState<string>("");
+  const [system, setSystem] = useState<number>(4);
+  const [version, setVersion] = useState<number>(1);
+  const [inclination, setInclination] = useState<string>('');
   const [incs, setIncs] = useState<Array<any>>([]);
-  const [dataType, setDataType] = useState<string>("coverage");
+  const [dataType, setDataType] = useState<string>('coverage');
   const [isRefresh, setIsRefresh] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [terrestrial, setTerrestrial] = useState({});
   const [maxAltitude, setMaxAltitude] = useState(0);
   const [coefficients, setCoefficients] = useState({} as any);
-  const [text, setText] = useState<string>("");
-  const deepDive = "system1/coverage";
-  const metric = deepDive.split("/")[1];
-  const missionType = "orbital";
+  const [text, setText] = useState<string>('');
+  const deepDive = 'system1/coverage';
+  const metric = deepDive.split('/')[1];
+  const missionType = 'orbital';
   const classes = useStyles();
 
   useEffect(() => {
-    setText("");
+    setText('');
     getCartItems({
       type: missionType,
       system: system,
       version: version,
-      dataType,
+      dataType
     })
       .then((res: any) => {
         setTerrestrial(res.data.terrestrial);
@@ -47,10 +47,8 @@ const CartDashPanel: React.FC = () => {
         setCoefficients(res.data.coefficients);
         setText(res.data.text);
 
-        if (Object.keys(res.data.data).includes("plot_value")) {
-          let tmp = res.data.data.plot_value.map(
-            (item: any) => item["inclination"]
-          );
+        if (Object.keys(res.data.data).includes('plot_value')) {
+          let tmp = res.data.data.plot_value.map((item: any) => item['inclination']);
           let uniqueArray: Array<any> = [...new Set(tmp)];
           setIncs(uniqueArray.sort());
         }
@@ -69,8 +67,8 @@ const CartDashPanel: React.FC = () => {
   }, [system, version, dataType, isRefresh]);
 
   useEffect(() => {
-    if (Object.keys(dataSource).includes("plot_value")) {
-      let user_inclination: number | string = inclination !== "" ? inclination : 30;
+    if (Object.keys(dataSource).includes('plot_value')) {
+      let user_inclination: number | string = inclination !== '' ? inclination : 30;
       let data = dataSource.plot_value.filter(
         (item: any) => item.inclination === user_inclination
       );
@@ -101,7 +99,7 @@ const CartDashPanel: React.FC = () => {
             }
           />
           {!isLoading &&
-            (missionType === "orbital" ? (
+            (missionType === 'orbital' ? (
               <AnalyzeRegressionSection
                 equation={(x: any, y: any, m: any) => equation(x, y, m)}
                 maxAltitude={maxAltitude}

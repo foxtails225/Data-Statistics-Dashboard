@@ -6,7 +6,7 @@ import {
   getItem,
   getSystems,
   getSystemVersion,
-  getFildId,
+  getFileId,
   deleteRecord,
   deleteAll,
   migrate,
@@ -19,7 +19,7 @@ router.get("/get-plot", getPlotItems);
 router.get("/get-systems", getSystems);
 router.get("/get-system-version", getSystemVersion);
 router.get("/get-cart", getCartItems);
-router.get("/get-file-id", getFildId);
+router.get("/get-file-id", getFileId);
 router.get("/change-db", changeDB);
 
 router.post("/delete-record", deleteRecord);

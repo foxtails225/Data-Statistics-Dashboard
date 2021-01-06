@@ -1,19 +1,19 @@
-import React from "react";
+import React from 'react';
 import {
   Grid,
   Select,
   FormControl,
   InputLabel,
   MenuItem,
-  IconButton,
-} from "@material-ui/core";
-import { ToggleButton, ToggleButtonGroup } from "@material-ui/lab";
-import DeleteOutlinedIcon from "@material-ui/icons/DeleteOutlined";
-import DeleteSweepOutlinedIcon from "@material-ui/icons/DeleteSweepOutlined";
-import ShopTwoOutlinedIcon from "@material-ui/icons/ShopTwoOutlined";
-import { grey } from "@material-ui/core/colors";
-import useStyles from "../../../../utils/styles";
-import { deleteAll, deleteRecord, migrate } from "../../../../API";
+  IconButton
+} from '@material-ui/core';
+import { ToggleButton, ToggleButtonGroup } from '@material-ui/lab';
+import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
+import DeleteSweepOutlinedIcon from '@material-ui/icons/DeleteSweepOutlined';
+import ShopTwoOutlinedIcon from '@material-ui/icons/ShopTwoOutlined';
+import { grey } from '@material-ui/core/colors';
+import useStyles from '../../../../utils/styles';
+import { deleteAll, deleteRecord, migrate } from '../../../../API';
 
 const HeaderSection: React.FC<any> = (props: any) => {
   const classes = useStyles();
@@ -27,7 +27,7 @@ const HeaderSection: React.FC<any> = (props: any) => {
         spacing={1}
         style={{
           backgroundColor: grey[300],
-          minHeight: "6vh",
+          minHeight: '6vh'
         }}
       >
         <Grid item md={2} style={{ marginLeft: 15 }}>
@@ -58,14 +58,14 @@ const HeaderSection: React.FC<any> = (props: any) => {
           <Grid container justify="center" alignItems="center">
             <Grid item md={4}>
               <IconButton
-                disabled={props.db === "product_db"}
+                disabled={props.db === 'product_db'}
                 onClick={() => {
                   deleteRecord({
                     system: props.system,
                     version: props.version,
                     alt: props.alt,
                     inc: props.inc,
-                    fileId: props.fileId,
+                    fileId: props.fileId
                   });
                   props.onRefresh();
                 }}
@@ -75,11 +75,11 @@ const HeaderSection: React.FC<any> = (props: any) => {
             </Grid>
             <Grid item md={4}>
               <IconButton
-                disabled={props.db === "product_db"}
+                disabled={props.db === 'product_db'}
                 onClick={() => {
                   deleteAll({
                     system: props.system,
-                    version: props.version,
+                    version: props.version
                   });
                   props.onRefresh();
                 }}
@@ -89,11 +89,11 @@ const HeaderSection: React.FC<any> = (props: any) => {
             </Grid>
             <Grid item md={4}>
               <IconButton
-                disabled={props.db === "product_db"}
+                disabled={props.db === 'product_db'}
                 onClick={() =>
                   migrate({
                     system: props.system,
-                    version: props.version,
+                    version: props.version
                   })
                 }
               >
@@ -107,7 +107,7 @@ const HeaderSection: React.FC<any> = (props: any) => {
             variant="outlined"
             size="small"
             className={classes.formControl}
-            style={{ width: "50%" }}
+            style={{ width: '50%' }}
           >
             <InputLabel id="demo-simple-select-outlined-label">{`System`}</InputLabel>
             <Select
@@ -131,7 +131,7 @@ const HeaderSection: React.FC<any> = (props: any) => {
             variant="outlined"
             size="small"
             className={classes.formControl}
-            style={{ width: "30%", marginLeft: 15 }}
+            style={{ width: '30%', marginLeft: 15 }}
           >
             <InputLabel id="demo-simple-select-outlined-label">{`Version`}</InputLabel>
             <Select
@@ -145,10 +145,7 @@ const HeaderSection: React.FC<any> = (props: any) => {
                 <em>{`None`}</em>
               </MenuItem>
               {props.versions.map((item: any) => (
-                <MenuItem
-                  key={`version_${item.versions}`}
-                  value={item.versions}
-                >
+                <MenuItem key={`version_${item.versions}`} value={item.versions}>
                   {item.versions}
                 </MenuItem>
               ))}
@@ -156,10 +153,7 @@ const HeaderSection: React.FC<any> = (props: any) => {
           </FormControl>
         </Grid>
         <Grid item md={3} style={{ marginLeft: 15 }}>
-          <ToggleButtonGroup
-            value={props.dataSet}
-            onChange={(e) => props.onClick(e)}
-          >
+          <ToggleButtonGroup value={props.dataSet} onChange={(e) => props.onClick(e)}>
             <ToggleButton
               id="as_needed_handoff"
               name="coverage"

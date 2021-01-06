@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 import {
   Grid,
   Card,
@@ -9,15 +9,15 @@ import {
   Typography,
   IconButton,
   DialogContent,
-  Slide,
-} from "@material-ui/core";
-import { TransitionProps } from "@material-ui/core/transitions";
-import { Close as CloseIcon } from "@material-ui/icons";
+  Slide
+} from '@material-ui/core';
+import { TransitionProps } from '@material-ui/core/transitions';
+import { Close as CloseIcon } from '@material-ui/icons';
 
-import DashAddon from "../../../../components/Button/DashAddon";
-import SelectedChartSection from "./selected-chart-section";
-import { MENU_ITEMS } from "../../../../constants";
-import useStyles from "../../../../utils/styles";
+import DashAddon from '../../../../components/Button/DashAddon';
+import SelectedChartSection from './selected-chart-section';
+import { MENU_ITEMS } from '../../../../constants';
+import useStyles from '../../../../utils/styles';
 
 const Transition = React.forwardRef(function Transition(
   props: TransitionProps & { children?: React.ReactElement<any, any> },
@@ -60,8 +60,8 @@ const ChartsLibsSection: React.FC<any> = (props: {
             md={6}
             key={item}
             style={{
-              paddingLeft: "2rem",
-              paddingRight: idx % 2 === 0 ? "2rem" : "0.8rem",
+              paddingLeft: '2rem',
+              paddingRight: idx % 2 === 0 ? '2rem' : '0.8rem'
             }}
           >
             <Card style={{ height: `calc(${props.size.height} * 0.4)` }}>
@@ -72,8 +72,7 @@ const ChartsLibsSection: React.FC<any> = (props: {
                   anchorEl={anchorEl}
                   index={idx}
                   source={
-                    props.traces[dset] &&
-                    Object.keys(props.traces[dset]).length > 0
+                    props.traces[dset] && Object.keys(props.traces[dset]).length > 0
                       ? props.traces[dset]
                       : null
                   }
@@ -86,16 +85,15 @@ const ChartsLibsSection: React.FC<any> = (props: {
                   }}
                 />
                 <Grid item md={12}>
-                  {props.traces[dset] &&
-                    Object.keys(props.traces[dset]).length > 0 && (
-                      <SelectedChartSection
-                        id={item}
-                        size={props.size}
-                        data={props.traces[dset]}
-                        dataType={props.dataType}
-                        isSubChart={false}
-                      />
-                    )}
+                  {props.traces[dset] && Object.keys(props.traces[dset]).length > 0 && (
+                    <SelectedChartSection
+                      id={item}
+                      size={props.size}
+                      data={props.traces[dset]}
+                      dataType={props.dataType}
+                      isSubChart={false}
+                    />
+                  )}
                 </Grid>
               </CardContent>
             </Card>
@@ -110,10 +108,10 @@ const ChartsLibsSection: React.FC<any> = (props: {
           onClose={() => setIsOpen(false)}
           PaperProps={{
             style: {
-              height: Number(props.size.width.replace("px", "")) * 0.42,
-              maxWidth: Number(props.size.width.replace("px", "")) * 0.6,
-              minWidth: Number(props.size.width.replace("px", "")) * 0.6,
-            },
+              height: Number(props.size.width.replace('px', '')) * 0.42,
+              maxWidth: Number(props.size.width.replace('px', '')) * 0.6,
+              minWidth: Number(props.size.width.replace('px', '')) * 0.6
+            }
           }}
         >
           <CssBaseline />
@@ -131,13 +129,9 @@ const ChartsLibsSection: React.FC<any> = (props: {
           </MuiDialogTitle>
           <hr />
           <DialogContent>
-            {props.traces[
-              MENU_ITEMS[props.dataSet][selected[subChart]].dataset
-            ] &&
+            {props.traces[MENU_ITEMS[props.dataSet][selected[subChart]].dataset] &&
               Object.keys(
-                props.traces[
-                  MENU_ITEMS[props.dataSet][selected[subChart]].dataset
-                ]
+                props.traces[MENU_ITEMS[props.dataSet][selected[subChart]].dataset]
               ).length > 0 && (
                 <SelectedChartSection
                   id={selected[subChart]}
@@ -145,9 +139,7 @@ const ChartsLibsSection: React.FC<any> = (props: {
                   dataType={props.dataType}
                   isSubChart={true}
                   data={
-                    props.traces[
-                      MENU_ITEMS[props.dataSet][selected[subChart]].dataset
-                    ]
+                    props.traces[MENU_ITEMS[props.dataSet][selected[subChart]].dataset]
                   }
                 />
               )}

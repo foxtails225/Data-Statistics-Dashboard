@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import Plot from "react-plotly.js";
+import React, { useState, useEffect } from 'react';
+import Plot from 'react-plotly.js';
 
 const TwoViewSection: React.FC<any> = (props: any) => {
   const [checked, setChecked] = useState(props.checked);
@@ -11,139 +11,127 @@ const TwoViewSection: React.FC<any> = (props: any) => {
     setChecked(props.checked);
   }, [props.checked]);
 
-  const unpack = (rows: Array<any>, key: any) =>
-    rows.map((row: any) => row[key]);
-  
+  const unpack = (rows: Array<any>, key: any) => rows.map((row: any) => row[key]);
+
   useEffect(() => {
     let configData: any = [];
     const inclination = parseInt(props.inc);
-    const new_plot_rows = plot_rows.filter(
-      (row: any) => row.inclination === inclination
-    );
+    const new_plot_rows = plot_rows.filter((row: any) => row.inclination === inclination);
     const new_surface_rows = surface_rows.filter(
       (row: any) => row.inclination === inclination
     );
     if (checked.show_surface === true && checked.show_scatter === true) {
       configData = [
         {
-          x: unpack(new_plot_rows, "altitude"),
-          y: unpack(new_plot_rows, "value"),
-          name: "Model data",
-          mode: "markers",
-          type: "scatter",
-          color: "rgb(23, 190, 207)",
+          x: unpack(new_plot_rows, 'altitude'),
+          y: unpack(new_plot_rows, 'value'),
+          name: 'Model data',
+          mode: 'markers',
+          type: 'scatter',
+          color: 'rgb(23, 190, 207)'
         },
         {
-          x: unpack(new_surface_rows, "altitude"),
-          y: unpack(new_surface_rows, "value"),
-          name: "Model curve",
-          mode: "lines",
+          x: unpack(new_surface_rows, 'altitude'),
+          y: unpack(new_surface_rows, 'value'),
+          name: 'Model curve',
+          mode: 'lines',
           line: {
-            color: "rgb(252, 154, 7)",
-          },
+            color: 'rgb(252, 154, 7)'
+          }
         },
         {
           x: [props.dot.x],
           y: [props.dot.y],
-          name: "User",
-          mode: "markers",
-          type: "scatter",
+          name: 'User',
+          mode: 'markers',
+          type: 'scatter',
           marker: {
-            color: "red",
-            size: 10,
-          },
-        },
+            color: 'red',
+            size: 10
+          }
+        }
       ];
-    } else if (
-      checked.show_surface === false &&
-      checked.show_scatter === true
-    ) {
+    } else if (checked.show_surface === false && checked.show_scatter === true) {
       configData = [
         {
-          x: unpack(new_plot_rows, "altitude"),
-          y: unpack(new_plot_rows, "value"),
-          name: "Model data",
-          mode: "markers",
-          type: "scatter",
-          color: "rgb(23, 190, 207)",
+          x: unpack(new_plot_rows, 'altitude'),
+          y: unpack(new_plot_rows, 'value'),
+          name: 'Model data',
+          mode: 'markers',
+          type: 'scatter',
+          color: 'rgb(23, 190, 207)'
         },
         {
           x: [],
           y: [],
-          mode: "markers",
-          type: "scatter",
+          mode: 'markers',
+          type: 'scatter'
         },
         {
           x: [props.dot.x],
           y: [props.dot.y],
-          name: "User",
-          mode: "markers",
-          type: "scatter",
+          name: 'User',
+          mode: 'markers',
+          type: 'scatter',
           marker: {
-            color: "red",
-            size: 10,
-          },
-        },
+            color: 'red',
+            size: 10
+          }
+        }
       ];
-    } else if (
-      checked.show_surface === true &&
-      checked.show_scatter === false
-    ) {
+    } else if (checked.show_surface === true && checked.show_scatter === false) {
       configData = [
         {
-          x: unpack(new_surface_rows, "altitude"),
-          y: unpack(new_surface_rows, "value"),
-          name: "Model curve",
-          mode: "lines",
+          x: unpack(new_surface_rows, 'altitude'),
+          y: unpack(new_surface_rows, 'value'),
+          name: 'Model curve',
+          mode: 'lines',
           line: {
-            color: "rgb(252, 154, 7)",
-          },
+            color: 'rgb(252, 154, 7)'
+          }
         },
         {
           x: [],
           y: [],
-          mode: "markers",
-          type: "scatter",
+          mode: 'markers',
+          type: 'scatter'
         },
         {
           x: [props.dot.x],
           y: [props.dot.y],
-          name: "User",
-          mode: "markers",
-          type: "scatter",
+          name: 'User',
+          mode: 'markers',
+          type: 'scatter',
           marker: {
-            color: "red",
-            size: 10,
-          },
-        },
+            color: 'red',
+            size: 10
+          }
+        }
       ];
-    } else if (
-      checked.show_surface === false &&
-      checked.show_scatter === false
-    ) {
+    } else if (checked.show_surface === false && checked.show_scatter === false) {
       configData = [
         {
           x: [],
           y: [],
-          mode: "lines",
+          mode: 'lines'
         },
         {
           x: [],
           y: [],
-          mode: "markers",
-          type: "scatter",
+          mode: 'markers',
+          type: 'scatter'
         },
         {
           x: [props.dot.x],
           y: [props.dot.y],
-          name: "User",
-          mode: "markers",
-          type: "scatter",
+          name: 'User',
+          mode: 'markers',
+          type: 'scatter',
           marker: {
-            color: "red",
-            size: 10,
-          },
-        },
+            color: 'red',
+            size: 10
+          }
+        }
       ];
     }
 
@@ -156,32 +144,32 @@ const TwoViewSection: React.FC<any> = (props: any) => {
       layout={{
         autosize: true,
         showlegend: false,
-        hovermode: "closest",
+        hovermode: 'closest',
         width: props.isChart
-          ? parseFloat(props.size.width.replace("px", "")) * 0.55
-          : parseFloat(props.size.width.replace("px", "")) * 0.4,
+          ? parseFloat(props.size.width.replace('px', '')) * 0.55
+          : parseFloat(props.size.width.replace('px', '')) * 0.4,
         height: props.isChart
-          ? parseFloat(props.size.height.replace("px", "")) * 0.55
-          : parseFloat(props.size.height.replace("px", "")) * 0.3,
+          ? parseFloat(props.size.height.replace('px', '')) * 0.55
+          : parseFloat(props.size.height.replace('px', '')) * 0.3,
         margin: {
           l: 60,
           r: 15,
           b: 35,
-          t: 15,
+          t: 15
         },
         xaxis: {
           title: `Altitude ${props.alt}(km), Inclination=${props.inc} deg`,
-          type: "linear",
-          zeroline: false,
+          type: 'linear',
+          zeroline: false
         },
         yaxis: {
           title: props.yAxisLabel,
-          type: "linear",
-          zeroline: false,
-        },
+          type: 'linear',
+          zeroline: false
+        }
       }}
-      onHover={(e: any) => (e.event.target.style.cursor = "pointer")}
-      onUnhover={(e: any) => (e.event.target.style.cursor = "crosshair")}
+      onHover={(e: any) => (e.event.target.style.cursor = 'pointer')}
+      onUnhover={(e: any) => (e.event.target.style.cursor = 'crosshair')}
       onClick={(e) => props.onClick(e)}
       onDoubleClick={() => props.onClick()}
     />
