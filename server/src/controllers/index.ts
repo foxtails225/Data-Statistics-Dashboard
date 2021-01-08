@@ -172,24 +172,20 @@ export const getSystems = async (req: Request, res: Response): Promise<void> => 
 };
 
 export const getSystemVersion = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const { system } = req.query;
-    const sql = `SELECT DISTINCT SYSTEM_ID, SYSTEM_ATTRIBUTE_VERSION_ID AS versions FROM FILE_ID_USAT \
+  const { system } = req.query;
+  const sql = `SELECT DISTINCT SYSTEM_ID, SYSTEM_ATTRIBUTE_VERSION_ID AS versions FROM FILE_ID_USAT \
       WHERE SYSTEM_ID=${system}`;
 
-    connection
-      .connect()
-      .then(async () => {
-        const result: IResult<any> = await connection.query(sql);
-        const data = result.recordset;
-        res.status(200).json(data);
-      })
-      .catch((err: Error) => {
-        throw err;
-      });
-  } catch (error) {
-    throw error;
-  }
+  connection
+    .connect()
+    .then(async () => {
+      const result: IResult<any> = await connection.query(sql);
+      const data = result.recordset;
+      res.status(200).json(data);
+    })
+    .catch((err: Error) => {
+      throw err;
+    });
 };
 
 export const getFileId = async (req: Request, res: Response): Promise<void> => {
@@ -273,4 +269,165 @@ export const migrate = async (req: Request, res: Response): Promise<void> => {
     .catch((err: Error) => {
       throw err;
     });
+};
+
+export const createSystem = async (req: Request, res: Response): Promise<void> => {
+  const { system } = req.body;
+  let sqls: string[] = [];
+
+  sqls.push(`insert into SYSTEM_VERSION( SYSTEM_VERSION_ID, SYSTEM_VERSION, NAME) values(\
+    (select max(SYSTEM_VERSION_ID)+1  from SYSTEM_VERSION), 0, '${system}')`);
+  sqls.push(`insert into STKMODEL_ATTRIBUTE(MODEL_ID, SYSTEM_ID) values(0, (select max(SYSTEM_VERSION_ID) from SYSTEM_VERSION))`);
+
+  connection
+    .connect()
+    .then(async () => {
+      for (let i = 0; i < sqls.length; i++) {
+        try {
+          await connection.query(sqls[i]);
+        } catch (err) {
+          throw err;
+        }
+      }
+      res.status(200).send('success');
+    })
+    .catch((err: Error) => {
+      throw err;
+    });
+};
+
+export const createVersion = async (req: Request, res: Response): Promise<void> => {
+  const { system_id, system_name } = req.body;
+  let sqls: string[] = [];
+
+  sqls.push(`insert into SYSTEM_VERSION( SYSTEM_VERSION_ID, SYSTEM_VERSION, NAME) \
+    values(${system_id}, (select max(SYSTEM_VERSION)+1  from SYSTEM_VERSION \
+    where SYSTEM_VERSION_ID=${system_id}), '${system_name}')`);
+  sqls.push(`delete from SYSTEM_VERSION where SYSTEM_VERSION=0`);
+
+  connection
+    .connect()
+    .then(async () => {
+      for (let i = 0; i < sqls.length; i++) {
+        try {
+          await connection.query(sqls[i]);
+        } catch (err) {
+          throw err;
+        }
+      }
+      res.status(200).send('success');
+    })
+    .catch((err: Error) => {
+      throw err;
+    });
+};
+
+export const createModel = async (req: Request, res: Response): Promise<void> => {
+  const { system_id, beam } = req.body;
+  let sqls: string[] = [];
+
+  sqls.push(`insert into STKMODEL_ATTRIBUTE(MODEL_ID, SYSTEM_ID, BEAM_TYPE_STK) \
+    values((select max(MODEL_ID)+1 from STKMODEL_ATTRIBUTE \
+    where SYSTEM_ID=${system_id}), '${system_id}', '${beam.trim()}')`);
+  sqls.push(`delete from SYSTEM_VERSION where SYSTEM_VERSION=0`);
+
+  connection
+    .connect()
+    .then(async () => {
+      for (let i = 0; i < sqls.length; i++) {
+        try {
+          await connection.query(sqls[i]);
+        } catch (err) {
+          throw err;
+        }
+      }
+      res.status(200).send('success');
+    })
+    .catch((err: Error) => {
+      throw err;
+    });
+};
+
+export const getModifySystems = async (req: Request, res: Response): Promise<void> => {
+  const sql: string = `select SYSTEM_VERSION_ID as SYSTEM_ID, NAME as SYSTEM_NAME from SYSTEM_VERSION`;
+
+  connection
+    .connect()
+    .then(async () => {
+      const result: IResult<any> = await connection.query(sql);
+      const data = result.recordset;
+      res.status(200).json(data);
+    })
+    .catch((err: Error) => {
+      throw err;
+    });
+};
+
+export const getModifyVersions = async (req: Request, res: Response): Promise<void> => {
+  const { system_id, system_name } = req.query;
+  const sql: string = `select SYSTEM_VERSION from SYSTEM_VERSION \
+    where SYSTEM_VERSION_ID=${system_id} and NAME='${system_name}'`;
+
+  connection
+    .connect()
+    .then(async () => {
+      const result: IResult<any> = await connection.query(sql);
+      const data = result.recordset;
+      res.status(200).json(data);
+    })
+    .catch((err: Error) => {
+      throw err;
+    });
+};
+
+export const getModifyAttrVersions = async (req: Request, res: Response): Promise<void> => {
+  const { system, version } = req.query;
+  const sql: string = `select distinct SYSTEM_ATTRIBUTE_VERSION_ID from File_ID_USAT \
+    where SYSTEM_ID=${system} and SYSTEM_VERSION_ID=${version}`;
+
+  connection
+    .connect()
+    .then(async () => {
+      const result: IResult<any> = await connection.query(sql);
+      const data = result.recordset;
+      res.status(200).json(data);
+    })
+    .catch((err: Error) => {
+      throw err;
+    });
+};
+
+export const getModifyModels = async (req: Request, res: Response): Promise<void> => {
+  const { system } = req.query;
+  const sql: string = `select MODEL_ID, BEAM_TYPE_STK from STKMODEL_ATTRIBUTE where system_ID=${system}`;
+
+  connection
+    .connect()
+    .then(async () => {
+      const result: IResult<any> = await connection.query(sql);
+      const data = result.recordset;
+      res.status(200).json(data);
+    })
+    .catch((err: Error) => {
+      throw err;
+    });
+};
+
+export const processScripts = async (req: Request, res: Response): Promise<void> => {
+  const { files } = req.body;
+
+  for (let i = 0; i < files.length; i++) {
+    try {
+      const { spawn } = require('child_process');
+      const fileName = files[i].split('.')[0];
+      var child = await spawn('python', [`${process.cwd()}/src/controllers/scripts/gap_data_v1.py`, fileName, 'xlsx']);
+
+      child.stdout.on('data', function (data: any) {
+        // res.status(200).send(data.toString());
+        console.log(data.toString());
+      });
+    } catch (error) {
+      throw error;
+    }
+  }
 };

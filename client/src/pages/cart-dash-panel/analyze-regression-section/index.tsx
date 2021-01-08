@@ -32,6 +32,11 @@ interface IDot {
   y: number;
 }
 
+interface ICount {
+  width: string;
+  height: string;
+}
+
 interface IFileId {
   id: number;
 }
@@ -63,8 +68,8 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
   const [fileId, setFileId] = useState<IFileId[]>([]);
   const [checked, setChecked] = useState(INIT_CHECK_STATUS);
   const [traces, setTraces] = useState<any>({});
-  const [reset, setReset] = useState(false);
-  const [count, setCount] = useState({ width: '0px', height: '0px' });
+  const [reset, setReset] = useState<boolean>(false);
+  const [count, setCount] = useState<ICount>({ width: '0px', height: '0px' });
   const [isChart, setIsChart] = useState(false);
   const classes = useStyles();
   const chartEl = useRef<any>(null);
@@ -76,10 +81,10 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
     getSystems()
       .then((res: any) => {
         setSystems(res.data);
-        console.log(res.data);
         props.onSystem(res.data[1].system_id);
       })
       .catch((err: any) => setSystems([]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.isRefresh]);
 
   useEffect(() => {
@@ -90,7 +95,7 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
         version: props.version
       })
         .then((res) => {
-          Object.keys(res.data).map((el: string) => {
+          Object.keys(res.data).forEach((el: string) => {
             let ctype: string = res.data[el]['type'];
             let gaps: number[] = [];
             let durations: number[] = [];
@@ -98,7 +103,7 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
 
             // Detect chart type and set Traces
             if (ctype === 'line') {
-              res.data[el]['data'].map((item: number[], idx: number) => {
+              res.data[el]['data'].forEach((item: number[], idx: number) => {
                 gaps.push(idx + 1);
                 durations.push(item[0]);
                 avgs.push(item[1]);

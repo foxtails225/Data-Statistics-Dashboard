@@ -66,7 +66,6 @@ function a11yProps(index: any) {
 function ChartPanel() {
   const [traces, setTraces] = useState({} as any);
   const [isOpen, setIsOpen] = useState(false);
-  const [isOpenDash, setIsOpenDash] = useState(false);
   const [selected, setSelected] = useState("none");
   const [tab, setTab] = useState(0);
   const theme = useTheme();
@@ -76,7 +75,7 @@ function ChartPanel() {
     if (selected !== "none")
       getItems(selected)
         .then((res) => {
-          Object.keys(res.data).map((el) => {
+          Object.keys(res.data).forEach((el) => {
             let ctype: string = res.data[el]["type"];
             let gaps: Array<any> = [];
             let durations: Array<any> = [];
@@ -84,7 +83,7 @@ function ChartPanel() {
 
             // Detect chart type and set Traces
             if (ctype === "line") {
-              res.data[el]["data"].map((item: Array<any>, idx: number) => {
+              res.data[el]["data"].forEach((item: Array<any>, idx: number) => {
                 gaps.push(idx + 1);
                 durations.push(item[0]);
                 avgs.push(item[1]);
@@ -172,6 +171,7 @@ function ChartPanel() {
                         onChange={(e: any) => setSelected(e.target.value)}
                         className={classes.searchSelect}
                         style={selected === "none" ? { color: grey[500] } : {}}
+                        defaultValue=""
                         fullWidth
                       >
                         <MenuItem

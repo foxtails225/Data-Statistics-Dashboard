@@ -136,7 +136,7 @@ const TwoViewSection: React.FC<any> = (props: any) => {
     }
 
     setConfig(configData);
-  }, [checked, plot_rows, surface_rows, props.inc]);
+  }, [checked, plot_rows, surface_rows, props.inc, props.dot]);
 
   return (
     <Plot

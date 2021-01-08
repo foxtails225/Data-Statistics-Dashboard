@@ -22,9 +22,7 @@ const CartDashPanel: React.FC = () => {
   const [dataType, setDataType] = useState<string>('coverage');
   const [isRefresh, setIsRefresh] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [terrestrial, setTerrestrial] = useState({});
   const [maxAltitude, setMaxAltitude] = useState(0);
-  const [coefficients, setCoefficients] = useState({} as any);
   const [text, setText] = useState<string>('');
   const deepDive = 'system1/coverage';
   const metric = deepDive.split('/')[1];
@@ -40,12 +38,14 @@ const CartDashPanel: React.FC = () => {
       dataType
     })
       .then((res: any) => {
-        setTerrestrial(res.data.terrestrial);
         setSource(res.data.data);
         setDataSource(res.data.data);
         setMaxAltitude(res.data.maxAltitude);
-        setCoefficients(res.data.coefficients);
         setText(res.data.text);
+
+        // TODO: active when used
+        // setTerrestrial(res.data.terrestrial);
+        // setCoefficients(res.data.coefficients);
 
         if (Object.keys(res.data.data).includes('plot_value')) {
           let tmp = res.data.data.plot_value.map((item: any) => item['inclination']);
@@ -85,7 +85,7 @@ const CartDashPanel: React.FC = () => {
     // return eqn(coefs, altitude, inclination);
     return inc;
   };
-  console.log(source);
+  
   return (
     <Grid container>
       <Container component="main" maxWidth="xl">

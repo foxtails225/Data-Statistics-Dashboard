@@ -72,10 +72,11 @@ def gapItems(filename, ext):
         }
 
         # Export Result as excel file
-        # cdata = pd.DataFrame(cdata)
-        # cdata = cdata.rename(columns={0: 'Gap', 1: 'Start', 2: 'End', 3: 'Duration', 4: 'Average'})
-        # cdata.to_csv("assets/gap-" + filename + '-' +
-        #         str(datetime.timestamp(datetime.now())) + ".csv", index=False)
+        cdata = pd.DataFrame(cdata)
+        cdata = cdata.rename(
+            columns={0: 'Gap', 1: 'Start', 2: 'End', 3: 'Duration', 4: 'Average'})
+        cdata.to_csv("assets/gap-" + filename + '-' +
+                     str(datetime.timestamp(datetime.now())) + ".csv", index=False)
 
         print(output)
     else:

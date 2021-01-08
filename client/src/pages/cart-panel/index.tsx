@@ -47,9 +47,7 @@ function CartPanel(props: any) {
   const [incs, setIncs] = useState([] as any);
   const [dataType, setDataType] = useState("coverage" as any);
   const [isLoading, setIsLoading] = useState(true);
-  const [terrestrial, setTerrestrial] = useState({});
   const [maxAltitude, setMaxAltitude] = useState(0);
-  const [coefficients, setCoefficients] = useState({} as any);
   const [text, setText] = useState("");
   const deepDive = "system1/coverage";
   const metric = deepDive.split("/")[1];
@@ -65,12 +63,14 @@ function CartPanel(props: any) {
       dataType,
     })
       .then((res: any) => {
-        setTerrestrial(res.data.terrestrial);
         setSource(res.data.data);
         setDataSource(res.data.data);
         setMaxAltitude(res.data.maxAltitude);
-        setCoefficients(res.data.coefficients);
         setText(res.data.text);
+
+        // TODO: active when used
+        // setTerrestrial(res.data.terrestrial);
+        // setCoefficients(res.data.coefficients);
 
         if (Object.keys(res.data.data).includes("plot_value")) {
           let tmp = res.data.data.plot_value.map(
@@ -100,7 +100,7 @@ function CartPanel(props: any) {
       );
       setSource((prevState: any) => ({ ...prevState, plot_value: data }));
     }
-  }, [inclination]);
+  }, [inclination, dataSource]);
 
   const equation = (inc: any, alt: any, metric: string) => {
     // FIXME: activate in integration of cart.

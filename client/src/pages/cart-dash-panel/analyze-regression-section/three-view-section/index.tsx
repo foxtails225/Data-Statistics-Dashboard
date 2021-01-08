@@ -2,19 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Plot from 'react-plotly.js';
 
 const ThreeViewSection: React.FC<any> = (props: any) => {
-  const [checked, setChecked] = useState(props.checked);
-  const [reset, setReset] = useState(false);
   const [config, setConfig] = useState([]);
-  const plot_rows = props.plot_rows;
-  const surface_rows = props.surface_rows;
-
-  useEffect(() => {
-    setReset(!reset);
-  }, [props.reset]);
-
-  useEffect(() => {
-    setChecked(props.checked);
-  }, [props.checked]);
 
   const unpack = (rows: Array<any>, key: any) => {
     return rows.map(function (row) {
@@ -24,12 +12,12 @@ const ThreeViewSection: React.FC<any> = (props: any) => {
 
   useEffect(() => {
     let configData: any = [];
-    if (checked.show_surface === true && checked.show_scatter === true) {
+    if (props.checked.show_surface === true && props.checked.show_scatter === true) {
       configData = [
         {
-          x: unpack(plot_rows, 'altitude'),
-          y: unpack(plot_rows, 'inclination'),
-          z: unpack(plot_rows, 'value'),
+          x: unpack(props.plot_rows, 'altitude'),
+          y: unpack(props.plot_rows, 'inclination'),
+          z: unpack(props.plot_rows, 'value'),
           name: 'Model data',
           mode: 'markers',
           type: 'scatter3d',
@@ -40,9 +28,9 @@ const ThreeViewSection: React.FC<any> = (props: any) => {
           }
         },
         {
-          x: unpack(surface_rows, 'altitude'),
-          y: unpack(surface_rows, 'inclination'),
-          z: unpack(surface_rows, 'value'),
+          x: unpack(props.surface_rows, 'altitude'),
+          y: unpack(props.surface_rows, 'inclination'),
+          z: unpack(props.surface_rows, 'value'),
           name: 'Model surface',
           opacity: 0.3,
           type: 'mesh3d',
@@ -62,12 +50,15 @@ const ThreeViewSection: React.FC<any> = (props: any) => {
           }
         }
       ];
-    } else if (checked.show_surface === false && checked.show_scatter === true) {
+    } else if (
+      props.checked.show_surface === false &&
+      props.checked.show_scatter === true
+    ) {
       configData = [
         {
-          x: unpack(plot_rows, 'altitude'),
-          y: unpack(plot_rows, 'inclination'),
-          z: unpack(plot_rows, 'value'),
+          x: unpack(props.plot_rows, 'altitude'),
+          y: unpack(props.plot_rows, 'inclination'),
+          z: unpack(props.plot_rows, 'value'),
           name: 'Model data',
           mode: 'markers',
           type: 'scatter3d',
@@ -91,12 +82,15 @@ const ThreeViewSection: React.FC<any> = (props: any) => {
           }
         }
       ];
-    } else if (checked.show_surface === true && checked.show_scatter === false) {
+    } else if (
+      props.checked.show_surface === true &&
+      props.checked.show_scatter === false
+    ) {
       configData = [
         {
-          x: unpack(surface_rows, 'altitude'),
-          y: unpack(surface_rows, 'inclination'),
-          z: unpack(surface_rows, 'value'),
+          x: unpack(props.surface_rows, 'altitude'),
+          y: unpack(props.surface_rows, 'inclination'),
+          z: unpack(props.surface_rows, 'value'),
           name: 'Model surface',
           opacity: 0.3,
           type: 'mesh3d',
@@ -116,7 +110,10 @@ const ThreeViewSection: React.FC<any> = (props: any) => {
           }
         }
       ];
-    } else if (checked.show_surface === false && checked.show_scatter === false) {
+    } else if (
+      props.checked.show_surface === false &&
+      props.checked.show_scatter === false
+    ) {
       configData = [
         {
           x: [],
@@ -148,7 +145,15 @@ const ThreeViewSection: React.FC<any> = (props: any) => {
     }
 
     setConfig(configData);
-  }, [checked, plot_rows, surface_rows, reset]);
+  }, [
+    props.checked,
+    props.plot_rows,
+    props.surface_rows,
+    props.reset,
+    props.alt,
+    props.inc,
+    props.value
+  ]);
 
   return (
     <Plot
@@ -193,7 +198,7 @@ const ThreeViewSection: React.FC<any> = (props: any) => {
           xaxis: {
             title: 'Altitude (km)',
             type: 'linear',
-            range: [Math.max(...unpack(surface_rows, 'altitude')), 0],
+            range: [Math.max(...unpack(props.surface_rows, 'altitude')), 0],
             zeroline: false
           },
           yaxis: {
@@ -206,8 +211,8 @@ const ThreeViewSection: React.FC<any> = (props: any) => {
             title: props.zAxisLabel,
             type: 'linear',
             range: [
-              Math.min(...unpack(surface_rows, 'value')),
-              Math.max(...unpack(surface_rows, 'value'))
+              Math.min(...unpack(props.surface_rows, 'value')),
+              Math.max(...unpack(props.surface_rows, 'value'))
             ],
             zeroline: false
           }

@@ -322,7 +322,6 @@ export const migrate = async (req: Request, res: Response): Promise<void> => {
 
       connection.query(sql, [1, 2], (err, data, fields) => {
         if (err) throw err;
-        console.log(data[0]);
         res.status(200).json(data);
         connection.release();
       });

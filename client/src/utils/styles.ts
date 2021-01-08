@@ -52,6 +52,11 @@ const useStyles = makeStyles((theme) => ({
     backgroundColor: theme.palette.grey[100],
   },
 
+  dialogModify: {
+    minWidth: "40vw !important",
+    maxWidth: "40vw !important",
+  },
+
   dialogCloseBtn: {
     position: "absolute",
     right: theme.spacing(1),

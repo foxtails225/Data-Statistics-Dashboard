@@ -152,6 +152,7 @@ function OptionAddon (props: any) {
                     value={props.inc}
                     onChange={(e) => props.onInc(e.target.value)}
                     label="Inclination"
+                    defaultValue=""
                     disabled={props.viewMethod === "3d_view"}
                   >
                     <MenuItem value="" disabled>
