@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -7,7 +7,12 @@ import {
   Button,
   Slide,
   IconButton,
-  Grid
+  Grid,
+  Box,
+  Table,
+  TableBody,
+  TableRow,
+  TableCell
 } from '@material-ui/core';
 import { TransitionProps } from '@material-ui/core/transitions';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
@@ -16,16 +21,18 @@ import SystemDetailsSection from './system-details-section';
 import ModelDetailsSection from './model-details-section';
 import useStyles from '../../../../../utils/styles';
 import NewDataSection from './new-data-section';
-import { processScripts } from '../../../../../API';
+import { processing } from '../../../../../API';
+import { baseUrl } from '../../../../../constants';
 
 interface IModifyDialogProps {
   isOpen: boolean;
   onClose(): void;
 }
 
-interface IUploadedItem {
+interface ISource {
   name: string;
   size: number;
+  status: string;
 }
 
 const Transition = React.forwardRef(function Transition(
@@ -38,16 +45,32 @@ const Transition = React.forwardRef(function Transition(
 const ModifyDialog: React.FC<IModifyDialogProps> = (props) => {
   const [system, setSystem] = useState<number>(-1);
   const [expanded, setExpanded] = useState<string>('panel1');
-  const [uploadedItems, setUploadedItems] = useState<IUploadedItem[]>([]);
+  const [uploadedItems, setUploadedItems] = useState<File[]>([]);
+  const [listening, setListening] = useState<boolean>(false);
+  const [source, setSource] = useState<Array<any>>([]);
   const classes: Record<string, string> = useStyles();
 
-  const handleChangeUploadedItems = (name: string, size: number) => {
-    setUploadedItems((prevState) => [...prevState, { name, size }]);
-  };
+  useEffect(() => {
+    if (!listening) {
+      const events = new EventSource(baseUrl + '/events');
+      events.onmessage = (event) => {
+        const parsedData = JSON.parse(event.data);
+        setSource((nests) => nests.concat(parsedData));
+      };
 
+      setListening(true);
+    }
+  }, [listening, source]);
+  
   const handleClick = () => {
-    processScripts({ files: uploadedItems });
-    props.onClose();
+    const formData = new FormData();
+
+    uploadedItems.forEach((file: File) => {
+      formData.append('upload', file);
+    });
+
+    processing(formData);
+    setListening(false);
   };
 
   return (
@@ -95,22 +118,45 @@ const ModifyDialog: React.FC<IModifyDialogProps> = (props) => {
                 <NewDataSection
                   expanded={expanded}
                   uploadedItems={uploadedItems}
-                  onChangeUploadedItems={(name: string, size: number) =>
-                    handleChangeUploadedItems(name, size)
-                  }
                   onChange={(value: string) => setExpanded(value)}
+                  onChangeUploadedItems={(file: File) =>
+                    setUploadedItems((prevState) => [...prevState, file])
+                  }
                 />
               </Grid>
             </Grid>
           </Grid>
           <Grid item md={12}>
-            <div
+            <Box
+              border={1}
               style={{
-                width: '100%',
-                minHeight: '20vh',
-                backgroundColor: '#000'
+                height: '10rem',
+                backgroundColor: '#000',
+                overflow: 'auto'
               }}
-            />
+            >
+              <Table size="small" aria-label="status table">
+                <TableBody>
+                  {source.map((row: ISource, idx: number) => (
+                    <TableRow key={row.name + idx}>
+                      <TableCell
+                        component="th"
+                        scope="row"
+                        style={{ color: '#fff', borderBottom: 0 }}
+                      >
+                        {row.name}
+                      </TableCell>
+                      <TableCell align="right" style={{ color: '#fff', borderBottom: 0 }}>
+                        {row.size}
+                      </TableCell>
+                      <TableCell align="right" style={{ color: '#fff', borderBottom: 0 }}>
+                        {row.status}
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </Box>
           </Grid>
         </Grid>
       </DialogContent>

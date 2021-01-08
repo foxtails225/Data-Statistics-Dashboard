@@ -1,11 +1,44 @@
 import { Response, Request } from 'express';
+import multer from 'multer';
+import path from 'path';
 import { config, env, localEnv } from '../config';
 import { getAvgs } from '../utils';
 import { testData, cartData } from '../data/test';
 import sql, { IResult } from 'mssql';
 
+interface IClient {
+  id: number;
+  res: Response<any>;
+}
+
+interface IFile {
+  name: string;
+  size: number;
+}
+
 const conf = config.NODE_ENV === 'production' ? env : localEnv;
 let connection = new sql.ConnectionPool(`mssql://${conf.username}:${conf.password}@${conf.server}/${conf.defaultDB}`);
+
+let clients: IClient[] = [];
+let files: IFile[] = [];
+
+const storage = multer.diskStorage({
+  destination: './assets/',
+  filename: function (req, file, cb) {
+    cb(null, file.originalname.split('.')[0] + '-' + Date.now() + '-' + path.extname(file.originalname));
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    if (!['image/png'].includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', 'not a PNG'));
+    }
+  }
+}).array('upload');
 
 export const changeDB = async (req: Request, res: Response): Promise<void> => {
   const { database } = req.query;
@@ -203,6 +236,31 @@ export const getFileId = async (req: Request, res: Response): Promise<void> => {
     .catch((err: Error) => {
       throw err;
     });
+};
+
+export const getEvents = async (req: Request, res: Response): Promise<void> => {
+  const headers = {
+    'Content-Type': 'text/event-stream',
+    Connection: 'keep-alive',
+    'Cache-Control': 'no-cache'
+  };
+  res.writeHead(200, headers);
+
+  const data = `data: ${JSON.stringify(files)}\n\n`;
+  res.write(data);
+
+  const clientId = Date.now();
+  const newClient = {
+    id: clientId,
+    res
+  };
+  clients.push(newClient);
+
+  req.on('close', () => {
+    console.log(`${clientId} Connection closed`);
+    files = [];
+    clients = clients.filter((c) => c.id !== clientId);
+  });
 };
 
 export const deleteRecord = async (req: Request, res: Response): Promise<void> => {
@@ -413,21 +471,29 @@ export const getModifyModels = async (req: Request, res: Response): Promise<void
     });
 };
 
-export const processScripts = async (req: Request, res: Response): Promise<void> => {
-  const { files } = req.body;
+export const processing = async (req: Request, res: Response): Promise<void> => {
+  let status: string = 'success';
+  upload(req, res, (err: any) => {
+    if (err instanceof multer.MulterError) status = 'failed';
+    //@ts-ignore
+    files = req.files.map((item: any) => {
+      return { name: item.originalname, size: item.size, status };
+    });
+  });
 
-  for (let i = 0; i < files.length; i++) {
-    try {
-      const { spawn } = require('child_process');
-      const fileName = files[i].split('.')[0];
-      var child = await spawn('python', [`${process.cwd()}/src/controllers/scripts/gap_data_v1.py`, fileName, 'xlsx']);
+  clients.forEach((c: IClient) => c.res.write(`data: ${JSON.stringify(files)}\n\n`));
+  // for (let i = 0; i < files.length; i++) {
+  //   try {
+  //     const { spawn } = require('child_process');
+  //     const fileName = files[i].split('.')[0];
+  //     var child = await spawn('python', [`${process.cwd()}/src/controllers/scripts/gap_data_v1.py`, fileName, 'xlsx']);
 
-      child.stdout.on('data', function (data: any) {
-        // res.status(200).send(data.toString());
-        console.log(data.toString());
-      });
-    } catch (error) {
-      throw error;
-    }
-  }
+  //     child.stdout.on('data', function (data: any) {
+  //       // res.status(200).send(data.toString());
+  //       console.log(data.toString());
+  //     });
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 };

@@ -10,19 +10,21 @@ interface DashParams {
   [key: string]: number;
 }
 
+export const baseUrl = 'http://127.0.0.1:7000';
+
 export const MENU_ITEMS: MenuSelecter = {
   as_needed_handoff: [
-    { id: 0, dataset: "coverage", name: "Key Metrics" },
-    { id: 1, dataset: "coverage", name: "Running Average" },
-    { id: 2, dataset: "coverage_histogram", name: "Distribution" },
-    { id: 3, dataset: "coverage_histogram", name: "Statistics Chart" },
+    { id: 0, dataset: 'coverage', name: 'Key Metrics' },
+    { id: 1, dataset: 'coverage', name: 'Running Average' },
+    { id: 2, dataset: 'coverage_histogram', name: 'Distribution' },
+    { id: 3, dataset: 'coverage_histogram', name: 'Statistics Chart' }
   ],
   maximum_powee_handoff: [
-    { id: 0, dataset: "gap", name: "Key Metrics" },
-    { id: 1, dataset: "gap", name: "Running Average" },
-    { id: 2, dataset: "gap_histogram", name: "Distribution" },
-    { id: 3, dataset: "gap_histogram", name: "Statistics Chart" },
-  ],
+    { id: 0, dataset: 'gap', name: 'Key Metrics' },
+    { id: 1, dataset: 'gap', name: 'Running Average' },
+    { id: 2, dataset: 'gap_histogram', name: 'Distribution' },
+    { id: 3, dataset: 'gap_histogram', name: 'Statistics Chart' }
+  ]
 };
 
 export const INIT_PARAMS: DashParams = {
@@ -36,5 +38,5 @@ export const INIT_PARAMS: DashParams = {
   longitude: 30,
   navAccuracyNeed: 20,
   powerAmplifier: 1,
-  value: 100,
+  value: 100
 };

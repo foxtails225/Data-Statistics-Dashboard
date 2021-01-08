@@ -85,7 +85,7 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
       })
       .catch((err: any) => setSystems([]));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props.isRefresh]);
+  }, [props.isRefresh, db]);
 
   useEffect(() => {
     if (fileId.length > 0) {
@@ -155,6 +155,7 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
 
   useEffect(() => {
     changeDB({ database: db }).catch((err) => setDB('staging_db'));
+    setDataSet('as_needed_handoff');
   }, [db]);
 
   useEffect(() => {
@@ -214,7 +215,11 @@ const AnalyzeRegressionSection: React.FC<any> = (props: any) => {
 
   return (
     <>
-      <CardContent ref={chartEl} className={classes.cartCardContent}>
+      <CardContent
+        ref={chartEl}
+        className={classes.cartCardContent}
+        style={{ overflow: 'hidden' }}
+      >
         <Grid container justify="center" alignItems="center" spacing={2}>
           <HeaderSection
             db={db}

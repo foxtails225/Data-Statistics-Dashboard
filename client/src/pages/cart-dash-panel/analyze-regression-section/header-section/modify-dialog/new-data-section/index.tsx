@@ -11,24 +11,15 @@ import {
 } from '@material-ui/core';
 import { blue } from '@material-ui/core/colors';
 import { Accordion, AccordionSummary, AccordionDetails } from '../custom-accordion';
-import useStyles from '../../../../../../utils/styles';
-import { uploadFile } from '../../../../../../API';
-
-interface IUploadedItem {
-  name: string;
-  size: number;
-}
 
 interface IModelDetailsProps {
   expanded: string;
-  uploadedItems: IUploadedItem[];
-  onChangeUploadedItems(name: string, size: number): void;
+  uploadedItems: File[];
+  onChangeUploadedItems(param: File): void;
   onChange(param: string): void;
 }
 
 const NewDataSection: React.FC<IModelDetailsProps> = (props) => {
-  const classes: Record<string, string> = useStyles();
-
   const handleUploadFile = (
     event: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ): void => {
@@ -43,11 +34,7 @@ const NewDataSection: React.FC<IModelDetailsProps> = (props) => {
     const files: FileList | null = element?.files;
 
     if (files && files[0]) {
-      const formData = new FormData();
-      formData.append('upload', files[0]);
-
-      props.onChangeUploadedItems(files[0].name, files[0].size);
-      uploadFile(formData);
+      props.onChangeUploadedItems(files[0]);
     }
   };
 
@@ -91,7 +78,7 @@ const NewDataSection: React.FC<IModelDetailsProps> = (props) => {
             >
               <Table size="small" aria-label="uploaded files table">
                 <TableBody>
-                  {props.uploadedItems.map((row: IUploadedItem) => (
+                  {props.uploadedItems.map((row: File) => (
                     <TableRow key={row.name}>
                       <TableCell component="th" scope="row">
                         {row.name}

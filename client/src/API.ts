@@ -1,11 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-
-interface IUploadedItem {
-  name: string;
-  size: number;
-}
-
-const baseUrl: string = 'http://127.0.0.1:7000';
+import { baseUrl } from './constants';
 
 export const getItems = async (params: any) => {
   try {
@@ -170,7 +164,7 @@ export const createModel = async (params: { [key: string]: number | string }) =>
   }
 };
 
-export const uploadFile = async (formData: FormData) => {
+export const processing = async (formData: FormData) => {
   try {
     const config = {
       headers: {
@@ -178,19 +172,10 @@ export const uploadFile = async (formData: FormData) => {
       }
     };
     const res: AxiosResponse = await axios.post(
-      baseUrl + '/upload-file',
+      baseUrl + '/processing',
       formData,
       config
     );
-    return res;
-  } catch (error) {
-    throw new Error(error);
-  }
-};
-
-export const processScripts = async (params: { [key: string]: IUploadedItem[] }) => {
-  try {
-    const res: AxiosResponse = await axios.post(baseUrl + '/process-scripts', params);
     return res;
   } catch (error) {
     throw new Error(error);

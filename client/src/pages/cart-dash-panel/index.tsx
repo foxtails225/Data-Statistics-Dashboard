@@ -7,6 +7,7 @@ import {
   CardHeader,
   Typography
 } from '@material-ui/core';
+import { blue } from '@material-ui/core/colors';
 import { getCartItems } from '../../API';
 import useStyles from '../../utils/styles';
 import { INIT_PARAMS } from '../../constants';
@@ -85,7 +86,7 @@ const CartDashPanel: React.FC = () => {
     // return eqn(coefs, altitude, inclination);
     return inc;
   };
-  
+
   return (
     <Grid container>
       <Container component="main" maxWidth="xl">
@@ -93,10 +94,11 @@ const CartDashPanel: React.FC = () => {
           <CssBaseline />
           <CardHeader
             title={
-              <Typography component="h1" variant="h5" style={{ margin: 5 }}>
+              <Typography component="h1" variant="h6" style={{ margin: 5 }}>
                 {`CAESAR Data Dashboard`}
               </Typography>
             }
+            style={{ backgroundColor: blue[700], color: '#fff', maxHeight: '4rem' }}
           />
           {!isLoading &&
             (missionType === 'orbital' ? (
