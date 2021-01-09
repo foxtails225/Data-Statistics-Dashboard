@@ -482,6 +482,9 @@ export const processing = async (req: Request, res: Response): Promise<void> => 
   });
 
   clients.forEach((c: IClient) => c.res.write(`data: ${JSON.stringify(files)}\n\n`));
+  res.send(status);
+
+  // TODO: running python scripts files.
   // for (let i = 0; i < files.length; i++) {
   //   try {
   //     const { spawn } = require('child_process');
