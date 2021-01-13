@@ -1,10 +1,10 @@
 import { Router } from 'express';
 import {
-  changeDB,
   getPlotItems,
   getCartItems,
   getItem,
   getSystems,
+  getSystemVersion,
   getFileId,
   getEvents,
   deleteRecord,
@@ -13,20 +13,20 @@ import {
   createSystem,
   createVersion,
   createModel
-} from '../controllers';
+} from '../controllers/caesar';
 
 const router: Router = Router();
 
-router.get('/get-items', getItem);
 router.get('/get-plot', getPlotItems);
 router.get('/get-systems', getSystems);
 
 router.get('/get-cart', getCartItems);
 router.get('/get-file-id', getFileId);
 
-router.get('/change-db', changeDB);
 router.get('/events', getEvents);
 
+router.post('/get-system-version', getSystemVersion);
+router.post('/get-items', getItem);
 router.post('/delete-record', deleteRecord);
 router.post('/delete-all', deleteAll);
 router.post('/migrate', migrate);

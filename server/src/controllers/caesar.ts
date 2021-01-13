@@ -1,57 +1,24 @@
 import { Response, Request } from 'express';
 import multer from 'multer';
-import path from 'path';
-import { config, env, localEnv } from '../config';
-import { getAvgs } from '../utils';
+import { IResult } from 'mssql';
+import { connection } from './connection';
+import { getAvgs } from '../utils/util';
+import upload from '../utils/upload';
 import { testData, cartData } from '../data/test';
-import sql, { IResult } from 'mssql';
+import IFile from '../types/file';
+import Client from '../types/client';
 
-interface IClient {
-  id: number;
-  res: Response<any>;
-}
-
-interface IFile {
-  name: string;
-  size: number;
-}
-
-const conf = config.NODE_ENV === 'production' ? env : localEnv;
-let connection = new sql.ConnectionPool(`mssql://${conf.username}:${conf.password}@${conf.server}/${conf.defaultDB}`);
-
-let clients: IClient[] = [];
+let clients: Client[] = [];
 let files: IFile[] = [];
-
-const storage = multer.diskStorage({
-  destination: './assets/',
-  filename: function (req, file, cb) {
-    cb(null, file.originalname.split('.')[0] + '-' + Date.now() + '-' + path.extname(file.originalname));
-  }
-});
-
-const upload = multer({
-  storage: storage,
-  fileFilter: (req, file, cb) => {
-    if (!['image/png'].includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(new multer.MulterError('LIMIT_UNEXPECTED_FILE', 'not a PNG'));
-    }
-  }
-}).array('upload');
-
-export const changeDB = async (req: Request, res: Response): Promise<void> => {
-  const { database } = req.query;
-  const db: string = database === 'product_db' ? 'CaesarModelResults_Production' : 'CaesarModelResults_Stage';
-
-  connection = new sql.ConnectionPool(`mssql://${conf.username}:${conf.password}@${conf.server}/${db}`);
-  res.status(200).send('success');
-};
 
 export const getItems = async (req: Request, res: Response): Promise<void> => {
   try {
     const { spawn } = require('child_process');
-    var child = await spawn('python', [`${process.cwd()}/src/controllers/scripts/gap_data_v1.py`, req.query.selected, 'csv']);
+    var child = await spawn('python', [
+      `${process.cwd()}/src/controllers/scripts/gap_data_v1.py`,
+      req.query.selected,
+      'csv'
+    ]);
 
     child.stdout.on('data', function (data: any) {
       res.status(200).send(data.toString());
@@ -66,7 +33,10 @@ export const getPlotItems = async (req: Request, res: Response): Promise<void> =
 
   try {
     const { spawn } = require('child_process');
-    var child = await spawn('python', [`${process.cwd()}/src/controllers/scripts/plot_data_v1.py`, JSON.stringify(testData)]);
+    var child = await spawn('python', [
+      `${process.cwd()}/src/controllers/scripts/plot_data_v1.py`,
+      JSON.stringify(testData)
+    ]);
 
     child.stderr.on('data', (data: any) => {
       console.log(data.toString());
@@ -117,17 +87,18 @@ export const getCartItems = async (req: Request, res: Response): Promise<void> =
 };
 
 export const getItem = async (req: Request, res: Response): Promise<void> => {
-  const { dataType, fileId } = req.query as any;
+  const { dataType, fileId } = req.body;
   // TODO: Need to account for case where there are more than 2 file IDs
+
   const sql =
     fileId.length === 1
       ? `SELECT s.[Simulation Time] as simulation_time, s.[Gap Duration] as gap_duration FROM StkReport as s \
     INNER JOIN FILE_ID_USAT as f ON f.[FILE_ID]=s.[FILE_ID] \
-    WHERE f.Is_Active=1 AND f.FILE_ID=${JSON.parse(fileId[0]).FILE_ID} \
+    WHERE f.Is_Active=1 AND f.FILE_ID=${fileId[0].FILE_ID} \
     ORDER BY s.[Simulation Time]`
       : `SELECT s.[Simulation Time] as simulation_time, s.[Gap Duration] as gap_duration FROM StkReport as s \
-    INNER JOIN FILE_ID_USAT as f ON s.FILE_ID=f.FILE_ID WHERE f.FILE_ID=${JSON.parse(fileId[0]).FILE_ID} OR \
-    f.FILE_ID=${JSON.parse(fileId[1]).FILE_ID} AND f.Is_Active=1 \
+    INNER JOIN FILE_ID_USAT as f ON s.FILE_ID=f.FILE_ID WHERE f.FILE_ID=${fileId[0].FILE_ID} OR \
+    f.FILE_ID=${fileId[1].FILE_ID} AND f.Is_Active=1 \
     ORDER BY simulation_time`;
   let preVal: number = 0;
   let tdata: number[] = [];
@@ -205,7 +176,7 @@ export const getSystems = async (req: Request, res: Response): Promise<void> => 
 };
 
 export const getSystemVersion = async (req: Request, res: Response): Promise<void> => {
-  const { system } = req.query;
+  const { system } = req.body;
   const sql = `SELECT DISTINCT SYSTEM_ID, SYSTEM_ATTRIBUTE_VERSION_ID AS versions FROM FILE_ID_USAT \
       WHERE SYSTEM_ID=${system}`;
 
@@ -296,7 +267,9 @@ export const deleteAll = async (req: Request, res: Response): Promise<void> => {
       (SELECT FILE_ID FROM FILE_ID_USAT WHERE SYSTEM_ID=${system} AND SYSTEM_ATTRIBUTE_VERSION_ID=${version} AND Is_Active=1)`);
   sqls.push(`DELETE FROM StkPointingReportSummaryStats WHERE FILE_ID IN \
       (SELECT FILE_ID FROM FILE_ID_USAT WHERE SYSTEM_ID=${system} AND SYSTEM_ATTRIBUTE_VERSION_ID=${version} AND Is_Active=1)`);
-  sqls.push(`DELETE FROM FILE_ID_USAT WHERE SYSTEM_ID=${system} AND SYSTEM_ATTRIBUTE_VERSION_ID=${version} AND Is_Active=1`);
+  sqls.push(
+    `DELETE FROM FILE_ID_USAT WHERE SYSTEM_ID=${system} AND SYSTEM_ATTRIBUTE_VERSION_ID=${version} AND Is_Active=1`
+  );
 
   connection
     .connect()
@@ -314,7 +287,9 @@ export const deleteAll = async (req: Request, res: Response): Promise<void> => {
 export const migrate = async (req: Request, res: Response): Promise<void> => {
   const { system, version, alt, inc, fildId } = req.body;
   const sql = `SELECT * FROM FILE_ID_USAT WHERE SYSTEM_ID=${system} AND SYSTEM_ATTRIBUTE_VERSION_ID=${version} \
-    AND [User Altitude]=${alt} AND [User Inclination]=${inc} AND Is_Active=1 AND FILE_ID=${JSON.parse(fildId[0]).FILE_ID}; \
+    AND [User Altitude]=${alt} AND [User Inclination]=${inc} AND Is_Active=1 AND FILE_ID=${
+    JSON.parse(fildId[0]).FILE_ID
+  }; \
     SELECT * FROM StkReport WHERE FILE_ID=${JSON.parse(fildId[0].FILE_ID)}`;
 
   connection
@@ -335,7 +310,9 @@ export const createSystem = async (req: Request, res: Response): Promise<void> =
 
   sqls.push(`insert into SYSTEM_VERSION( SYSTEM_VERSION_ID, SYSTEM_VERSION, NAME) values(\
     (select max(SYSTEM_VERSION_ID)+1  from SYSTEM_VERSION), 0, '${system}')`);
-  sqls.push(`insert into STKMODEL_ATTRIBUTE(MODEL_ID, SYSTEM_ID) values(0, (select max(SYSTEM_VERSION_ID) from SYSTEM_VERSION))`);
+  sqls.push(
+    `insert into STKMODEL_ATTRIBUTE(MODEL_ID, SYSTEM_ID) values(0, (select max(SYSTEM_VERSION_ID) from SYSTEM_VERSION))`
+  );
 
   connection
     .connect()
@@ -404,99 +381,4 @@ export const createModel = async (req: Request, res: Response): Promise<void> =>
     .catch((err: Error) => {
       throw err;
     });
-};
-
-export const getModifySystems = async (req: Request, res: Response): Promise<void> => {
-  const sql: string = `select SYSTEM_VERSION_ID as SYSTEM_ID, NAME as SYSTEM_NAME from SYSTEM_VERSION`;
-
-  connection
-    .connect()
-    .then(async () => {
-      const result: IResult<any> = await connection.query(sql);
-      const data = result.recordset;
-      res.status(200).json(data);
-    })
-    .catch((err: Error) => {
-      throw err;
-    });
-};
-
-export const getModifyVersions = async (req: Request, res: Response): Promise<void> => {
-  const { system_id, system_name } = req.query;
-  const sql: string = `select SYSTEM_VERSION from SYSTEM_VERSION \
-    where SYSTEM_VERSION_ID=${system_id} and NAME='${system_name}'`;
-
-  connection
-    .connect()
-    .then(async () => {
-      const result: IResult<any> = await connection.query(sql);
-      const data = result.recordset;
-      res.status(200).json(data);
-    })
-    .catch((err: Error) => {
-      throw err;
-    });
-};
-
-export const getModifyAttrVersions = async (req: Request, res: Response): Promise<void> => {
-  const { system, version } = req.query;
-  const sql: string = `select distinct SYSTEM_ATTRIBUTE_VERSION_ID from File_ID_USAT \
-    where SYSTEM_ID=${system} and SYSTEM_VERSION_ID=${version}`;
-
-  connection
-    .connect()
-    .then(async () => {
-      const result: IResult<any> = await connection.query(sql);
-      const data = result.recordset;
-      res.status(200).json(data);
-    })
-    .catch((err: Error) => {
-      throw err;
-    });
-};
-
-export const getModifyModels = async (req: Request, res: Response): Promise<void> => {
-  const { system } = req.query;
-  const sql: string = `select MODEL_ID, BEAM_TYPE_STK from STKMODEL_ATTRIBUTE where system_ID=${system}`;
-
-  connection
-    .connect()
-    .then(async () => {
-      const result: IResult<any> = await connection.query(sql);
-      const data = result.recordset;
-      res.status(200).json(data);
-    })
-    .catch((err: Error) => {
-      throw err;
-    });
-};
-
-export const processing = async (req: Request, res: Response): Promise<void> => {
-  let status: string = 'success';
-  upload(req, res, (err: any) => {
-    if (err instanceof multer.MulterError) status = 'failed';
-    //@ts-ignore
-    files = req.files.map((item: any) => {
-      return { name: item.originalname, size: item.size, status };
-    });
-  });
-
-  clients.forEach((c: IClient) => c.res.write(`data: ${JSON.stringify(files)}\n\n`));
-  res.send(status);
-
-  // TODO: running python scripts files.
-  // for (let i = 0; i < files.length; i++) {
-  //   try {
-  //     const { spawn } = require('child_process');
-  //     const fileName = files[i].split('.')[0];
-  //     var child = await spawn('python', [`${process.cwd()}/src/controllers/scripts/gap_data_v1.py`, fileName, 'xlsx']);
-
-  //     child.stdout.on('data', function (data: any) {
-  //       // res.status(200).send(data.toString());
-  //       console.log(data.toString());
-  //     });
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
 };

@@ -9,6 +9,7 @@
     "forceConsistentCasingInFileNames": true,
     "moduleResolution": "node",
     "module": "commonjs",
+    "strict": true,
     "pretty": true,
     "sourceMap": true,
     "outDir": "dist/js",
@@ -18,6 +19,6 @@
     "esModuleInterop": true,
     "skipLibCheck": true
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", ".env"],
   "exclude": ["src/types/*.ts", "node_modules", ".vscode"]
 }

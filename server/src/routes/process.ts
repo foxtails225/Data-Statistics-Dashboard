@@ -1,20 +1,12 @@
 import { Router } from 'express';
-import {
-  getModifySystems,
-  getModifyVersions,
-  getSystemVersion,
-  getModifyAttrVersions,
-  getModifyModels,
-  processing
-} from '../controllers';
+import { getSystems, getVersions, getAttrVersions, getModels, processing } from '../controllers/process';
 
 const router: Router = Router();
 
-router.get('/get-system-version', getSystemVersion);
-router.get('/get-modify-systems', getModifySystems);
-router.get('/get-modify-versions', getModifyVersions);
-router.get('/get-modify-attr-versions', getModifyAttrVersions);
-router.get('/get-modify-models', getModifyModels);
+router.get('/get-modify-systems', getSystems);
+router.get('/get-modify-versions', getVersions);
+router.get('/get-modify-attr-versions', getAttrVersions);
+router.get('/get-modify-models', getModels);
 router.post('/processing', processing);
 
 export default router;

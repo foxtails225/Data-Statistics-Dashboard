@@ -4,10 +4,11 @@ const validateEnv = () => {
   cleanEnv(process.env, {
     NODE_ENV: str(),
     PORT: port(),
-    MONGO_HOST: str(),
-    MONGO_PORT: str(),
-    MONGO_DATABASE: str(),
-    JWT_SECRET: str(),
+    MSSQL_HOST: str(),
+    MSSQL_USERNAME: str(),
+    MSSQL_PASSWORD: str(),
+    MSSQL_DATABASE: str(),
+    MSSQL_PRO_DATABASE: str(),
   });
 };
 

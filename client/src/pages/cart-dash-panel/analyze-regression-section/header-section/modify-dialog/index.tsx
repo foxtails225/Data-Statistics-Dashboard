@@ -52,7 +52,7 @@ const ModifyDialog: React.FC<IModifyDialogProps> = (props) => {
 
   useEffect(() => {
     if (!listening) {
-      const events = new EventSource(baseUrl + '/events');
+      const events = new EventSource(baseUrl + '/api/events');
       events.onmessage = (event) => {
         const parsedData = JSON.parse(event.data);
         setSource((nests) => nests.concat(parsedData));

@@ -2,6 +2,7 @@
 /dist
 /src/config
 /src/logs
+.env
 
 # yarn
 yarn-error.log*

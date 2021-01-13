@@ -8,8 +8,8 @@ import compression from 'compression';
 import path from 'path';
 import { logger, stream } from './utils/logger';
 import validateEnv from './utils/validateEnv';
-import routes from './routes';
 import errorMiddleware from './middlewares/error';
+import routes from './routes';
 
 validateEnv();
 
@@ -19,14 +19,14 @@ const env: string = process.env.NODE_ENV || 'development';
 
 if (env === 'production') {
   app.use(morgan('combined', { stream }));
-  app.use(cors({ origin: 'your.domain.com', credentials: true }));
+  app.use(cors({ origin: 'http://20.80.240.57', credentials: true }));
 } else if (env === 'development') {
   app.use(morgan('dev', { stream }));
   app.use(cors({ origin: true, credentials: true }));
 }
 
 app.use(hpp());
-app.use(helmet());
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(compression());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -37,7 +37,7 @@ routes.forEach((route) => {
 });
 
 app.get('/', function (req, res) {
-  res.sendFile(path.join('./build', 'index.html'));
+  res.sendFile(path.resolve('./build/' + 'index.html'));
 });
 
 app.use(errorMiddleware);
