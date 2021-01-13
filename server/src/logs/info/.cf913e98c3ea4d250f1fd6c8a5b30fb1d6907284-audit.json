@@ -1,0 +1,14 @@
+{
+    "keep": {
+        "days": false,
+        "amount": 30
+    },
+    "auditLog": "D:\\Teltrium\\Data-Statistics\\Source\\data-statistics\\server\\src\\logs\\info\\.cf913e98c3ea4d250f1fd6c8a5b30fb1d6907284-audit.json",
+    "files": [
+        {
+            "date": 1610515178835,
+            "name": "D:\\Teltrium\\Data-Statistics\\Source\\data-statistics\\server\\src\\logs\\info\\2021-01-13.log",
+            "hash": "62036a6bc7887ff4eb8f4fc28f1c05b6"
+        }
+    ]
+}
