@@ -1,5 +1,5 @@
 import 'dotenv/config';
-import express, { Express } from 'express';
+import express, { Express, Request, Response, Router } from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import hpp from 'hpp';
@@ -32,11 +32,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static('./build'));
 
-routes.forEach((route) => {
+routes.forEach((route: Router) => {
   app.use('/api/', route);
 });
 
-app.get('/', function (req, res) {
+app.get('/', (req: Request, res: Response) => {
   res.sendFile(path.resolve('./build/' + 'index.html'));
 });
 

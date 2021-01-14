@@ -4,7 +4,7 @@ import {
   getCartItems,
   getItem,
   getSystems,
-  getSystemVersion,
+  getVersions,
   getFileId,
   getEvents,
   deleteRecord,
@@ -25,7 +25,7 @@ router.get('/get-file-id', getFileId);
 
 router.get('/events', getEvents);
 
-router.post('/get-system-version', getSystemVersion);
+router.post('/get-versions', getVersions);
 router.post('/get-items', getItem);
 router.post('/delete-record', deleteRecord);
 router.post('/delete-all', deleteAll);

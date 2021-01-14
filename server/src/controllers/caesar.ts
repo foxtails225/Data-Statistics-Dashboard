@@ -1,9 +1,7 @@
 import { Response, Request } from 'express';
-import multer from 'multer';
 import { IResult } from 'mssql';
 import { connection } from './connection';
 import { getAvgs } from '../utils/util';
-import upload from '../utils/upload';
 import { testData, cartData } from '../data/test';
 import IFile from '../types/file';
 import Client from '../types/client';
@@ -175,10 +173,9 @@ export const getSystems = async (req: Request, res: Response): Promise<void> => 
   }
 };
 
-export const getSystemVersion = async (req: Request, res: Response): Promise<void> => {
+export const getVersions = async (req: Request, res: Response): Promise<void> => {
   const { system } = req.body;
-  const sql = `SELECT DISTINCT SYSTEM_ID, SYSTEM_ATTRIBUTE_VERSION_ID AS versions FROM FILE_ID_USAT \
-      WHERE SYSTEM_ID=${system}`;
+  const sql = `select distinct SYSTEM_ID, SYSTEM_ATTRIBUTE_VERSION_ID as versions from FILE_ID_USAT where SYSTEM_ID=${system}`;
 
   connection
     .connect()
