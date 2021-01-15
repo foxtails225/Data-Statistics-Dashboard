@@ -156,7 +156,7 @@ export const getItem = async (req: Request, res: Response): Promise<void> => {
 
 export const getSystems = async (req: Request, res: Response): Promise<void> => {
   try {
-    const sql = `SELECT SYSTEM_VERSION_ID AS system_id, NAME AS system_name FROM SYSTEM_VERSION`;
+    const sql = 'select distinct SYSTEM_VERSION_ID as system_id, NAME as system_name from SYSTEM_VERSION';
 
     connection
       .connect()
